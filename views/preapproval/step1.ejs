@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pre-Approval - Step 1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Link to CSS -->
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="bg-gray-100">
+  <!-- Navigation Bar -->
+  <%- include('../partials/navbar.ejs') %>
+
+  <!-- Main Content -->
+  <main class="container mx-auto py-8 px-4">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold text-blue-900 mb-6">Step 1: Property Details</h2>
+      <form action="/preapproval/step/1" method="post" id="step1-form">
+        <!-- Home Search Status -->
+        <div class="mb-4">
+          <label for="homeStatus" class="block text-gray-700 mb-2">Have you found a specific property you're interested in?</label>
+          <select name="homeStatus" id="homeStatus" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select an option</option>
+            <option value="yes">Yes, I have a property in mind</option>
+            <option value="no">No, I'm still looking</option>
+          </select>
+        </div>
+
+        <!-- If Yes: Property Address -->
+        <div id="propertyDetails" class="mb-4" style="display: none;">
+          <div class="mb-4">
+            <label for="propertyAddress" class="block text-gray-700 mb-2">Property Address:</label>
+            <input type="text" name="propertyAddress" id="propertyAddress" placeholder="Enter the property's address" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <!-- If No: Preferred Location and Price Range -->
+        <div id="searchPreferences" class="mb-4" style="display: none;">
+          <div class="mb-4">
+            <label for="priceRange" class="block text-gray-700 mb-2">What's your target price range for a home?</label>
+            <select name="priceRange" id="priceRange" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">Select a price range</option>
+              <option value="under_100k">Under $100,000</option>
+              <option value="100k_200k">$100,000 - $200,000</option>
+              <option value="200k_300k">$200,001 - $300,000</option>
+              <option value="300k_400k">$300,001 - $400,000</option>
+              <option value="400k_500k">$400,001 - $500,000</option>
+              <option value="500k_750k">$500,001 - $750,000</option>
+              <option value="750k_1m">$750,001 - $1,000,000</option>
+              <option value="over_1m">Over $1,000,000</option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label for="preferredLocation" class="block text-gray-700 mb-2">Where are you looking to buy a home?</label>
+            <input type="text" name="preferredLocation" id="preferredLocation" placeholder="Enter city, state, or ZIP code" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <button type="submit" class="bg-blue-900 text-white px-6 py-2 rounded-md hover:bg-blue-800 transition">Continue</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white text-center py-4 mt-8">
+    <p>© 2024 Pasaana. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript to handle conditional display -->
+  <script>
+    document.getElementById('homeStatus').addEventListener('change', function() {
+      const propertyDetails = document.getElementById('propertyDetails');
+      const searchPreferences = document.getElementById('searchPreferences');
+      if (this.value === 'yes') {
+        propertyDetails.style.display = 'block';
+        searchPreferences.style.display = 'none';
+        document.getElementById('propertyAddress').required = true;
+      } else if (this.value === 'no') {
+        propertyDetails.style.display = 'none';
+        searchPreferences.style.display = 'block';
+        document.getElementById('propertyAddress').required = false;
+      } else {
+        propertyDetails.style.display = 'none';
+        searchPreferences.style.display = 'none';
+        document.getElementById('propertyAddress').required = false;
+      }
+    });
+  </script>
+</body>
+</html>

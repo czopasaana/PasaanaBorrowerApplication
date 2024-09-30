@@ -1,0 +1,101 @@
+<!-- Navigation Bar -->
+<header>
+  <nav class="bg-blue-900">
+    <div class="container mx-auto px-4 flex items-center justify-between h-16">
+      <!-- Logo -->
+      <div class="text-white text-2xl font-bold">
+        <a href="/">Pasaana</a>
+      </div>
+      <!-- Navigation Links -->
+      <div class="hidden md:flex items-center space-x-4">
+        <!-- Updated Dropdown Structure -->
+        <div class="relative inline-block">
+          <button id="mortgageDropdownButton" class="text-white hover:text-gray-200 flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false">
+            Mortgage
+            <!-- Dropdown Icon -->
+            <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414L10 13.414 5.293 8.707a1 1 0 010-1.414z" />
+            </svg>
+          </button>
+          <!-- Dropdown Menu -->
+          <div id="mortgageDropdownMenu" class="absolute right-0 mt-2 w-48 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
+            <a href="/preapproval" class="block px-4 py-2 hover:bg-blue-800">Apply Now</a>
+            <a href="/mortgage-calculator" class="block px-4 py-2 hover:bg-blue-800">Mortgage Calculator</a>
+            <a href="/affordability-calculator" class="block px-4 py-2 hover:bg-blue-800">Affordability Calculator</a>
+          </div>
+        </div>
+        <!-- Additional Links (if any) -->
+      </div>
+      <!-- Authentication Buttons -->
+      <div class="hidden md:flex items-center space-x-4">
+        <% if (user) { %>
+          <a href="/profile" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">Profile</a>
+          <a href="/logout" class="text-white hover:text-gray-200">Sign Out</a>
+        <% } else { %>
+          <a href="/login" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">Sign In</a>
+        <% } %>
+      </div>
+      <!-- Mobile Menu Button -->
+      <div class="md:hidden">
+        <button id="mobile-menu-button" class="text-white focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <ul class="bg-blue-900 text-white">
+        <li><a href="/preapproval" class="block px-4 py-2 hover:bg-blue-800">Apply Now</a></li>
+        <li><a href="/mortgage-calculator" class="block px-4 py-2 hover:bg-blue-800">Mortgage Calculator</a></li>
+        <li><a href="/affordability-calculator" class="block px-4 py-2 hover:bg-blue-800">Affordability Calculator</a></li>
+        <% if (user) { %>
+          <li><a href="/profile" class="block px-4 py-2 hover:bg-blue-800">Profile</a></li>
+          <li><a href="/logout" class="block px-4 py-2 hover:bg-blue-800">Sign Out</a></li>
+        <% } else { %>
+          <li><a href="/login" class="block px-4 py-2 hover:bg-blue-800">Sign In</a></li>
+        <% } %>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<!-- Existing Script for Mobile Menu -->
+<script>
+  // Mobile Menu Script
+  const btn = document.getElementById('mobile-menu-button');
+  const menu = document.getElementById('mobile-menu');
+
+  btn.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+  });
+
+  // Mortgage Dropdown Script
+  const mortgageButton = document.getElementById('mortgageDropdownButton');
+  const mortgageMenu = document.getElementById('mortgageDropdownMenu');
+
+  mortgageButton.addEventListener('click', (event) => {
+    event.preventDefault(); // Prevent default action
+    const isHidden = mortgageMenu.classList.contains('hidden');
+    mortgageMenu.classList.toggle('hidden');
+    mortgageButton.setAttribute('aria-expanded', !isHidden);
+  });
+
+  // Close the dropdown when clicking outside
+  window.addEventListener('click', (event) => {
+    if (!mortgageButton.contains(event.target) && !mortgageMenu.contains(event.target)) {
+      mortgageMenu.classList.add('hidden');
+      mortgageButton.setAttribute('aria-expanded', false);
+    }
+  });
+
+  // Close the dropdown when pressing the Escape key
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      mortgageMenu.classList.add('hidden');
+      mortgageButton.setAttribute('aria-expanded', false);
+    }
+  });
+</script>

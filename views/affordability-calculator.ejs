@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Affordability Calculator</title>
+  <meta name="description" content="Determine how much house you can afford based on your income and expenses.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Link to CSS -->
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="bg-gray-100">
+  <!-- Navigation Bar -->
+  <%- include('partials/navbar.ejs') %>
+
+  <!-- Affordability Calculator Content -->
+  <main class="container mx-auto py-12 px-4">
+    <section class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <h1 class="text-3xl font-bold text-blue-900 mb-6 text-center">Affordability Calculator</h1>
+      <form id="affordability-form" class="space-y-6">
+        <div class="mb-4">
+          <label for="annual-income" class="block text-gray-700 mb-2">Annual Income ($):</label>
+          <input type="number" id="annual-income" name="annualIncome" step="0.01" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="mb-4">
+          <label for="monthly-debts" class="block text-gray-700 mb-2">Total Monthly Debts ($):</label>
+          <input type="number" id="monthly-debts" name="monthlyDebts" step="0.01" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="mb-4">
+          <label for="down-payment" class="block text-gray-700 mb-2">Available Down Payment ($):</label>
+          <input type="number" id="down-payment" name="downPayment" step="0.01" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="mb-4">
+          <label for="interest-rate" class="block text-gray-700 mb-2">Expected Interest Rate (%):</label>
+          <input type="number" id="interest-rate" name="interestRate" step="0.01" value="3.0" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="mb-6">
+          <label for="loan-term" class="block text-gray-700 mb-2">Loan Term (years):</label>
+          <input type="number" id="loan-term" name="loanTerm" value="30" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <button type="submit" class="w-full bg-blue-900 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-blue-800 transition">Calculate Affordability</button>
+      </form>
+
+      <!-- Results -->
+      <div id="results" class="mt-8 p-6 bg-gray-100 rounded-lg" style="display: none;">
+        <h2 class="text-2xl font-semibold text-blue-900 mb-4">Affordability Results</h2>
+        <p class="text-gray-700 mb-2"><strong>Maximum Affordable Home Price:</strong> <span id="affordable-home-price"></span></p>
+        <p class="text-gray-700"><strong>Estimated Monthly Mortgage Payment:</strong> <span id="monthly-payment"></span></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white text-center py-4 mt-12">
+    <p>© 2024 Pasaana. All rights reserved.</p>
+  </footer>
+
+  <!-- Include JavaScript -->
+  <script src="/affordability-calculator.js"></script>
+</body>
+</html>

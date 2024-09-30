@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pre-Approval - Step 5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Link to CSS -->
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="bg-gray-100">
+  <!-- Navigation Bar -->
+  <%- include('../partials/navbar.ejs') %>
+
+  <!-- Main Content -->
+  <main class="container mx-auto py-8 px-4">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold text-blue-900 mb-6">Step 5: Financial Information</h2>
+      <form action="/preapproval/step/5" method="post" id="step5-form">
+        <!-- Assets Section -->
+        <h3 class="text-xl font-semibold text-blue-800 mb-4">Assets</h3>
+        <!-- Checking Account Balance -->
+        <div class="mb-4">
+          <label for="checkingBalance" class="block text-gray-700 mb-2">Checking Account Balance (USD):</label>
+          <input type="number" name="checkingBalance" id="checkingBalance" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <!-- Savings Account Balance -->
+        <div class="mb-4">
+          <label for="savingsBalance" class="block text-gray-700 mb-2">Savings Account Balance (USD):</label>
+          <input type="number" name="savingsBalance" id="savingsBalance" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <!-- Investments -->
+        <div class="mb-4">
+          <label for="hasInvestments" class="block text-gray-700 mb-2">Do you have any investment accounts?</label>
+          <select name="hasInvestments" id="hasInvestments" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <!-- Investment Details -->
+        <div id="investmentDetails" class="mb-4" style="display: none;">
+          <div class="mb-4">
+            <label for="investmentValue" class="block text-gray-700 mb-2">Total Investment Value (USD):</label>
+            <input type="number" name="investmentValue" id="investmentValue" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+        <!-- Retirement Accounts -->
+        <div class="mb-4">
+          <label for="hasRetirement" class="block text-gray-700 mb-2">Do you have any retirement accounts (e.g., 401(k), IRA)?</label>
+          <select name="hasRetirement" id="hasRetirement" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <!-- Retirement Account Details -->
+        <div id="retirementDetails" class="mb-4" style="display: none;">
+          <div class="mb-4">
+            <label for="retirementValue" class="block text-gray-700 mb-2">Total Retirement Account Value (USD):</label>
+            <input type="number" name="retirementValue" id="retirementValue" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <!-- Liabilities Section -->
+        <h3 class="text-xl font-semibold text-blue-800 mb-4">Liabilities (Debts)</h3>
+        <!-- Credit Card Payments -->
+        <div class="mb-4">
+          <label for="creditCardPayments" class="block text-gray-700 mb-2">Monthly Credit Card Payments (USD):</label>
+          <input type="number" name="creditCardPayments" id="creditCardPayments" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <!-- Auto Loans -->
+        <div class="mb-4">
+          <label for="autoLoanPayments" class="block text-gray-700 mb-2">Monthly Auto Loan Payments (USD):</label>
+          <input type="number" name="autoLoanPayments" id="autoLoanPayments" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <!-- Student Loans -->
+        <div class="mb-4">
+          <label for="studentLoanPayments" class="block text-gray-700 mb-2">Monthly Student Loan Payments (USD):</label>
+          <input type="number" name="studentLoanPayments" id="studentLoanPayments" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <!-- Other Debts -->
+        <div class="mb-4">
+          <label for="hasOtherDebts" class="block text-gray-700 mb-2">Do you have any other debts?</label>
+          <select name="hasOtherDebts" id="hasOtherDebts" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <!-- Other Debts Details -->
+        <div id="otherDebtsDetails" class="mb-4" style="display: none;">
+          <div id="otherDebtsEntries">
+            <!-- Template for other debts entry -->
+            <div class="other-debt-entry mb-4">
+              <div class="mb-4">
+                <label for="otherDebtType" class="block text-gray-700 mb-2">Type of Debt:</label>
+                <input type="text" name="otherDebtType[]" class="otherDebtType w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div class="mb-4">
+                <label for="otherDebtPayment" class="block text-gray-700 mb-2">Monthly Payment Amount (USD):</label>
+                <input type="number" name="otherDebtPayment[]" class="otherDebtPayment w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+            </div>
+          </div>
+          <button type="button" id="addOtherDebt" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition">Add Another Debt</button>
+        </div>
+        <!-- Alimony/Child Support -->
+        <div class="mb-4">
+          <label for="hasAlimony" class="block text-gray-700 mb-2">Do you pay alimony or child support?</label>
+          <select name="hasAlimony" id="hasAlimony" required class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <!-- Alimony/Child Support Details -->
+        <div id="alimonyDetails" class="mb-6" style="display: none;">
+          <div class="mb-4">
+            <label for="alimonyPayment" class="block text-gray-700 mb-2">Monthly Payment Amount (USD):</label>
+            <input type="number" name="alimonyPayment" id="alimonyPayment" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <button type="submit" class="bg-blue-900 text-white px-6 py-2 rounded-md hover:bg-blue-800 transition">Continue</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white text-center py-4 mt-8">
+    <p>© 2024 Pasaana. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript to handle conditional display and required attributes -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const hasInvestments = document.getElementById('hasInvestments');
+      const investmentDetails = document.getElementById('investmentDetails');
+      const hasRetirement = document.getElementById('hasRetirement');
+      const retirementDetails = document.getElementById('retirementDetails');
+      const hasOtherDebts = document.getElementById('hasOtherDebts');
+      const otherDebtsDetails = document.getElementById('otherDebtsDetails');
+      const addOtherDebt = document.getElementById('addOtherDebt');
+      const otherDebtsEntries = document.getElementById('otherDebtsEntries');
+      const hasAlimony = document.getElementById('hasAlimony');
+      const alimonyDetails = document.getElementById('alimonyDetails');
+
+      // Toggle Investment Details
+      hasInvestments.addEventListener('change', function() {
+        if (this.value === 'yes') {
+          investmentDetails.style.display = 'block';
+          addRequiredToFields(investmentDetails);
+        } else {
+          investmentDetails.style.display = 'none';
+          removeRequiredFromFields(investmentDetails);
+        }
+      });
+
+      // Toggle Retirement Details
+      hasRetirement.addEventListener('change', function() {
+        if (this.value === 'yes') {
+          retirementDetails.style.display = 'block';
+          addRequiredToFields(retirementDetails);
+        } else {
+          retirementDetails.style.display = 'none';
+          removeRequiredFromFields(retirementDetails);
+        }
+      });
+
+      // Toggle Other Debts Details
+      hasOtherDebts.addEventListener('change', function() {
+        if (this.value === 'yes') {
+          otherDebtsDetails.style.display = 'block';
+          addRequiredToFields(otherDebtsDetails);
+        } else {
+          otherDebtsDetails.style.display = 'none';
+          removeRequiredFromFields(otherDebtsDetails);
+        }
+      });
+
+      // Add Another Debt Entry
+      addOtherDebt.addEventListener('click', function() {
+        const newEntry = document.createElement('div');
+        newEntry.classList.add('other-debt-entry', 'mb-4');
+        newEntry.innerHTML = `
+          <div class="mb-4">
+            <label for="otherDebtType" class="block text-gray-700 mb-2">Type of Debt:</label>
+            <input type="text" name="otherDebtType[]" class="otherDebtType w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          </div>
+          <div class="mb-4">
+            <label for="otherDebtPayment" class="block text-gray-700 mb-2">Monthly Payment Amount (USD):</label>
+            <input type="number" name="otherDebtPayment[]" class="otherDebtPayment w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          </div>
+        `;
+        otherDebtsEntries.appendChild(newEntry);
+      });
+
+      // Toggle Alimony Details
+      hasAlimony.addEventListener('change', function() {
+        if (this.value === 'yes') {
+          alimonyDetails.style.display = 'block';
+          addRequiredToFields(alimonyDetails);
+        } else {
+          alimonyDetails.style.display = 'none';
+          removeRequiredFromFields(alimonyDetails);
+        }
+      });
+
+      function addRequiredToFields(section) {
+        const inputs = section.querySelectorAll('input, select');
+        inputs.forEach(input => {
+          input.setAttribute('required', 'required');
+        });
+      }
+
+      function removeRequiredFromFields(section) {
+        const inputs = section.querySelectorAll('input, select');
+        inputs.forEach(input => {
+          input.removeAttribute('required');
+        });
+      }
+    });
+  </script>
+</body>
+</html>
