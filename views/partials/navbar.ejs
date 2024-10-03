@@ -32,7 +32,7 @@
           <a href="/profile" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">Profile</a>
           <a href="/logout" class="text-white hover:text-gray-200">Sign Out</a>
         <% } else { %>
-          <a href="/login" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">Sign In</a>
+          <a href="/login?from=navbar" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">Sign In</a>
         <% } %>
       </div>
       <!-- Mobile Menu Button -->
@@ -55,7 +55,7 @@
           <li><a href="/profile" class="block px-4 py-2 hover:bg-blue-800">Profile</a></li>
           <li><a href="/logout" class="block px-4 py-2 hover:bg-blue-800">Sign Out</a></li>
         <% } else { %>
-          <li><a href="/login" class="block px-4 py-2 hover:bg-blue-800">Sign In</a></li>
+          <li><a href="/login?from=navbar" class="block px-4 py-2 hover:bg-blue-800">Sign In</a></li>
         <% } %>
       </ul>
     </div>

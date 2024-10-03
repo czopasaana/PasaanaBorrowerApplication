@@ -1,76 +1,102 @@
-document.getElementById('mortgage-form').addEventListener('submit', calculateMortgage);
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('mortgage-form');
+  const detailsBtn = document.getElementById('details-btn');
+  const detailsSection = document.getElementById('details-section');
 
-function calculateMortgage(event) {
-  event.preventDefault(); // Prevent form from submitting and refreshing the page
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
 
-  const housePriceInput = document.getElementById('house-price');
-  const loanTermInput = document.getElementById('loan-term');
-  const pasaanaResultsDiv = document.getElementById('pasaana-results');
-  const standardResultsDiv = document.getElementById('standard-results');
-  const savingsResultsDiv = document.getElementById('savings-results');
+    // Get input values
+    const housePrice = parseFloat(document.getElementById('house-price').value);
+    const loanTerm = parseInt(document.getElementById('loan-term').value);
+    const rateType = document.querySelector('input[name="rateType"]:checked').value;
 
-  const housePrice = parseFloat(housePriceInput.value);
-  const loanTermYears = parseInt(loanTermInput.value);
-  const annualInterestRatePasaana = 0.03; // Pasaana's 3% mortgage rate
-  const annualInterestRateStandard = 0.07; // US industry standard 7% rate
-  const downPaymentPercentage = 0.20; // Fixed down payment percentage at 20%
+    // Check if inputs are valid
+    if (isNaN(housePrice) || isNaN(loanTerm)) {
+      alert('Please enter valid numbers for house price and loan term.');
+      return;
+    }
 
-  if (isNaN(housePrice) || housePrice <= 0) {
-    alert('Please enter a valid house price.');
-    return;
-  }
+    // Perform calculations
+    const variableRate = 0.04; // Current variable interest rate (4%)
+    const fixedRate = 0.045;   // Fixed interest rate slightly higher (4.5%)
+    const pasaanaRate = rateType === 'variable' ? variableRate : fixedRate;
 
-  // Calculate down payment
-  const downPayment = housePrice * downPaymentPercentage;
-  const loanAmount = housePrice - downPayment;
-  const numberOfPayments = loanTermYears * 12;
+    const standardRate = pasaanaRate + 0.02; // Standard rate is higher than Pasaana's
 
-  // Function to calculate monthly payment
-  function calculateMonthlyPayment(loanAmount, annualInterestRate, numberOfPayments) {
-    const monthlyInterestRate = annualInterestRate / 12;
-    return (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments));
-  }
+    const pasaanaMonthlyPayment = calculateMonthlyPayment(housePrice, pasaanaRate, loanTerm);
+    const standardMonthlyPayment = calculateMonthlyPayment(housePrice, standardRate, loanTerm);
 
-  // Calculate payments and total interest for Pasaana
-  const monthlyPaymentPasaana = calculateMonthlyPayment(loanAmount, annualInterestRatePasaana, numberOfPayments);
-  const totalPaymentPasaana = monthlyPaymentPasaana * numberOfPayments;
-  const totalInterestPasaana = totalPaymentPasaana - loanAmount;
+    // Calculate savings
+    const monthlySavings = standardMonthlyPayment - pasaanaMonthlyPayment;
+    const totalSavings = monthlySavings * loanTerm * 12;
 
-  // Calculate payments and total interest for Standard rate
-  const monthlyPaymentStandard = calculateMonthlyPayment(loanAmount, annualInterestRateStandard, numberOfPayments);
-  const totalPaymentStandard = monthlyPaymentStandard * numberOfPayments;
-  const totalInterestStandard = totalPaymentStandard - loanAmount;
+    // Display results with formatted numbers
+    document.getElementById('pasaana-results').innerHTML = `
+      <h3 class="text-xl font-bold mb-4">Pasaana Mortgage (${capitalizeFirstLetter(rateType)} Rate)</h3>
+      <p class="text-gray-700">Monthly Payment: $${formatNumber(pasaanaMonthlyPayment)}</p>
+      <p class="text-gray-700">Total Payment over ${loanTerm} years: $${formatNumber(pasaanaMonthlyPayment * loanTerm * 12)}</p>
+    `;
 
-  // Calculate savings
-  const monthlySavings = monthlyPaymentStandard - monthlyPaymentPasaana;
-  const totalInterestSavings = totalInterestStandard - totalInterestPasaana;
+    document.getElementById('standard-results').innerHTML = `
+      <h3 class="text-xl font-bold mb-4">Standard Mortgage (${capitalizeFirstLetter(rateType)} Rate)</h3>
+      <p class="text-gray-700">Monthly Payment: $${formatNumber(standardMonthlyPayment)}</p>
+      <p class="text-gray-700">Total Payment over ${loanTerm} years: $${formatNumber(standardMonthlyPayment * loanTerm * 12)}</p>
+    `;
 
-  // Format numbers as currency
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+    document.getElementById('savings-results').innerHTML = `
+      <h3 class="text-2xl font-bold mb-4">Your Savings with Pasaana</h3>
+      <p class="text-green-600 text-xl">Save $${formatNumber(monthlySavings)} per month</p>
+      <p class="text-green-600 text-xl">Total Savings over ${loanTerm} years: $${formatNumber(totalSavings)}</p>
+    `;
+
+    // Prepare detailed breakdown
+    const pasaanaTotalInterest = (pasaanaMonthlyPayment * loanTerm * 12) - housePrice;
+    const standardTotalInterest = (standardMonthlyPayment * loanTerm * 12) - housePrice;
+
+    document.getElementById('pasaana-details').innerHTML = `
+      <h3 class="text-xl font-bold mb-4">Pasaana Mortgage Details</h3>
+      <p class="text-gray-700">Interest Rate: ${(pasaanaRate * 100).toFixed(2)}%</p>
+      <p class="text-gray-700">Total Interest Paid: $${formatNumber(pasaanaTotalInterest)}</p>
+      <p class="text-gray-700">Total Payment: $${formatNumber(pasaanaMonthlyPayment * loanTerm * 12)}</p>
+    `;
+
+    document.getElementById('standard-details').innerHTML = `
+      <h3 class="text-xl font-bold mb-4">Standard Mortgage Details</h3>
+      <p class="text-gray-700">Interest Rate: ${(standardRate * 100).toFixed(2)}%</p>
+      <p class="text-gray-700">Total Interest Paid: $${formatNumber(standardTotalInterest)}</p>
+      <p class="text-gray-700">Total Payment: $${formatNumber(standardMonthlyPayment * loanTerm * 12)}</p>
+    `;
+
+    // Hide the details section initially
+    detailsSection.classList.add('hidden');
+    detailsBtn.textContent = 'See More Details';
+
+    // Show the results section
+    document.getElementById('results').classList.remove('hidden');
   });
 
-  // Display Pasaana Mortgage results
-  pasaanaResultsDiv.innerHTML = `
-    <h2>Pasaana Mortgage (3%)</h2>
-    <p><strong>Monthly Payment:</strong> ${formatter.format(monthlyPaymentPasaana.toFixed(2))}</p>
-    <p><strong>Total Interest Paid:</strong> ${formatter.format(totalInterestPasaana.toFixed(2))}</p>
-    <p><strong>Total Amount Paid:</strong> ${formatter.format(totalPaymentPasaana.toFixed(2))}</p>
-  `;
+  // Toggle detailed breakdown visibility
+  detailsBtn.addEventListener('click', function() {
+    detailsSection.classList.toggle('hidden');
+    if (detailsSection.classList.contains('hidden')) {
+      detailsBtn.textContent = 'See More Details';
+    } else {
+      detailsBtn.textContent = 'Hide Details';
+    }
+  });
 
-  // Display Standard Mortgage results
-  standardResultsDiv.innerHTML = `
-    <h2>Standard Mortgage (7%)</h2>
-    <p><strong>Monthly Payment:</strong> ${formatter.format(monthlyPaymentStandard.toFixed(2))}</p>
-    <p><strong>Total Interest Paid:</strong> ${formatter.format(totalInterestStandard.toFixed(2))}</p>
-    <p><strong>Total Amount Paid:</strong> ${formatter.format(totalPaymentStandard.toFixed(2))}</p>
-  `;
+  function calculateMonthlyPayment(principal, annualRate, years) {
+    const monthlyRate = annualRate / 12;
+    const numberOfPayments = years * 12;
+    return (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -numberOfPayments));
+  }
 
-  // Display Savings
-  savingsResultsDiv.innerHTML = `
-    <h2>Savings with Pasaana</h2>
-    <p><strong>Monthly Savings:</strong> ${formatter.format(monthlySavings.toFixed(2))}</p>
-    <p><strong>Total Interest Savings:</strong> ${formatter.format(totalInterestSavings.toFixed(2))}</p>
-  `;
-}
+  function formatNumber(number) {
+    return number.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+});

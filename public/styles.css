@@ -1192,3 +1192,44 @@ select {
   }
 }
 
+/* Card Hover Shadow */
+.card:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.z-60 {
+  z-index: 60;
+}
+
+/* Add this to your styles.css file */
+.hero-background {
+  background-image: url('/images/hero-image.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: bottom;
+}
+
+/* Ensure the navbar is positioned and has a higher z-index */
+.navbar {
+  position: relative;
+  z-index: 100;
+}
+
+/* Ensure the dropdown menu is positioned properly */
+.navbar .dropdown-menu {
+  position: absolute;
+  z-index: 101; /* Higher than navbar */
+}
+
+/* Adjust the hero background */
+.hero-background {
+  position: relative;
+  z-index: 1;
+}
+
+/* If there is an overlay on the hero section, adjust its z-index */
+.hero-background .overlay {
+  position: absolute;
+  z-index: 2;
+}

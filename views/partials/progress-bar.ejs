@@ -1,0 +1,37 @@
+<!-- Enhanced Progress Bar Partial -->
+<div class="container mx-auto px-4 my-6">
+  <div class="flex items-start justify-between">
+    <% 
+      const totalSteps = 7;
+      const steps = [
+        { number: 1, title: 'Property Details' },
+        { number: 2, title: 'Consent & Disclosure' },
+        { number: 3, title: 'Personal Info' },
+        { number: 4, title: 'Employment' },
+        { number: 5, title: 'Financial Info' },
+        { number: 6, title: 'Credit Check' },
+        { number: 7, title: 'Review' },
+      ];
+    %>
+    <% steps.forEach(function(step, index) { %>
+      <div class="relative flex flex-col items-center w-full">
+        <!-- Connector Line (before circle) -->
+        <% if (index !== 0) { %>
+          <div class="absolute left-0 top-4 w-1/2 h-1 <% if (step.number <= currentStep) { %>bg-blue-600<% } else { %>bg-gray-200<% } %>"></div>
+        <% } %>
+        <!-- Connector Line (after circle) -->
+        <% if (index !== steps.length - 1) { %>
+          <div class="absolute right-0 top-4 w-1/2 h-1 <% if (step.number < currentStep) { %>bg-blue-600<% } else { %>bg-gray-200<% } %>"></div>
+        <% } %>
+        <!-- Step Circle -->
+        <div class="z-10 rounded-full h-8 w-8 flex items-center justify-center <% if (step.number <= currentStep) { %>bg-blue-600 text-white<% } else { %>bg-gray-200 text-gray-500<% } %>">
+          <%= step.number %>
+        </div>
+        <!-- Step Title -->
+        <div class="text-center mt-2 text-sm font-medium text-gray-700 w-28 h-12 flex items-center justify-center leading-tight">
+          <%= step.title %>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+</div>

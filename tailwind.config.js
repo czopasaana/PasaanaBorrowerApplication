@@ -1,4 +1,6 @@
-/** @type {import('tailwindcss').Config} */
+/**
+ * @type {import('tailwindcss').Config}
+ */
 module.exports = {
   content: [
     './views/**/*.ejs',
@@ -16,6 +18,13 @@ module.exports = {
   plugins: [
     require('@tailwindcss/forms'),
     // ...other plugins
+  ],
+  safelist: [
+    'max-h-0',
+    'transition-all',
+    'duration-300',
+    'ease-in-out',
+    'open',
   ],
 };
 

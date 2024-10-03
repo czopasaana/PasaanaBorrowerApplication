@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <title>My Profile</title>
   <link rel="stylesheet" href="/styles.css">
+  <!-- Include Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Link to Custom CSS -->
+  <link rel="stylesheet" href="/styles.css">
+   <!-- Include jQuery for AJAX requests -->
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-gray-100">
   <!-- Navigation Bar -->
@@ -16,6 +22,9 @@
       <a href="/logout" class="bg-orange-500 text-white px-6 py-2 rounded-md text-lg font-semibold hover:bg-orange-600 transition">Sign Out</a>
     </section>
   </main>
+
+  <!-- Chatbot -->
+  <%- include('partials/chatbot.ejs') %>
 
   <!-- Footer -->
   <footer class="bg-blue-900 text-white text-center py-4 mt-12">

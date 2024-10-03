@@ -1,0 +1,116 @@
+<!-- Chatbot Section -->
+<div id="chatbot-container" class="fixed bottom-0 right-0 mr-4 z-50 shadow-lg rounded-lg overflow-hidden">
+
+  <!-- Chatbot Header -->
+  <div id="chatbot-header" class="bg-blue-500 text-white px-4 py-3 cursor-pointer flex items-center justify-between" style="width: 250px;" onclick="toggleChatbot()">
+    <span class="font-semibold">Chat Assistant</span>
+    <svg id="chatbot-arrow" class="w-5 h-5 transform transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <!-- Arrow Icon -->
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+    </svg>
+  </div>
+
+  <!-- Chatbot Window -->
+  <div id="chatbot-window" class="hidden bg-white border-t border-gray-200" style="max-height: 500px; width: 350px;">
+    <div id="chat-content" class="p-4 h-80 overflow-y-auto space-y-2">
+      <!-- Chat messages will appear here -->
+    </div>
+    <form id="chat-form" class="flex items-center border-t border-gray-200 px-3 py-2">
+      <input type="text" id="user-input" class="flex-grow px-4 py-2 focus:outline-none text-gray-700 placeholder-gray-500 rounded-full bg-gray-100" placeholder="Type your message..." required>
+      <button type="submit" class="ml-2 bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 focus:outline-none">Send</button>
+    </form>
+  </div>
+</div>
+
+<!-- Chatbot Toggle Script -->
+<script>
+  function toggleChatbot() {
+    const chatbotContainer = document.getElementById('chatbot-container');
+    const chatbotWindow = document.getElementById('chatbot-window');
+    const chatbotHeader = document.getElementById('chatbot-header');
+    const chatbotArrow = document.getElementById('chatbot-arrow');
+
+    chatbotWindow.classList.toggle('hidden');
+    chatbotArrow.classList.toggle('rotate-180');
+
+    // Adjust the width of the chatbot container when toggling
+    if (chatbotWindow.classList.contains('hidden')) {
+      chatbotHeader.style.width = '250px';
+      chatbotContainer.style.width = 'auto';
+    } else {
+      chatbotHeader.style.width = '350px';
+      chatbotContainer.style.width = '350px';
+    }
+  }
+</script>
+
+<!-- Chatbot Functionality Script -->
+<script>
+  $(document).ready(function() {
+    $('#chat-form').submit(function(e) {
+      e.preventDefault();
+      const message = $('#user-input').val().trim();
+      if (message === '') return;
+      $('#user-input').val('');
+
+      // Display user's message
+      $('#chat-content').append(
+        `<div class="flex justify-end">
+          <div class="bg-blue-500 text-white px-4 py-2 rounded-l-lg rounded-br-lg max-w-xs">
+            ${message}
+          </div>
+        </div>`
+      );
+
+      // Scroll to the bottom
+      $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
+
+      // Display typing indicator
+      $('#chat-content').append(
+        `<div id="typing-indicator" class="flex justify-start">
+          <div class="bg-gray-200 text-gray-700 px-4 py-2 rounded-r-lg rounded-bl-lg max-w-xs">
+            ...
+          </div>
+        </div>`
+      );
+
+      // Scroll to the bottom
+      $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
+
+      // Simulate bot typing delay
+      setTimeout(function() {
+        // Remove typing indicator
+        $('#typing-indicator').remove();
+
+        // Send the message to the server
+        $.ajax({
+          url: '/chat',
+          method: 'POST',
+          data: { message: message },
+          success: function(response) {
+            // Display the assistant's response
+            $('#chat-content').append(
+              `<div class="flex justify-start">
+                <div class="bg-gray-200 text-gray-700 px-4 py-2 rounded-r-lg rounded-bl-lg max-w-xs">
+                  ${response.reply}
+                </div>
+              </div>`
+            );
+
+            // Scroll to the bottom
+            $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
+          },
+          error: function() {
+            $('#chat-content').append(
+              `<div class="flex justify-start">
+                <div class="bg-red-200 text-red-700 px-4 py-2 rounded-r-lg rounded-bl-lg max-w-xs">
+                  Error: Could not get a response.
+                </div>
+              </div>`
+            );
+          }
+        });
+      }, 1000); // Simulate typing delay (1 second)
+    });
+  });
+</script>

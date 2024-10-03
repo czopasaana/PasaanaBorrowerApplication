@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const path = require('path');
@@ -5,12 +6,20 @@ const port = 3000;
 
 const bcrypt = require('bcrypt');
 const session = require('express-session');
+const { OpenAI } = require('openai');
+
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
 
 // In-memory user store (Use a database in production)
 const users = [];
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(session({
   secret: 'your-secret-key', // Replace with your own secret
   resave: false,
@@ -49,6 +58,10 @@ app.get('/', (req, res) => {
 
 // Sign Up Page
 app.get('/signup', (req, res) => {
+  if (req.query.from === 'navbar') {
+    // Clear any existing returnTo value
+    delete req.session.returnTo;
+  }
   const showMessage = req.session.returnTo ? true : false;
   res.render('signup', { showMessage });
 });
@@ -84,6 +97,10 @@ app.post('/signup', async (req, res) => {
 
 // Sign In Page
 app.get('/login', (req, res) => {
+  if (req.query.from === 'navbar') {
+    // Clear any existing returnTo value
+    delete req.session.returnTo;
+  }
   const showMessage = req.session.returnTo ? true : false;
   res.render('login', { showMessage });
 });
@@ -204,6 +221,67 @@ app.get('/mortgage-calculator', (req, res) => {
 // **Affordability Calculator Route**
 app.get('/affordability-calculator', (req, res) => {
   res.render('affordability-calculator');
+});
+
+// Chat Route using Chat Completion API
+app.post('/chat', async (req, res) => {
+  const message = req.body.message;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a helpful assistant that guides users through the mortgage application process.',
+        },
+        { role: 'user', content: message },
+      ],
+      model: 'gpt-3.5-turbo',
+    });
+
+    const reply = completion.choices[0].message.content.trim();
+    res.json({ reply });
+  } catch (error) {
+    console.error('Error communicating with OpenAI:', error.response ? error.response.data : error.message);
+    res.status(500).json({ error: 'An error occurred while processing your request.' });
+  }
+});
+
+// Add a new route for AI-based predictions
+app.post('/api/predict', async (req, res) => {
+  const {
+    annualIncome,
+    monthlyDebts,
+    salaryGrowthRate,
+    expenseGrowthRate,
+    years
+  } = req.body;
+
+  // Construct the AI prompt
+  const prompt = `
+    Predict the annual income and debts over ${years} years, given:
+    - Starting Annual Income: $${annualIncome}
+    - Monthly Debts: $${monthlyDebts}
+    - Annual Salary Growth Rate: ${salaryGrowthRate * 100}%
+    - Annual Expense Growth Rate: ${expenseGrowthRate * 100}%
+    Provide the results in a JSON array with "year", "income", and "debts" fields.
+  `;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [{ role: 'user', content: prompt }],
+      model: 'gpt-3.5-turbo',
+    });
+
+    // Extract and parse AI response
+    const aiResponse = completion.choices[0].message.content;
+    const projections = JSON.parse(aiResponse);
+
+    res.json({ projections });
+  } catch (error) {
+    console.error('Error with OpenAI API:', error);
+    res.status(500).json({ error: 'Prediction failed.' });
+  }
 });
 
 // **Add the static middleware after your routes**

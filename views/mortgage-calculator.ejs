@@ -7,48 +7,92 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Link to CSS -->
   <link rel="stylesheet" href="/styles.css">
+  <!-- Include Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+   <!-- Include jQuery for AJAX requests -->
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-gray-100">
   <!-- Navigation Bar -->
   <%- include('partials/navbar.ejs') %>
 
+  <!-- Title Section -->
+  <section class="bg-white py-8">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-5xl font-bold text-blue-900 mb-4">Mortgage Calculator</h1>
+      <p class="text-xl text-gray-700">Find out how much you can save with Pasaana.</p>
+    </div>
+  </section>
+
   <!-- Mortgage Calculator Content -->
   <main class="container mx-auto py-12 px-4">
-    <section class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-      <h1 class="text-3xl font-bold text-blue-900 mb-6 text-center">Mortgage Calculator</h1>
-      <!-- Wrap inputs and button in a form element -->
+    <section class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <!-- Calculator Form -->
       <form id="mortgage-form" class="space-y-6">
-        <div class="mb-4">
-          <label for="house-price" class="block text-gray-700 mb-2">House Price:</label>
-          <input type="number" id="house-price" name="housePrice" placeholder="e.g., 300000" required autofocus class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="house-price" class="block text-gray-700 font-semibold">House Price:</label>
+            <input type="number" id="house-price" name="housePrice" placeholder="e.g., 300,000" required autofocus class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label for="loan-term" class="block text-gray-700 font-semibold">Loan Term:</label>
+            <select id="loan-term" name="loanTerm" class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="10">10 Years</option>
+              <option value="15">15 Years</option>
+              <option value="30" selected>30 Years</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-gray-700 font-semibold">Interest Rate Type:</label>
+            <div class="mt-2 flex items-center space-x-6">
+              <label class="inline-flex items-center">
+                <input type="radio" class="form-radio text-blue-600" name="rateType" value="variable" checked>
+                <span class="ml-2 text-gray-700">Variable Rate</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input type="radio" class="form-radio text-blue-600" name="rateType" value="fixed">
+                <span class="ml-2 text-gray-700">Fixed Rate</span>
+              </label>
+            </div>
+          </div>
         </div>
-        <div class="mb-6">
-          <label for="loan-term" class="block text-gray-700 mb-2">Loan Term:</label>
-          <select id="loan-term" name="loanTerm" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="10">10 Years</option>
-            <option value="15">15 Years</option>
-            <option value="30" selected>30 Years</option>
-          </select>
-        </div>
-        <button type="submit" id="calculate-btn" class="w-full bg-blue-900 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-blue-800 transition">Calculate</button>
+        <button type="submit" id="calculate-btn" class="w-full bg-blue-900 text-white px-6 py-4 rounded-md text-lg font-semibold hover:bg-blue-800 transition duration-300">Calculate</button>
       </form>
       <!-- Results Section -->
-      <div id="results" class="mt-8">
+      <div id="results" class="mt-12 hidden">
         <!-- The comparison and savings will be displayed here -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="comparison-box bg-gray-50 p-6 rounded-lg shadow" id="pasaana-results">
+          <div class="comparison-box bg-blue-50 p-6 rounded-lg shadow" id="pasaana-results">
             <!-- Pasaana Mortgage results -->
           </div>
-          <div class="comparison-box bg-gray-50 p-6 rounded-lg shadow" id="standard-results">
+          <div class="comparison-box bg-blue-50 p-6 rounded-lg shadow" id="standard-results">
             <!-- Standard Mortgage results -->
           </div>
         </div>
-        <div class="savings-box bg-green-50 p-6 mt-6 rounded-lg shadow" id="savings-results">
+        <div class="savings-box bg-green-100 p-6 mt-6 rounded-lg shadow text-center" id="savings-results">
           <!-- Savings results -->
+        </div>
+        <!-- See More Details Button -->
+        <div class="text-center mt-6">
+          <button id="details-btn" class="bg-gray-800 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-gray-700 transition duration-300">See More Details</button>
+        </div>
+        <!-- Detailed Breakdown -->
+        <div id="details-section" class="mt-6 hidden">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow" id="pasaana-details">
+              <!-- Detailed breakdown for Pasaana Mortgage -->
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow" id="standard-details">
+              <!-- Detailed breakdown for Standard Mortgage -->
+            </div>
+          </div>
         </div>
       </div>
     </section>
   </main>
+
+  <!-- Chatbot -->
+  <%- include('partials/chatbot.ejs') %>
 
   <!-- Footer -->
   <footer class="bg-blue-900 text-white text-center py-4 mt-12">
