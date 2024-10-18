@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const path = require('path');
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const bcrypt = require('bcrypt');
 const session = require('express-session');
@@ -286,7 +286,6 @@ app.post('/api/predict', async (req, res) => {
 
 // **Add the static middleware after your routes**
 app.use(express.static('public'));
-
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
