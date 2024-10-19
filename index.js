@@ -354,7 +354,16 @@ app.post('/api/predict', async (req, res) => {
 
 // **Add the static middleware after your routes**
 app.use(express.static('public'));
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+
+async function startServer() {
+  try {
+    await connectToDatabase(); // Wait for the database connection to be established
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server:', err.message);
+  }
+}
+
+startServer();
