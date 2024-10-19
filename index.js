@@ -8,14 +8,13 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const { OpenAI } = require('openai');
 
+const { DefaultAzureCredential } = require('@azure/identity');
+const { SecretClient } = require('@azure/keyvault-secrets');
+const sql = require('mssql');
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
-
-
-// In-memory user store (Use a database in production)
-const users = [];
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -36,6 +35,43 @@ app.use((req, res, next) => {
 app.set('view engine', 'ejs');
 // Optional: Set the views directory explicitly if it's not in the default location
 app.set('views', path.join(__dirname, 'views'));
+
+// Azure Key Vault and SQL Database Connection
+const credential = new DefaultAzureCredential();
+const keyVaultUrl = process.env.KEY_VAULT_URL;
+const secretClient = new SecretClient(keyVaultUrl, credential);
+
+let sqlConfig;
+
+async function getSqlConfig() {
+  try {
+    const secret = await secretClient.getSecret('SqlConnectionString');
+    sqlConfig = {
+      connectionString: secret.value, // Assuming the secret is the connection string
+      options: {
+        encrypt: true, // For secure connection
+      },
+    };
+  } catch (err) {
+    console.error('Error retrieving Azure SQL connection string from Key Vault:', err.message);
+  }
+}
+
+getSqlConfig();
+
+let pool;
+
+async function connectToDatabase() {
+  try {
+    await getSqlConfig(); // Ensure sqlConfig is populated
+    pool = await sql.connect(sqlConfig.connectionString);
+    console.log('Connected to Azure SQL database.');
+  } catch (err) {
+    console.error('Database connection failed:', err.message);
+  }
+}
+
+connectToDatabase();
 
 // **Ensure Authenticated Middleware Function**
 function ensureAuthenticated(req, res, next) {
@@ -70,17 +106,26 @@ app.get('/signup', (req, res) => {
 app.post('/signup', async (req, res) => {
   const { email, password } = req.body;
 
-  // Check if user already exists
-  if (users.find(u => u.email === email)) {
-    return res.send('User already exists. Please sign in.');
-  }
-
   try {
+    // Check if user already exists
+    const result = await pool
+      .request()
+      .input('email', sql.VarChar, email)
+      .query('SELECT * FROM Users WHERE Email = @email');
+
+    if (result.recordset.length > 0) {
+      return res.send('User already exists. Please sign in.');
+    }
+
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Save the user
-    users.push({ email, password: hashedPassword });
+    await pool
+      .request()
+      .input('email', sql.VarChar, email)
+      .input('password', sql.VarChar, hashedPassword)
+      .query('INSERT INTO Users (Email, Password) VALUES (@email, @password)');
 
     // Set user session
     req.session.user = { email };
@@ -90,7 +135,7 @@ app.post('/signup', async (req, res) => {
     delete req.session.returnTo; // Remove the return URL from session
     return res.redirect(redirectTo);
   } catch (err) {
-    console.error(err);
+    console.error('Sign up error:', err.message);
     res.redirect('/signup');
   }
 });
@@ -108,14 +153,21 @@ app.get('/login', (req, res) => {
 // Sign In Handler
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  const user = users.find(u => u.email === email);
 
-  if (user) {
-    try {
+  try {
+    // Retrieve user from database
+    const result = await pool
+      .request()
+      .input('email', sql.VarChar, email)
+      .query('SELECT * FROM Users WHERE Email = @email');
+
+    const user = result.recordset[0];
+
+    if (user) {
       // Compare passwords
-      if (await bcrypt.compare(password, user.password)) {
+      if (await bcrypt.compare(password, user.Password)) {
         // Authentication successful
-        req.session.user = { email: user.email };
+        req.session.user = { email: user.Email };
 
         // Redirect to the original requested URL or home page
         const redirectTo = req.session.returnTo || '/';
@@ -125,19 +177,35 @@ app.post('/login', async (req, res) => {
         // Authentication failed
         return res.send('Incorrect password.');
       }
-    } catch (err) {
-      console.error(err);
-      return res.redirect('/login');
+    } else {
+      return res.send('User not found.');
     }
-  } else {
-    return res.send('User not found.');
+  } catch (err) {
+    console.error('Login error:', err.message);
+    res.redirect('/login');
   }
 });
 
 // Profile Page
-app.get('/profile', (req, res) => {
+app.get('/profile', async (req, res) => {
   if (req.session.user) {
-    res.render('profile');
+    try {
+      const result = await pool
+        .request()
+        .input('email', sql.VarChar, req.session.user.email)
+        .query('SELECT * FROM Users WHERE Email = @email');
+
+      const user = result.recordset[0];
+
+      if (user) {
+        res.render('profile', { user });
+      } else {
+        res.redirect('/login');
+      }
+    } catch (err) {
+      console.error('Error fetching user profile:', err.message);
+      res.redirect('/login');
+    }
   } else {
     res.redirect('/login');
   }
