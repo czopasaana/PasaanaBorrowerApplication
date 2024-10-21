@@ -37,7 +37,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Azure Key Vault and SQL Database Connection
-const credential = new DefaultAzureCredential(); // Uses Managed Identity
+const credential = new DefaultAzureCredential();
 const keyVaultUrl = process.env.KEY_VAULT_URL;
 const secretClient = new SecretClient(keyVaultUrl, credential);
 
@@ -46,31 +46,14 @@ let sqlConfig;
 async function getSqlConfig() {
   try {
     const secret = await secretClient.getSecret('SqlConnectionString');
-    const connectionString = secret.value;
-
-    // Parse server and database from connection string
-    const serverMatch = /Server=(?<server>[^;]+)/i.exec(connectionString);
-    const databaseMatch = /Database=(?<database>[^;]+)/i.exec(connectionString);
-
-    const server = serverMatch?.groups.server;
-    const database = databaseMatch?.groups.database;
-
-    if (!server || !database) {
-      throw new Error('Invalid connection string format.');
-    }
-
     sqlConfig = {
-      server: server,
-      database: database,
-      authentication: {
-        type: 'azure-active-directory-msi-app-service', // Authentication via Managed Identity
-      },
+      connectionString: secret.value, // Assuming the secret is the connection string
       options: {
-        encrypt: true, // Required for Azure SQL
+        encrypt: true, // For secure connection
       },
     };
   } catch (err) {
-    console.error('Error retrieving Azure SQL connection configuration:', err.message);
+    console.error('Error retrieving Azure SQL connection string from Key Vault:', err.message);
   }
 }
 
@@ -80,12 +63,8 @@ let pool;
 
 async function connectToDatabase() {
   try {
-    if (!sqlConfig) {
-      await getSqlConfig(); // Ensure sqlConfig is populated
-    }
-
-    pool = await sql.connect(sqlConfig);
-
+    await getSqlConfig(); // Ensure sqlConfig is populated
+    pool = await sql.connect(sqlConfig.connectionString);
     console.log('Connected to Azure SQL database.');
   } catch (err) {
     console.error('Database connection failed:', err.message);
