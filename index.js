@@ -68,10 +68,20 @@ async function connectToDatabase() {
     console.log('Connected to Azure SQL database.');
   } catch (err) {
     console.error('Database connection failed:', err.message);
+    throw err; // Throw error to prevent server from starting
   }
 }
 
-connectToDatabase();
+// Start the server after database connection is established
+connectToDatabase()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server is running at http://localhost:${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to start server due to database connection error:', err.message);
+  });
 
 // **Ensure Authenticated Middleware Function**
 function ensureAuthenticated(req, res, next) {
@@ -354,7 +364,4 @@ app.post('/api/predict', async (req, res) => {
 
 // **Add the static middleware after your routes**
 app.use(express.static('public'));
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+
