@@ -64,10 +64,13 @@ let pool;
 async function connectToDatabase() {
   try {
     await getSqlConfig(); // Ensure sqlConfig is populated
+    if (!sqlConfig || !sqlConfig.connectionString) {
+      throw new Error('SQL configuration is missing or incomplete.');
+    }
     pool = await sql.connect(sqlConfig.connectionString);
     console.log('Connected to Azure SQL database.');
   } catch (err) {
-    console.error('Database connection failed:', err.message);
+    console.error('Database connection failed:', err);
   }
 }
 
