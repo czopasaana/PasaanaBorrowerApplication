@@ -38,7 +38,15 @@
 
   <!-- Call to Action Section -->
   <section class="py-12 bg-gray-100 text-center">
-    <a href="/preapproval" class="inline-block bg-orange-500 text-white px-8 py-4 rounded-md text-xl font-semibold hover:bg-orange-600">Get Pre-Approved Now</a>
+    <% if (user && isPreApproved) { %>
+      <a href="/preapproval/thank-you" class="inline-block bg-orange-500 text-white px-8 py-4 rounded-md text-xl font-semibold hover:bg-orange-600">
+        View Your Pre-Approval Status
+      </a>
+    <% } else { %>
+      <a href="/preapproval" class="inline-block bg-orange-500 text-white px-8 py-4 rounded-md text-xl font-semibold hover:bg-orange-600">
+        Get Pre-Approved Now
+      </a>
+    <% } %>
   </section>
 
   <!-- Features Section -->

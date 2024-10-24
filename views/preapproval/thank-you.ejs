@@ -16,10 +16,18 @@
   <!-- Main Content -->
   <main class="flex-grow flex items-center justify-center">
     <div class="text-center px-4 py-16">
-      <h2 class="text-4xl font-bold text-blue-900 mb-6">Application Submitted!</h2>
-      <p class="text-xl text-gray-700 mb-8">
-        Thank you for your application. We will review your information and get back to you shortly.
-      </p>
+      <% if (isPreApproved) { %>
+        <h2 class="text-4xl font-bold text-blue-900 mb-6">You're Pre-Approved!</h2>
+        <p class="text-xl text-gray-700 mb-8">
+          Congratulations! You have been pre-approved for a mortgage up to: <strong>$<%= maximumLoanAmount.toLocaleString() %></strong>.
+          You can now proceed to view available properties.
+        </p>
+      <% } else { %>
+        <h2 class="text-4xl font-bold text-blue-900 mb-6">Application Submitted!</h2>
+        <p class="text-xl text-gray-700 mb-8">
+          Thank you for your application. We will review your information and get back to you shortly.
+        </p>
+      <% } %>
       <a href="/" class="inline-block bg-orange-500 text-white px-12 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-orange-600 transition duration-300">Back to Home</a>
     </div>
   </main>

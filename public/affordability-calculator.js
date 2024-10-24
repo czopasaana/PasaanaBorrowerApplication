@@ -1,235 +1,97 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('affordability-form');
-  const detailsBtn = document.getElementById('details-btn');
-  const detailsSection = document.getElementById('details-section');
+  if (isLoggedIn && preApprovalData) {
+    // Initialize variables from preApprovalData
+    let annualIncome = preApprovalData.annualIncome;
+    let monthlyDebts = preApprovalData.monthlyDebts;
+    let downPayment = preApprovalData.downPayment;
+    let interestRate = preApprovalData.expectedInterestRate; // Fixed at 4%
+    let loanTermYears = preApprovalData.loanTermYears;
 
-  form.addEventListener('submit', calculateAffordability);
+    // Initialize UI elements
+    const maxLoanAmountElement = document.getElementById('max-loan-amount');
+    const estimatedMonthlyPaymentElement = document.getElementById('estimated-monthly-payment');
 
-  // New function to project future financials
-  function projectFinancials(params) {
-    const { annualIncome, monthlyDebts, salaryGrowthRate, expenseGrowthRate, years } = params;
+    // Sliders and labels (excluding interest rate since it's fixed)
+    const loanTermSlider = document.getElementById('loan-term-slider');
+    const downPaymentSlider = document.getElementById('down-payment-slider');
+    const annualIncomeSlider = document.getElementById('annual-income-slider');
 
-    const projectedIncomes = [];
-    const projectedDebts = [];
+    const loanTermLabel = document.getElementById('loan-term-label');
+    const downPaymentLabel = document.getElementById('down-payment-label');
+    const annualIncomeLabel = document.getElementById('annual-income-label');
 
-    for (let i = 0; i <= years; i++) {
-      const income = annualIncome * Math.pow(1 + salaryGrowthRate, i);
-      const debts = monthlyDebts * 12 * Math.pow(1 + expenseGrowthRate, i);
-      projectedIncomes.push(income);
-      projectedDebts.push(debts);
+    // Set initial slider values based on preApprovalData
+    loanTermSlider.value = loanTermYears;
+    downPaymentSlider.value = downPayment;
+    annualIncomeSlider.value = annualIncome;
+
+    // Update labels with initial values
+    loanTermLabel.textContent = loanTermYears;
+    downPaymentLabel.textContent = downPayment.toLocaleString();
+    annualIncomeLabel.textContent = annualIncome.toLocaleString();
+
+    // Event listeners for sliders
+    loanTermSlider.addEventListener('input', updateCalculations);
+    downPaymentSlider.addEventListener('input', updateCalculations);
+    annualIncomeSlider.addEventListener('input', updateCalculations);
+
+    function updateCalculations() {
+      // Update variables from sliders
+      loanTermYears = parseInt(loanTermSlider.value);
+      downPayment = parseFloat(downPaymentSlider.value);
+      annualIncome = parseFloat(annualIncomeSlider.value);
+
+      // Update labels
+      loanTermLabel.textContent = loanTermYears;
+      downPaymentLabel.textContent = downPayment.toLocaleString();
+      annualIncomeLabel.textContent = annualIncome.toLocaleString();
+
+      // Perform calculations
+      calculateAffordability();
     }
 
-    return { projectedIncomes, projectedDebts };
-  }
+    function calculateAffordability() {
+      const monthlyIncome = annualIncome / 12;
 
-  function calculateAffordability(event) {
-    if (event) event.preventDefault(); // Allow manual calls without an event
+      // Maximum Housing Expense (Front-End Ratio)
+      const maxHousingExpense = monthlyIncome * 0.28; // 28% of monthly income
 
-    // Collect inputs
-    const annualIncome = parseFloat(document.getElementById('annual-income').value);
-    const monthlyDebts = parseFloat(document.getElementById('monthly-debts').value);
-    const downPayment = parseFloat(document.getElementById('down-payment').value);
-    const interestRate = parseFloat(document.getElementById('interest-rate').value) / 100;
-    const loanTermYears = parseInt(document.getElementById('loan-term').value);
-    const salaryGrowthRate = parseFloat(document.getElementById('salary-growth').value) / 100;
-    const expenseGrowthRate = parseFloat(document.getElementById('expense-growth').value) / 100;
+      // Maximum Debt Expense (Back-End Ratio)
+      const maxDebtExpense = (monthlyIncome * 0.36) - monthlyDebts; // 36% minus existing debts
 
-    if (isNaN(annualIncome) || isNaN(monthlyDebts) || isNaN(downPayment) || isNaN(interestRate) || isNaN(loanTermYears)) {
-      alert('Please enter valid numeric values in all fields.');
-      return;
+      // Maximum Mortgage Payment
+      const maxMortgagePayment = Math.min(maxHousingExpense, maxDebtExpense);
+
+      // Ensure the maxMortgagePayment is positive
+      if (maxMortgagePayment <= 0) {
+        maxLoanAmountElement.textContent = `$0`;
+        estimatedMonthlyPaymentElement.textContent = `$0`;
+        return;
+      }
+
+      const monthlyInterestRate = interestRate / 100 / 12;
+      const numberOfPayments = loanTermYears * 12;
+
+      // Calculate mortgage amount using the formula for present value of an annuity
+      const P = maxMortgagePayment;
+      const r = monthlyInterestRate;
+      const n = numberOfPayments;
+
+      let mortgageAmount = P * (1 - Math.pow(1 + r, -n)) / r;
+
+      // Include down payment
+      const totalAffordableAmount = mortgageAmount + downPayment;
+
+      // Update UI
+      maxLoanAmountElement.textContent = `$${totalAffordableAmount.toFixed(0).toLocaleString()}`;
+      estimatedMonthlyPaymentElement.textContent = `$${maxMortgagePayment.toFixed(0).toLocaleString()}`;
     }
 
-    const monthlyIncome = annualIncome / 12;
-    const maxDTI = 0.43; // Typical maximum Debt-to-Income ratio (43% as per standard guidelines)
-
-    // Calculate maximum monthly mortgage payment
-    const maxMonthlyMortgagePayment = (monthlyIncome * maxDTI) - monthlyDebts;
-
-    // Calculate the maximum loan amount the user can afford
-    const numberOfPayments = loanTermYears * 12;
-    const monthlyInterestRate = interestRate / 12;
-
-    const maxLoanAmount = (maxMonthlyMortgagePayment * (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments))) / monthlyInterestRate;
-
-    // Calculate the maximum affordable home price
-    const affordableHomePrice = maxLoanAmount + downPayment;
-
-    // Calculate Debt-to-Income Ratio
-    const dtiPercentage = ((monthlyDebts + maxMonthlyMortgagePayment) / monthlyIncome) * 100;
-
-    // Format numbers as currency
-    const formatter = new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-
-    // Display the results
-    document.getElementById('affordable-home-price').innerText = formatter.format(affordableHomePrice);
-    document.getElementById('monthly-payment').innerText = formatter.format(maxMonthlyMortgagePayment);
-
-    // Detailed Breakdown
-    document.getElementById('detail-annual-income').innerText = formatter.format(annualIncome);
-    document.getElementById('detail-monthly-debts').innerText = formatter.format(monthlyDebts);
-    document.getElementById('detail-down-payment').innerText = formatter.format(downPayment);
-    document.getElementById('detail-interest-rate').innerText = (interestRate * 100).toFixed(2);
-    document.getElementById('detail-loan-term').innerText = loanTermYears;
-    document.getElementById('detail-dti').innerText = dtiPercentage.toFixed(2);
-
-    // Hide the details section initially
-    detailsSection.classList.add('hidden');
-    detailsBtn.textContent = 'See More Details';
-
-    // Show the results section
-    document.getElementById('results').classList.remove('hidden');
-
-    // Future projections
-    const projectionYears = loanTermYears; // Project over the loan term
-    const projections = projectFinancials({
-      annualIncome,
-      monthlyDebts,
-      salaryGrowthRate,
-      expenseGrowthRate,
-      years: projectionYears
-    });
-
-    // Display projections
-    displayProjections(projections, projectionYears);
-
-    // Prepare data for AI prediction
-    const data = {
-      annualIncome,
-      monthlyDebts,
-      salaryGrowthRate,
-      expenseGrowthRate,
-      years: loanTermYears
-    };
-
-    // Fetch AI predictions
-    fetch('/api/predict', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response => response.json())
-      .then(result => {
-        // Use AI-generated projections
-        const projections = result.projections;
-
-        // Update the chart
-        displayProjectionsFromAI(projections);
-
-        // Update results...
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  }
-
-  // Function to display charts
-  function displayProjections(projections, years) {
-    const ctx = document.getElementById('projection-chart').getContext('2d');
-    const labels = [];
-    for (let i = 0; i <= years; i++) {
-      labels.push(`Year ${i}`);
-    }
-
-    const data = {
-      labels: labels,
-      datasets: [
-        {
-          label: 'Projected Annual Income',
-          data: projections.projectedIncomes,
-          borderColor: 'rgba(54, 162, 235, 1)',
-          fill: false,
-        },
-        {
-          label: 'Projected Annual Debts',
-          data: projections.projectedDebts,
-          borderColor: 'rgba(255, 99, 132, 1)',
-          fill: false,
-        },
-      ],
-    };
-
-    // Destroy existing chart if it exists
-    if (window.projectionChart) {
-      window.projectionChart.destroy();
-    }
-
-    window.projectionChart = new Chart(ctx, {
-      type: 'line',
-      data: data,
-      options: {
-        responsive: true,
-        title: {
-          display: true,
-          text: 'Future Financial Projections',
-        },
-      },
-    });
-  }
-
-  // Function to display AI projections
-  function displayProjectionsFromAI(projections) {
-    const labels = projections.map(item => `Year ${item.year}`);
-    const incomeData = projections.map(item => item.income);
-    const debtsData = projections.map(item => item.debts);
-
-    const ctx = document.getElementById('projection-chart').getContext('2d');
-
-    // Destroy existing chart if it exists
-    if (window.projectionChart) {
-      window.projectionChart.destroy();
-    }
-
-    window.projectionChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Projected Annual Income',
-            data: incomeData,
-            borderColor: 'rgba(54, 162, 235, 1)',
-            fill: false,
-          },
-          {
-            label: 'Projected Annual Debts',
-            data: debtsData,
-            borderColor: 'rgba(255, 99, 132, 1)',
-            fill: false,
-          },
-        ],
-      },
-      options: {
-        // Chart options...
-      },
-    });
-  }
-
-  // Toggle detailed breakdown visibility
-  detailsBtn.addEventListener('click', function() {
-    detailsSection.classList.toggle('hidden');
-    if (detailsSection.classList.contains('hidden')) {
-      detailsBtn.textContent = 'See More Details';
-    } else {
-      detailsBtn.textContent = 'Hide Details';
-    }
-  });
-
-  // Add event listener for the what-if scenario input
-  const whatIfInterestRate = document.getElementById('whatif-interest-rate');
-  const whatIfInterestRateValue = document.getElementById('whatif-interest-rate-value');
-
-  whatIfInterestRate.addEventListener('input', function() {
-    const adjustedRate = parseFloat(this.value);
-    whatIfInterestRateValue.textContent = `${adjustedRate}%`;
-
-    // Recalculate affordability with the adjusted interest rate
+    // Initialize calculation
     calculateAffordability();
-  });
+
+  } else {
+    // Handle non-logged-in users or users without pre-approval data
+    // Your existing code here
+  }
 });

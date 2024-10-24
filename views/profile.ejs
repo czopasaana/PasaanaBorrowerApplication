@@ -17,8 +17,15 @@
 
   <main class="container mx-auto py-12 px-4">
     <section class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-      <h1 class="text-3xl font-bold text-blue-900 mb-6">Welcome, <%= user.email %>!</h1>
-      <p class="text-lg text-gray-700 mb-6">Your email: <%= user.email %></p>
+      <h1 class="text-3xl font-bold text-blue-900 mb-6">Welcome, <%= user.Email %>!</h1>
+      <p class="text-lg text-gray-700 mb-6">Your email: <%= user.Email %></p>
+
+      <% if (isPreApproved) { %>
+        <p class="text-green-600 font-semibold mb-6">Status: Pre-Approved</p>
+      <% } else { %>
+        <p class="text-red-600 font-semibold mb-6">Status: Not Pre-Approved</p>
+      <% } %>
+
       <a href="/logout" class="bg-orange-500 text-white px-6 py-2 rounded-md text-lg font-semibold hover:bg-orange-600 transition">Sign Out</a>
     </section>
   </main>

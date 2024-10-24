@@ -2,123 +2,98 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pasaana - Affordability Calculator</title>
-  <meta name="description" content="Determine how much house you can afford based on your income and expenses with Pasaana's Affordability Calculator.">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Link to CSS -->
-  <link rel="stylesheet" href="/styles.css">
-  <!-- Include Tailwind CSS CDN -->
+  <title>Affordability Calculator</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-   <!-- Include jQuery for AJAX requests -->
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Include Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Include jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-gray-100">
   <!-- Navigation Bar -->
   <%- include('partials/navbar.ejs') %>
 
-  <!-- Title Section -->
-  <section class="bg-white py-8">
-    <div class="container mx-auto px-4 text-center">
-      <h1 class="text-5xl font-bold text-blue-900 mb-4">Affordability Calculator</h1>
-      <p class="text-xl text-gray-700">Find out how much home you can afford with Pasaana.</p>
-    </div>
-  </section>
+  <main class="container mx-auto py-8">
+    <h1 class="text-4xl font-bold text-blue-900 mb-6 text-center">Affordability Calculator</h1>
 
-  <!-- Affordability Calculator Content -->
-  <main class="container mx-auto py-12 px-4">
-    <section class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-      <form id="affordability-form" class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label for="annual-income" class="block text-gray-700 font-semibold">Annual Income ($):</label>
-            <input type="number" id="annual-income" name="annualIncome" step="0.01" required class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <% if (isLoggedIn && preApprovalData) { %>
+      <!-- Personalized Affordability Insights -->
+      <div class="bg-white p-8 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-4">Hello, <%= preApprovalData.firstName %>!</h2>
+        <p class="mb-6">Based on your financial profile, here are your personalized affordability insights:</p>
+
+        <!-- Affordability Summary -->
+        <div id="affordability-summary" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Maximum Loan Amount -->
+          <div class="p-6 bg-blue-50 rounded-lg text-center">
+            <h3 class="text-xl font-bold mb-2">Maximum Loan Amount</h3>
+            <p id="max-loan-amount" class="text-3xl font-extrabold text-blue-900">$0</p>
           </div>
-          <div>
-            <label for="monthly-debts" class="block text-gray-700 font-semibold">Monthly Debts ($):</label>
-            <input type="number" id="monthly-debts" name="monthlyDebts" step="0.01" required class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <div>
-            <label for="down-payment" class="block text-gray-700 font-semibold">Available Down Payment ($):</label>
-            <input type="number" id="down-payment" name="downPayment" step="0.01" required class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <div>
-            <label for="interest-rate" class="block text-gray-700 font-semibold">ExpectedInterest Rate (%):</label>
-            <input type="number" id="interest-rate" name="interestRate" step="0.01" required class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <div>
-            <label for="loan-term" class="block text-gray-700 font-semibold">Loan Term (Years):</label>
-            <input type="number" id="loan-term" name="loanTerm" value="30" required class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <!-- Additional Inputs for Future Projections -->
-          <div>
-            <label for="salary-growth" class="block text-gray-700 font-semibold">Expected Annual Salary Growth Rate (%):</label>
-            <input type="number" id="salary-growth" name="salaryGrowth" step="0.01" value="3" required class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <div>
-            <label for="expense-growth" class="block text-gray-700 font-semibold">Expected Annual Expense Growth Rate (%):</label>
-            <input type="number" id="expense-growth" name="expenseGrowth" step="0.01" value="2" required class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <!-- Estimated Monthly Payment -->
+          <div class="p-6 bg-blue-50 rounded-lg text-center">
+            <h3 class="text-xl font-bold mb-2">Estimated Monthly Payment</h3>
+            <p id="estimated-monthly-payment" class="text-3xl font-extrabold text-blue-900">$0</p>
           </div>
         </div>
-        <button type="submit" class="w-full bg-blue-900 text-white px-6 py-4 rounded-md text-lg font-semibold hover:bg-blue-800 transition duration-300">Calculate Affordability</button>
+
+        <!-- Display Fixed Interest Rate -->
+        <div class="mt-8">
+          <h3 class="text-xl font-semibold mb-4">Loan Parameters</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Interest Rate -->
+            <div>
+              <label class="block text-gray-700 font-medium">
+                Interest Rate (%): <span id="interest-rate-label"><%= preApprovalData.expectedInterestRate.toFixed(2) %></span>
+              </label>
+            </div>
+            <!-- Loan Term Slider -->
+            <div>
+              <label for="loan-term-slider" class="block text-gray-700 font-medium">Loan Term (Years): <span id="loan-term-label"><%= preApprovalData.loanTermYears %></span></label>
+              <input type="range" id="loan-term-slider" min="10" max="30" step="5" value="<%= preApprovalData.loanTermYears %>" class="w-full mt-2">
+            </div>
+            <!-- Down Payment Slider -->
+            <div>
+              <label for="down-payment-slider" class="block text-gray-700 font-medium">Down Payment ($): <span id="down-payment-label"><%= preApprovalData.downPayment.toLocaleString() %></span></label>
+              <input type="range" id="down-payment-slider" min="0" max="<%= preApprovalData.downPayment * 2 || 100000 %>" step="1000" value="<%= preApprovalData.downPayment %>" class="w-full mt-2">
+            </div>
+            <!-- Annual Income Slider -->
+            <div>
+              <label for="annual-income-slider" class="block text-gray-700 font-medium">Annual Income ($): <span id="annual-income-label"><%= preApprovalData.annualIncome.toLocaleString() %></span></label>
+              <input type="range" id="annual-income-slider" min="<%= preApprovalData.annualIncome * 0.5 %>" max="<%= preApprovalData.annualIncome * 1.5 %>" step="1000" value="<%= preApprovalData.annualIncome %>" class="w-full mt-2">
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Section (Optional) -->
+        <!-- You can add charts here if desired -->
+
+      </div>
+    <% } else { %>
+      <!-- Not Logged In / No Pre-Approval Data -->
+      <form id="affordability-form" class="max-w-2xl mx-auto bg-white p-6 rounded shadow-md">
+        <!-- Input Fields -->
+        <!-- Existing input fields go here -->
+        <!-- ... -->
+        <button type="submit" class="w-full bg-blue-900 text-white py-2 mt-4 rounded">Calculate</button>
       </form>
 
-      <!-- Results Section -->
-      <div id="results" class="mt-12 hidden">
-        <div class="bg-blue-50 p-6 rounded-lg shadow">
-          <h2 class="text-2xl font-bold text-blue-900 mb-4">Affordability Results</h2>
-          <p class="text-gray-700 mb-2"><strong>Maximum Affordable Home Price:</strong> <span id="affordable-home-price"></span></p>
-          <p class="text-gray-700"><strong>Estimated Monthly Mortgage Payment:</strong> <span id="monthly-payment"></span></p>
-        </div>
-        <!-- See More Details Button -->
+      <% if (!isLoggedIn) { %>
+        <!-- Prompt to Log In/Sign Up -->
         <div class="text-center mt-6">
-          <button id="details-btn" class="bg-gray-800 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-gray-700 transition duration-300">See More Details</button>
+          <p class="text-lg">For more detailed insights, please <a href="/login" class="text-blue-600 underline">Log In</a> or <a href="/signup" class="text-blue-600 underline">Sign Up</a>.</p>
         </div>
-        <!-- Detailed Breakdown -->
-        <div id="details-section" class="mt-6 hidden">
-          <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-xl font-bold mb-4">Detailed Breakdown</h3>
-            <p class="text-gray-700">Annual Income: <span id="detail-annual-income"></span></p>
-            <p class="text-gray-700">Monthly Debts: <span id="detail-monthly-debts"></span></p>
-            <p class="text-gray-700">Down Payment: <span id="detail-down-payment"></span></p>
-            <p class="text-gray-700">Interest Rate: <span id="detail-interest-rate"></span>%</p>
-            <p class="text-gray-700">Loan Term: <span id="detail-loan-term"></span> years</p>
-            <p class="text-gray-700">Debt-to-Income Ratio: <span id="detail-dti"></span>%</p>
-          </div>
-        </div>
-        <!-- Projection Chart -->
-        <div class="mt-12">
-          <h2 class="text-2xl font-bold text-blue-900 mb-4">Future Financial Projections</h2>
-          <canvas id="projection-chart"></canvas>
-        </div>
-      </div>
-    </section>
+      <% } %>
+    <% } %>
   </main>
 
-  <!-- Chatbot -->
-  <%- include('partials/chatbot.ejs') %>
+  <!-- Pass data to client-side script -->
+  <script>
+    const isLoggedIn = <%= JSON.stringify(isLoggedIn) %>;
+    const preApprovalData = <%- JSON.stringify(preApprovalData || null) %>;
+  </script>
 
-  <!-- JavaScript -->
-  <!-- Include Chart.js CDN before your JavaScript file -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Include Calculator Script -->
   <script src="/affordability-calculator.js"></script>
-
-  <!-- What-If Scenarios Section -->
-  <section class="mt-12">
-    <h2 class="text-2xl font-bold text-blue-900 mb-4">What-If Scenarios</h2>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <label for="whatif-interest-rate" class="block text-gray-700 font-semibold">Adjust Interest Rate (%):</label>
-        <input type="range" id="whatif-interest-rate" name="whatIfInterestRate" min="1" max="10" step="0.1" value="3.5" class="w-full">
-        <p class="mt-2 text-gray-700">Selected Rate: <span id="whatif-interest-rate-value">3.5%</span></p>
-      </div>
-      <!-- Add more adjustable inputs as needed -->
-    </div>
-  </section>
 </body>
-
-  <!-- Footer -->
-  <footer class="bg-blue-900 text-white text-center py-4 mt-12">
-    <p>© 2024 Pasaana. All rights reserved.</p>
-  </footer>
 </html>
