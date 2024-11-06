@@ -71,28 +71,42 @@ async function getSqlConfig() {
     // Determine environment
     const isAzure = process.env.WEBSITE_SITE_NAME && process.env.WEBSITE_SITE_NAME.toLowerCase() === 'pasaana';
 
-    let connectionStringSecretName;
+    // Retrieve the server name and database name from Key Vault
+    const serverNameSecret = await secretClient.getSecret('SqlServerName');
+    const databaseNameSecret = await secretClient.getSecret('SqlDatabaseName');
+
+    const serverName = serverNameSecret.value;
+    const databaseName = databaseNameSecret.value;
 
     if (isAzure) {
       // Running on Azure Web App
-      connectionStringSecretName = 'SqlConnectionStringWebApp';
+      sqlConfig = {
+        server: serverName,
+        authentication: {
+          type: 'azure-active-directory-msi-app-service',
+        },
+        options: {
+          database: databaseName,
+          encrypt: true,
+        },
+        // Increase the connection timeout (optional)
+        connectionTimeout: 30000,
+      };
     } else {
       // Running locally
-      connectionStringSecretName = 'SqlConnectionString';
+      sqlConfig = {
+        server: serverName,
+        authentication: {
+          type: 'azure-active-directory-default',
+        },
+        options: {
+          database: databaseName,
+          encrypt: true,
+        },
+        // Increase the connection timeout (optional)
+        connectionTimeout: 30000,
+      };
     }
-
-    // Retrieve the connection string from Key Vault
-    const connectionStringSecret = await secretClient.getSecret(connectionStringSecretName);
-    const connectionString = connectionStringSecret.value;
-
-    // Set up the SQL configuration using the connection string
-    sqlConfig = {
-      connectionString: connectionString,
-      options: {
-        encrypt: true,
-      },
-      connectionTimeout: 30000,
-    };
   } catch (err) {
     console.error('Error retrieving SQL configuration:', err.message);
   }
@@ -105,12 +119,12 @@ async function connectToDatabase() {
     await getSqlConfig(); // Ensure sqlConfig is populated
     
     // Validate that sqlConfig has the necessary properties
-    if (!sqlConfig.connectionString) {
-      throw new Error('SQL configuration is missing connection string.');
+    if (!sqlConfig.server || !sqlConfig.authentication || !sqlConfig.options) {
+      throw new Error('SQL configuration is incomplete.');
     }
 
-    // Connect to the database using the connection string directly
-    pool = await sql.connect(sqlConfig.connectionString);
+    // Connect to the database using the sqlConfig object
+    pool = await sql.connect(sqlConfig);
     console.log('Connected to Azure SQL database.');
   } catch (err) {
     console.error('Database connection failed:', err);
