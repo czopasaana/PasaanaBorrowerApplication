@@ -64,14 +64,30 @@ let sqlConfig = {};
 
 async function getSqlConfig() {
   try {
-    const credential = new DefaultAzureCredential();
+    const isAzure = process.env.WEBSITE_SITE_NAME && process.env.WEBSITE_SITE_NAME.toLowerCase() === 'pasaana';
+
+    let credentialOptions = {};
+
+    if (isAzure) {
+      // Retrieve the client ID of the user-assigned managed identity from environment variable
+      const miClientId = process.env.USER_ASSIGNED_MI_CLIENT_ID;
+
+      if (!miClientId) {
+        throw new Error('Managed Identity Client ID is not set in environment variables.');
+      }
+
+      // Specify the managed identity client ID
+      credentialOptions = { managedIdentityClientId: miClientId };
+    }
+
+    // Create the credential with options (Avoid redeclaring 'credential' if it's declared elsewhere)
+    let credential = new DefaultAzureCredential(credentialOptions);
+
+    // Use credential to instantiate SecretClient
     const keyVaultUrl = process.env.KEY_VAULT_URL;
     const secretClient = new SecretClient(keyVaultUrl, credential);
 
-    // Determine environment
-    const isAzure = process.env.WEBSITE_SITE_NAME && process.env.WEBSITE_SITE_NAME.toLowerCase() === 'pasaana';
-
-    // Retrieve the server name and database name from Key Vault
+    // Retrieve server and database names
     const serverNameSecret = await secretClient.getSecret('SqlServerName');
     const databaseNameSecret = await secretClient.getSecret('SqlDatabaseName');
 
@@ -79,18 +95,15 @@ async function getSqlConfig() {
     const databaseName = databaseNameSecret.value;
 
     if (isAzure) {
-      // Running on Azure Web App
-
-      // Retrieve the client ID of the user-assigned managed identity
-      const miClientIdSecret = await secretClient.getSecret('UserAssignedManagedIdentityClientId');
-      const miClientId = miClientIdSecret.value;
+      // Obtain access token for SQL Database
+      const accessToken = await credential.getToken('https://database.windows.net/');
 
       sqlConfig = {
         server: serverName,
         authentication: {
-          type: 'azure-active-directory-msi-app-service',
+          type: 'azure-active-directory-access-token',
           options: {
-            clientId: miClientId, // Specify the client ID of the user-assigned managed identity
+            token: accessToken.token,
           },
         },
         options: {
@@ -114,7 +127,7 @@ async function getSqlConfig() {
       };
     }
   } catch (err) {
-    console.error('Error retrieving SQL configuration:', err.message);
+    console.error('Error retrieving SQL configuration:', err);
   }
 }
 
