@@ -80,16 +80,23 @@ async function getSqlConfig() {
 
     if (isAzure) {
       // Running on Azure Web App
+
+      // Retrieve the client ID of the user-assigned managed identity
+      const miClientIdSecret = await secretClient.getSecret('UserAssignedManagedIdentityClientId');
+      const miClientId = miClientIdSecret.value;
+
       sqlConfig = {
         server: serverName,
         authentication: {
           type: 'azure-active-directory-msi-app-service',
+          options: {
+            clientId: miClientId, // Specify the client ID of the user-assigned managed identity
+          },
         },
         options: {
           database: databaseName,
           encrypt: true,
         },
-        // Increase the connection timeout (optional)
         connectionTimeout: 30000,
       };
     } else {
@@ -103,7 +110,6 @@ async function getSqlConfig() {
           database: databaseName,
           encrypt: true,
         },
-        // Increase the connection timeout (optional)
         connectionTimeout: 30000,
       };
     }
