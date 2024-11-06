@@ -80,8 +80,8 @@ async function getSqlConfig() {
       credentialOptions = { managedIdentityClientId: miClientId };
     }
 
-    // Create the credential with options (Avoid redeclaring 'credential' if it's declared elsewhere)
-    let credential = new DefaultAzureCredential(credentialOptions);
+    // Create the credential with options
+    const credential = new DefaultAzureCredential(credentialOptions);
 
     // Use credential to instantiate SecretClient
     const keyVaultUrl = process.env.KEY_VAULT_URL;
