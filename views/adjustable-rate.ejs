@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Adjustable Rate Loan F3 | Pasaana</title>
+  <meta name="description" content="Your guide to flexible mortgages with periodic interest rate adjustments.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="bg-white text-gray-800">
+  <!-- Navigation Bar -->
+  <%- include('partials/navbar.ejs') %>
+
+  <!-- Header Section -->
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-4xl font-extrabold text-blue-900 mb-4">
+        Understanding Adjustment Loans
+      </h1>
+      <p class="text-xl text-gray-700">
+        Your guide to flexible mortgages with periodic interest rate adjustments.
+      </p>
+    </div>
+  </section>
+
+  <!-- Content Section -->
+  <section class="py-8 bg-gray-100">
+    <div class="container mx-auto px-4">
+      <!-- Introduction -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">What Is an Adjustment Loan?</h2>
+        <p class="text-gray-700 leading-relaxed">
+          An Adjustment Loan is a type of variable-rate mortgage where the interest rate is fixed for agreed-upon intervals, typically every 3 or 5 years. After each period, the interest rate is adjusted (<em>rentetilpasning</em>) to reflect current market rates. This loan is suitable for those who desire short-term rate security but are open to adjustments that could lower their payments if interest rates fall.
+        </p>
+      </div>
+
+      <!-- Key Features -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Key Features</h2>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed">
+          <li><strong>Fixed Interest Periods:</strong> Lock in your interest rate for periods like 3 or 5 years. Generally, the longer you fix the rate, the higher the initial interest rate.</li>
+          <li><strong>Periodic Interest Adjustments:</strong> At each adjustment period, your interest rate will be updated to the current market rate.</li>
+          <li><strong>Interest-Only Option:</strong> Possibility to opt for up to 10 years of interest-only payments during the loan term.</li>
+          <li><strong>Flexibility with Repayment:</strong>
+            <ul class="list-disc list-inside ml-6">
+              <li><strong>Add or Remove Interest-Only Periods:</strong> You can choose to start or stop interest-only payments at each interest adjustment.</li>
+              <li><strong>Adjust Loan Term:</strong> Opportunity to change the loan duration during an interest adjustment, up to a maximum of 30 years.</li>
+            </ul>
+          </li>
+          <li><strong>Quarterly Payments:</strong> Payments are made four times a year.</li>
+        </ul>
+      </div>
+
+      <!-- Benefits -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Benefits of an Adjustment Loan</h2>
+        <!-- Benefit 1 -->
+        <h3 class="text-xl font-semibold mb-2">1. Combination of Stability and Flexibility</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Fixed Rates for Set Periods:</strong> Enjoy predictable payments during each fixed-rate period.</li>
+          <li><strong>Adaptability:</strong> Adjust your loan to suit changing financial circumstances at each interest adjustment.</li>
+        </ul>
+        <!-- Benefit 2 -->
+        <h3 class="text-xl font-semibold mb-2">2. Potential for Lower Payments</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Benefit from Falling Rates:</strong> If interest rates decrease, your payments will automatically be reduced after the adjustment.</li>
+          <li><strong>Manageable Increases:</strong> If rates rise, your payments will increase, but the fixed periods provide time to plan.</li>
+        </ul>
+        <!-- Benefit 3 -->
+        <h3 class="text-xl font-semibold mb-2">3. Interest-Only Payment Options</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Financial Flexibility:</strong> Lower your payments for up to 10 years by paying only the interest.</li>
+          <li><strong>Adjustable:</strong> Add or remove interest-only periods during interest adjustments, up to a total of 10 years.</li>
+        </ul>
+        <!-- Benefit 4 -->
+        <h3 class="text-xl font-semibold mb-2">4. Loan Term Adjustments</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Customize Your Repayment Period:</strong> Change your loan term during interest adjustments to better fit your financial goals, up to 30 years.</li>
+        </ul>
+      </div>
+
+      <!-- How Does It Work -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">How Does It Work?</h2>
+        <!-- Interest Rate Setting -->
+        <h3 class="text-xl font-semibold mb-2">Interest Rate Setting</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Initial Rate Fixing:</strong> At loan issuance, the interest rate is fixed for your chosen period (e.g., 3 or 5 years).</li>
+          <li><strong>Periodic Adjustments:</strong> After each period, the rate adjusts to the current market rate for the next interval.</li>
+        </ul>
+        <!-- Underlying Bonds -->
+        <h3 class="text-xl font-semibold mb-2">Underlying Bonds</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Shorter Bond Terms:</strong> The bonds funding your loan have shorter terms than the loan itself.</li>
+          <li><strong>Regular Refinancing (<em>Rentetilpasning</em>):</strong> When these bonds mature, they are replaced, and the loan's interest rate is adjusted accordingly.</li>
+        </ul>
+        <!-- Costs Associated with Adjustments -->
+        <h3 class="text-xl font-semibold mb-2">Costs Associated with Adjustments</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Rate Adjustment Fee:</strong> You pay a price deduction (<em>kursfradrag</em>) when the loan undergoes an interest adjustment.</li>
+        </ul>
+        <!-- Repayment Flexibility -->
+        <h3 class="text-xl font-semibold mb-2">Repayment Flexibility</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Interest-Only Options:</strong> Decide whether to pay down the principal or only the interest during each adjustment period.</li>
+          <li><strong>Loan Term Changes:</strong> Modify the length of your loan during adjustments, within the maximum allowed term.</li>
+        </ul>
+      </div>
+
+      <!-- Important Considerations -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Important Considerations</h2>
+        <!-- Variable Interest Rate -->
+        <h3 class="text-xl font-semibold mb-2">Variable Interest Rate</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Potential Payment Fluctuations:</strong> Be prepared for changes in your monthly payments due to interest rate adjustments.</li>
+          <li><strong>Economic Planning:</strong> Ensure your budget can accommodate potential increases in payments.</li>
+        </ul>
+        <!-- Limited Equity Protection -->
+        <h3 class="text-xl font-semibold mb-2">Limited Equity Protection</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Modest Home Equity Protection:</strong> Adjustment Loans offer limited protection of your home equity because the bond prices do not significantly decrease when interest rates rise.</li>
+          <li><strong>Market Sensitivity:</strong> Understand that your remaining debt may not reduce as much as with other loan types if rates increase.</li>
+        </ul>
+        <!-- Repayment Conditions -->
+        <h3 class="text-xl font-semibold mb-2">Repayment Conditions</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Non-Callable Loan:</strong> The loan cannot be refinanced at par value outside of adjustment periods.</li>
+          <li><strong>Early Repayment:</strong> You can repay the loan by purchasing the underlying bonds at market price, except in the last two months before an interest adjustment.</li>
+          <li><strong>Possible Higher Repayment Amount:</strong> The repayment amount might exceed the remaining loan balance.</li>
+          <li><strong>Termination at Adjustment Time:</strong> The loan can be terminated at par value (<em>kurs 100</em>) with two months' notice before an interest adjustment date.</li>
+          <li><strong>Taxation on Capital Gains:</strong> Any capital gain from repaying a cash loan (<em>kontantlån</em>) may be subject to tax.</li>
+        </ul>
+        <!-- Tax-Free Payouts over Par -->
+        <h3 class="text-xl font-semibold mb-2">Tax-Free Payouts over Par</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>No Tax on Initial Gains:</strong> If the loan is disbursed at a price above par (over <em>kurs 100</em>), any initial gain is not taxable because it's a cash loan.</li>
+        </ul>
+      </div>
+
+      <!-- Facts at a Glance -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Facts at a Glance</h2>
+        <table class="w-full text-left table-auto border-collapse">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="px-4 py-2 border"></th>
+              <th class="px-4 py-2 border">Adjustment Loan</th>
+              <th class="px-4 py-2 border">Fixed-Rate Bond Loan</th>
+              <th class="px-4 py-2 border">F1 Loan</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white">
+            <!-- Loan Type -->
+            <tr class="border-t">
+              <th class="px-4 py-2 border font-semibold">Loan Type</th>
+              <td class="px-4 py-2 border">Variable-Rate Cash Loan</td>
+              <td class="px-4 py-2 border">Fixed-Rate Bond Loan</td>
+              <td class="px-4 py-2 border">Variable-Rate Bond Loan</td>
+            </tr>
+            <!-- Interest Rate -->
+            <tr>
+              <th class="px-4 py-2 border font-semibold">Interest Rate</th>
+              <td class="px-4 py-2 border">Fixed at issuance, adjusted every 3 or 5 years</td>
+              <td class="px-4 py-2 border">Fixed throughout the loan term</td>
+              <td class="px-4 py-2 border">Adjusted annually based on refinancing auction results</td>
+            </tr>
+            <!-- Interest Adjustment Frequency -->
+            <tr class="bg-gray-50">
+              <th class="px-4 py-2 border font-semibold">Interest Adjustment Frequency</th>
+              <td class="px-4 py-2 border">Every 3 or 5 years</td>
+              <td class="px-4 py-2 border">Not applicable (fixed rate)</td>
+              <td class="px-4 py-2 border">Annually</td>
+            </tr>
+            <!-- Refinancing -->
+            <tr>
+              <th class="px-4 py-2 border font-semibold">Refinancing</th>
+              <td class="px-4 py-2 border">Occurs at each interest adjustment</td>
+              <td class="px-4 py-2 border">Not required; bonds run for entire loan term</td>
+              <td class="px-4 py-2 border">Occurs annually when bonds mature</td>
+            </tr>
+            <!-- Payments per Year -->
+            <tr class="bg-gray-50">
+              <th class="px-4 py-2 border font-semibold">Payments per Year</th>
+              <td class="px-4 py-2 border">4 (Quarterly)</td>
+              <td class="px-4 py-2 border">4 (Quarterly)</td>
+              <td class="px-4 py-2 border">4 (Quarterly)</td>
+            </tr>
+            <!-- Loan Term -->
+            <tr>
+              <th class="px-4 py-2 border font-semibold">Loan Term</th>
+              <td class="px-4 py-2 border">Up to 30 years</td>
+              <td class="px-4 py-2 border">1-30 years</td>
+              <td class="px-4 py-2 border">Up to 30 years</td>
+            </tr>
+            <!-- Interest-Only Period -->
+            <tr class="bg-gray-50">
+              <th class="px-4 py-2 border font-semibold">Interest-Only Period</th>
+              <td class="px-4 py-2 border">Up to 10 years, adjustable during interest adjustments</td>
+              <td class="px-4 py-2 border">Up to 10 years available</td>
+              <td class="px-4 py-2 border">Up to 10 years total; can add or remove during annual adjustments</td>
+            </tr>
+            <!-- Repayment Options -->
+            <tr>
+              <th class="px-4 py-2 border font-semibold">Repayment Options</th>
+              <td class="px-4 py-2 border">Early repayment by buying bonds at market price or terminating at par during adjustments</td>
+              <td class="px-4 py-2 border">At par with notice or buy bonds at market price</td>
+              <td class="px-4 py-2 border">Early repayment by buying bonds at market price or terminating at par during annual refinancing</td>
+            </tr>
+            <!-- Equity Protection -->
+            <tr class="bg-gray-50">
+              <th class="px-4 py-2 border font-semibold">Equity Protection</th>
+              <td class="px-4 py-2 border">Modest, as bond prices decrease minimally when rates rise</td>
+              <td class="px-4 py-2 border">High, due to bond price decrease if rates rise</td>
+              <td class="px-4 py-2 border">Minimal; bond prices are less affected when rates rise</td>
+            </tr>
+            <!-- Taxation -->
+            <tr>
+              <th class="px-4 py-2 border font-semibold">Taxation</th>
+              <td class="px-4 py-2 border">Potential tax on capital gains upon loan repayment</td>
+              <td class="px-4 py-2 border">No tax on capital gains from loan repayment</td>
+              <td class="px-4 py-2 border">Taxable gains if disbursed over par value; loan costs can offset gains</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Who Should Consider -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Who Should Consider an Adjustment Loan?</h2>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          An Adjustment Loan may be suitable if you:
+        </p>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Desire Short-Term Rate Security:</strong> Prefer fixed payments for shorter periods but are comfortable with periodic adjustments.</li>
+          <li><strong>Seek Flexibility:</strong> Want the ability to adjust your loan terms or switch between interest-only and amortizing payments.</li>
+          <li><strong>Are Open to Variable Rates:</strong> Prepared for potential increases or decreases in payments due to interest rate changes.</li>
+          <li><strong>Plan for Financial Changes:</strong> Anticipate changes in income or expenses and want a loan that can adapt accordingly.</li>
+        </ul>
+      </div>
+
+      <!-- Getting Professional Advice -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Getting Professional Advice</h2>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Choosing the right mortgage is crucial for your financial well-being. Consider the following steps:
+        </p>
+        <!-- Assess Your Financial Situation -->
+        <h3 class="text-xl font-semibold mb-2">Assess Your Financial Situation</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Budget Analysis:</strong> Review your income, expenses, and how they might change over time.</li>
+          <li><strong>Risk Tolerance:</strong> Evaluate how comfortable you are with potential payment fluctuations.</li>
+        </ul>
+        <!-- Understand Loan Implications -->
+        <h3 class="text-xl font-semibold mb-2">Understand Loan Implications</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Variable Rates:</strong> Acknowledge that payments can increase if interest rates rise.</li>
+          <li><strong>Interest-Only Periods:</strong> Recognize that paying only interest doesn't reduce your principal balance during that time.</li>
+        </ul>
+        <!-- Consult with an Advisor -->
+        <h3 class="text-xl font-semibold mb-2">Consult with an Advisor</h3>
+        <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4">
+          <li><strong>Personalized Guidance:</strong> Our advisors can help tailor the loan to your specific needs.</li>
+          <li><strong>Market Insights:</strong> Receive up-to-date information on interest rate trends and forecasts.</li>
+          <li><strong>Loan Comparisons:</strong> Understand how an Adjustment Loan compares with other mortgage options.</li>
+        </ul>
+      </div>
+
+      <!-- Contact Us -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Contact Us</h2>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Our experienced team is here to help you navigate your mortgage options and find the best fit for your financial goals.
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-2"><strong>Phone:</strong> [Placeholder]</p>
+        <p class="text-gray-700 leading-relaxed mb-2"><strong>Email:</strong> [Placeholder]</p>
+        <p class="text-gray-700 leading-relaxed mb-2"><strong>Address:</strong> [Placeholder]</p>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="text-sm text-gray-500">
+        <p>
+          This guide provides comprehensive information about Adjustment Loans based on the details provided. For personalized advice, please consult with one of our qualified mortgage advisors.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white text-center py-4">
+    <p>© 2024 Pasaana. All rights reserved.</p>
+  </footer>
+</body>
+</html> 

@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const { OpenAI } = require('openai');
 
-const { DefaultAzureCredential } = require('@azure/identity');
+const { DefaultAzureCredential, ManagedIdentityCredential, ChainedTokenCredential, AzureCliCredential } = require('@azure/identity');
 const { SecretClient } = require('@azure/keyvault-secrets');
 const sql = require('mssql');
 
@@ -60,60 +60,74 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Azure Key Vault and SQL Database Connection
-const credential = new DefaultAzureCredential();
-const keyVaultUrl = process.env.KEY_VAULT_URL;
-const secretClient = new SecretClient(keyVaultUrl, credential);
-
 let sqlConfig = {};
 
 async function getSqlConfig() {
   try {
-    const [serverSecret, databaseSecret] = await Promise.all([
-      secretClient.getSecret('SqlServerName'),
-      secretClient.getSecret('SqlDatabaseName'),
-    ]);
+    const credential = new DefaultAzureCredential();
+    const keyVaultUrl = process.env.KEY_VAULT_URL;
+    const secretClient = new SecretClient(keyVaultUrl, credential);
 
-    const serverName = serverSecret.value;
-    const databaseName = databaseSecret.value;
+    // Determine environment
+    const isAzure = process.env.WEBSITE_SITE_NAME && process.env.WEBSITE_SITE_NAME.toLowerCase() === 'pasaana';
 
+    let connectionStringSecretName;
+
+    if (isAzure) {
+      // Running on Azure Web App
+      connectionStringSecretName = 'SqlConnectionStringWebApp';
+    } else {
+      // Running locally
+      connectionStringSecretName = 'SqlConnectionString';
+    }
+
+    // Retrieve the connection string from Key Vault
+    const connectionStringSecret = await secretClient.getSecret(connectionStringSecretName);
+    const connectionString = connectionStringSecret.value;
+
+    // Set up the SQL configuration using the connection string
     sqlConfig = {
-      server: serverName,
-      database: databaseName,
+      connectionString: connectionString,
       options: {
         encrypt: true,
-      },
-      authentication: {
-        type: 'azure-active-directory-default',
       },
       connectionTimeout: 30000,
     };
   } catch (err) {
-    console.error('Error retrieving SQL configuration from Key Vault:', err.message);
+    console.error('Error retrieving SQL configuration:', err.message);
   }
 }
-
-getSqlConfig();
 
 let pool;
 
 async function connectToDatabase() {
   try {
     await getSqlConfig(); // Ensure sqlConfig is populated
-
+    
     // Validate that sqlConfig has the necessary properties
-    if (!sqlConfig.server || !sqlConfig.database) {
-      throw new Error('SQL configuration is missing server or database information.');
+    if (!sqlConfig.connectionString) {
+      throw new Error('SQL configuration is missing connection string.');
     }
 
-    // Connect to the database using the sqlConfig object
-    pool = await sql.connect(sqlConfig);
+    // Connect to the database using the connection string directly
+    pool = await sql.connect(sqlConfig.connectionString);
     console.log('Connected to Azure SQL database.');
   } catch (err) {
-    console.error('Database connection failed:', err.message);
+    console.error('Database connection failed:', err);
+    // Output more detailed information
+    console.error('SQL Config:', sqlConfig);
+    console.error('Error Stack:', err.stack);
   }
 }
 
-connectToDatabase();
+connectToDatabase().then(() => {
+  // Start the server after successfully connecting to the database
+  app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+  });
+}).catch(err => {
+  console.error('Failed to start server:', err);
+});
 
 // **Ensure Authenticated Middleware Function**
 function ensureAuthenticated(req, res, next) {
@@ -478,107 +492,23 @@ app.get('/preapproval/thank-you', ensureAuthenticated, async (req, res) => {
   }
 });
 
+// Calculators Selection Page Route
+app.get('/calculators', (req, res) => {
+  res.render('calculators');
+});
+
+// Ensure existing calculator routes are defined
+// Affordability Calculator Route
+app.get('/affordability-calculator', (req, res) => {
+  res.render('affordability-calculator', {
+    isLoggedIn: req.session.user != null,
+    preApprovalData: req.session.preApprovalData,
+  });
+});
+
 // Mortgage Calculator Route
 app.get('/mortgage-calculator', (req, res) => {
   res.render('mortgage-calculator');
-});
-
-// **Affordability Calculator Route**
-app.get('/affordability-calculator', ensureAuthenticated, async (req, res) => {
-  try {
-    const userID = req.session.user.userID;
-
-    // Retrieve the latest pre-approval application for the user
-    const result = await pool
-      .request()
-      .input('userID', sql.Int, userID)
-      .query(
-        `SELECT TOP 1 ApplicationData FROM PreApprovalApplications
-         WHERE UserID = @userID
-         ORDER BY SubmissionDate DESC`
-      );
-
-    if (result.recordset.length === 0) {
-      // No application data found
-      return res.render('affordability-calculator', {
-        isLoggedIn: true, // User is authenticated
-        preApprovalData: null,
-        user: req.session.user,
-      });
-    }
-
-    // Parse the ApplicationData JSON
-    const applicationDataJSON = result.recordset[0].ApplicationData;
-    const applicationData = JSON.parse(applicationDataJSON);
-
-    // Extract necessary data for affordability calculator
-    const preApprovalData = {};
-
-    // Annual Income
-    let annualIncome = Number(applicationData.step4.annualIncome || 0);
-
-    // If the user is self-employed, use selfAnnualIncome
-    if (applicationData.step4.employmentStatus === 'self_employed') {
-      annualIncome = Number(applicationData.step4.selfAnnualIncome || 0);
-    }
-
-    // Include additional income if applicable
-    if (applicationData.step4.additionalIncome === 'yes') {
-      const additionalIncomeAmounts = applicationData.step4.additionalIncomeAmount || [];
-      const totalAdditionalIncome = additionalIncomeAmounts.reduce(
-        (sum, amount) => sum + Number(amount || 0),
-        0
-      );
-      annualIncome += totalAdditionalIncome;
-    }
-
-    preApprovalData.annualIncome = annualIncome;
-
-    // Monthly Debts
-    let monthlyDebts = 0;
-    monthlyDebts += Number(applicationData.step5.creditCardPayments || 0);
-    monthlyDebts += Number(applicationData.step5.autoLoanPayments || 0);
-    monthlyDebts += Number(applicationData.step5.studentLoanPayments || 0);
-    if (applicationData.step5.hasOtherDebts === 'yes') {
-      const otherDebtPayments = applicationData.step5.otherDebtPayment || [];
-      monthlyDebts += otherDebtPayments.reduce(
-        (sum, amount) => sum + Number(amount || 0),
-        0
-      );
-    }
-    if (applicationData.step5.hasAlimony === 'yes') {
-      monthlyDebts += Number(applicationData.step5.alimonyPayment || 0);
-    }
-
-    preApprovalData.monthlyDebts = monthlyDebts;
-
-    // Expected Interest Rate (Assuming 4%)
-    preApprovalData.expectedInterestRate = 4; // 4%
-
-    // Loan Term Years (Assuming 30 years)
-    preApprovalData.loanTermYears = 30;
-
-    // Down Payment (Assuming user's savings balance)
-    let downPayment = Number(applicationData.step5.savingsBalance || 0);
-    preApprovalData.downPayment = downPayment;
-
-    // Pass user's first name (from application data or session)
-    preApprovalData.firstName = applicationData.step3.firstName || req.session.user.email;
-
-    // Render the affordability calculator page
-    res.render('affordability-calculator', {
-      isLoggedIn: true,
-      preApprovalData,
-      user: req.session.user,
-    });
-  } catch (error) {
-    console.error('Error fetching pre-approval data:', error);
-    res.render('affordability-calculator', {
-      isLoggedIn: true,
-      preApprovalData: null,
-      user: req.session.user,
-    });
-  }
 });
 
 // Chat Route using Chat Completion API
@@ -642,9 +572,75 @@ app.post('/api/predict', async (req, res) => {
   }
 });
 
+// Mortgage Loans Page Route
+app.get('/mortgage-loans', (req, res) => {
+  res.render('mortgage-loans');
+});
+
+// Fixed Rate Loans Page Route
+app.get('/fixed-rate-loans', (req, res) => {
+  res.render('fixed-rate-loans');
+});
+
+// Variable Rate Loans Page Route
+app.get('/variable-rate-loans', (req, res) => {
+  res.render('variable-rate-loans');
+});
+
+// Adjustable Rate Loan F3 Page Route
+app.get('/adjustable-rate', (req, res) => {
+  res.render('adjustable-rate');
+});
+
+// F-Kort Variable Short Term Loan Page Route
+app.get('/f-kort-variable-loan', (req, res) => {
+  res.render('f-kort-variable-loan');
+});
+
+// Realtor Service Page Route
+app.get('/realtor-service', (req, res) => {
+  res.render('realtor-service');
+});
+
+// Explore Homes Page Route
+app.get('/explore-homes', (req, res) => {
+  res.render('explore-homes');
+});
+
+// Add this route in your index.js
+app.get('/api/loan-types', async (req, res) => {
+  try {
+    // Fetch loan types from the database
+    const result = await pool.request().query('SELECT * FROM LoanTypes');
+    const loanTypes = result.recordset;
+
+    // Transform data into the expected format
+    const rates = {};
+
+    loanTypes.forEach(loan => {
+      rates[loan.LoanTypeCode] = {
+        name: loan.Name,
+        debtorInterestRate: loan.DebtorInterestRate,
+        annualContributionRate: loan.AnnualContributionRate,
+        apr: loan.APR,
+        issuePrice: loan.IssuePrice,
+        fees: {
+          loanEstablishmentFee: loan.LoanEstablishmentFee,
+          caseProcessingFee: loan.CaseProcessingFee,
+          settlementCommission: loan.SettlementCommission,
+          selfServiceDiscount: loan.SelfServiceDiscount,
+          priceDeductionAtDisbursementPercent: loan.PriceDeductionAtDisbursementPercent,
+          registrationFee: loan.RegistrationFee,
+        },
+      };
+    });
+
+    res.json(rates);
+  } catch (error) {
+    console.error('Error fetching loan types:', error.message);
+    res.status(500).json({ error: 'Failed to fetch loan types.' });
+  }
+});
+
 // **Add the static middleware after your routes**
 app.use(express.static('public'));
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});

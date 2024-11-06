@@ -8,20 +8,47 @@
       </div>
       <!-- Navigation Links -->
       <div class="hidden md:flex items-center space-x-4">
-        <!-- Updated Dropdown Structure -->
+        <!-- Buy A Home Dropdown Structure -->
         <div class="relative inline-block">
-          <button id="mortgageDropdownButton" class="text-white hover:text-gray-200 flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false">
-            Mortgage
+          <button id="buyDropdownButton" class="text-white hover:text-gray-200 flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false">
+            Buy A Home
             <!-- Dropdown Icon -->
             <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
               <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414L10 13.414 5.293 8.707a1 1 0 010-1.414z" />
             </svg>
           </button>
           <!-- Dropdown Menu -->
-          <div id="mortgageDropdownMenu" class="absolute right-0 mt-2 w-48 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
-            <a href="/preapproval" class="block px-4 py-2 hover:bg-blue-800">Apply Now</a>
-            <a href="/mortgage-calculator" class="block px-4 py-2 hover:bg-blue-800">Mortgage Calculator</a>
-            <a href="/affordability-calculator" class="block px-4 py-2 hover:bg-blue-800">Affordability Calculator</a>
+          <div id="buyDropdownMenu" class="dropdown-menu absolute left-0 mt-2 w-56 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
+            <a href="/realtor-service" class="block px-4 py-2 hover:bg-blue-800">Learn About Our Realtor Services</a>
+            <a href="/explore-homes" class="block px-4 py-2 hover:bg-blue-800">Explore Homes</a>
+          </div>
+        </div>
+        <!-- Home Loans Dropdown Structure -->
+        <div class="relative inline-block">
+          <button id="productsDropdownButton" class="text-white hover:text-gray-200 flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false">
+            Home Loans
+            <!-- Dropdown Icon -->
+            <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5.293 7.293a1 1 0 011.414 0L10 11.586l3.293-4.293a1 1 0 111.414 1.414l-4 5a1 1 0 01-1.414 0l-4-5a1 1 0 010-1.414z" />
+            </svg>
+          </button>
+          <!-- Dropdown Menu -->
+          <div id="productsDropdownMenu" class="dropdown-menu absolute left-0 mt-2 w-48 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
+            <a href="/mortgage-loans" class="block px-4 py-2 hover:bg-blue-800">Mortgage Loan Options</a>
+          </div>
+        </div>
+        <!-- Calculators Dropdown Structure -->
+        <div class="relative inline-block">
+          <button id="mortgageDropdownButton" class="text-white hover:text-gray-200 flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false">
+            Calculators
+            <!-- Dropdown Icon -->
+            <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414L10 13.414 5.293 8.707a1 1 0 010-1.414z" />
+            </svg>
+          </button>
+          <!-- Dropdown Menu -->
+          <div id="mortgageDropdownMenu" class="dropdown-menu absolute left-0 mt-2 w-48 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
+            <a href="/calculators" class="block px-4 py-2 hover:bg-blue-800">Try Our Housing Calculators</a>
           </div>
         </div>
         <!-- Additional Links (if any) -->
@@ -48,9 +75,11 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden">
       <ul class="bg-blue-900 text-white">
+        <li><a href="/realtor-service" class="block px-4 py-2 hover:bg-blue-800">Learn About Our Realtor Services</a></li>
+        <li><a href="/explore-homes" class="block px-4 py-2 hover:bg-blue-800">Explore Homes</a></li>
+        <li><a href="/mortgage-loans" class="block px-4 py-2 hover:bg-blue-800">Mortgage Loans</a></li>
         <li><a href="/preapproval" class="block px-4 py-2 hover:bg-blue-800">Apply Now</a></li>
-        <li><a href="/mortgage-calculator" class="block px-4 py-2 hover:bg-blue-800">Mortgage Calculator</a></li>
-        <li><a href="/affordability-calculator" class="block px-4 py-2 hover:bg-blue-800">Affordability Calculator</a></li>
+        <li><a href="/calculators" class="block px-4 py-2 hover:bg-blue-800">Try Our Housing Calculators</a></li>
         <% if (user) { %>
           <li><a href="/profile" class="block px-4 py-2 hover:bg-blue-800">Profile</a></li>
           <li><a href="/logout" class="block px-4 py-2 hover:bg-blue-800">Sign Out</a></li>
@@ -62,7 +91,7 @@
   </nav>
 </header>
 
-<!-- Existing Script for Mobile Menu -->
+<!-- Existing Script for Mobile Menu and Dropdowns -->
 <script>
   // Mobile Menu Script
   const btn = document.getElementById('mobile-menu-button');
@@ -72,30 +101,49 @@
     menu.classList.toggle('hidden');
   });
 
-  // Mortgage Dropdown Script
-  const mortgageButton = document.getElementById('mortgageDropdownButton');
-  const mortgageMenu = document.getElementById('mortgageDropdownMenu');
+  // Dropdown Menus Script
+  const dropdownButtons = document.querySelectorAll("[id$='DropdownButton']");
+  dropdownButtons.forEach((button) => {
+    const menuId = button.id.replace('Button', 'Menu');
+    const menu = document.getElementById(menuId);
 
-  mortgageButton.addEventListener('click', (event) => {
-    event.preventDefault(); // Prevent default action
-    const isHidden = mortgageMenu.classList.contains('hidden');
-    mortgageMenu.classList.toggle('hidden');
-    mortgageButton.setAttribute('aria-expanded', !isHidden);
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const isHidden = menu.classList.contains('hidden');
+
+      // Close other open dropdowns
+      document.querySelectorAll('.dropdown-menu').forEach((dropdown) => {
+        if (dropdown !== menu) {
+          dropdown.classList.add('hidden');
+        }
+      });
+
+      menu.classList.toggle('hidden');
+      button.setAttribute('aria-expanded', !isHidden);
+    });
   });
 
-  // Close the dropdown when clicking outside
+  // Close dropdowns when clicking outside
   window.addEventListener('click', (event) => {
-    if (!mortgageButton.contains(event.target) && !mortgageMenu.contains(event.target)) {
-      mortgageMenu.classList.add('hidden');
-      mortgageButton.setAttribute('aria-expanded', false);
-    }
+    dropdownButtons.forEach((button) => {
+      const menuId = button.id.replace('Button', 'Menu');
+      const menu = document.getElementById(menuId);
+      if (!button.contains(event.target) && !menu.contains(event.target)) {
+        menu.classList.add('hidden');
+        button.setAttribute('aria-expanded', false);
+      }
+    });
   });
 
-  // Close the dropdown when pressing the Escape key
+  // Close dropdowns when pressing the Escape key
   window.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
-      mortgageMenu.classList.add('hidden');
-      mortgageButton.setAttribute('aria-expanded', false);
+      dropdownButtons.forEach((button) => {
+        const menuId = button.id.replace('Button', 'Menu');
+        const menu = document.getElementById(menuId);
+        menu.classList.add('hidden');
+        button.setAttribute('aria-expanded', false);
+      });
     }
   });
 </script>

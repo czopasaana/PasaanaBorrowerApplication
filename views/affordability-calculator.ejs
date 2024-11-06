@@ -2,96 +2,89 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Affordability Calculator</title>
-  <!-- Tailwind CSS CDN -->
+  <title>Pasaana - Affordability Calculator</title>
+  <meta name="description" content="Estimate how much you can afford to spend on a home with our simple affordability calculator.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Link to CSS -->
+  <link rel="stylesheet" href="/styles.css">
+  <!-- Include Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Include Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Include jQuery -->
+  <!-- Include jQuery for AJAX requests -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Include Input Mask Plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.7/jquery.inputmask.min.js"></script>
 </head>
 <body class="bg-gray-100">
   <!-- Navigation Bar -->
   <%- include('partials/navbar.ejs') %>
 
-  <main class="container mx-auto py-8">
-    <h1 class="text-4xl font-bold text-blue-900 mb-6 text-center">Affordability Calculator</h1>
+  <!-- Title Section -->
+  <section class="bg-white py-8">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-5xl font-bold text-blue-900 mb-4">Affordability Calculator</h1>
+      <p class="text-xl text-gray-700">Estimate how much you can afford to spend on a home.</p>
+    </div>
+  </section>
 
-    <% if (isLoggedIn && preApprovalData) { %>
-      <!-- Personalized Affordability Insights -->
-      <div class="bg-white p-8 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-semibold mb-4">Hello, <%= preApprovalData.firstName %>!</h2>
-        <p class="mb-6">Based on your financial profile, here are your personalized affordability insights:</p>
-
-        <!-- Affordability Summary -->
-        <div id="affordability-summary" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Maximum Loan Amount -->
-          <div class="p-6 bg-blue-50 rounded-lg text-center">
-            <h3 class="text-xl font-bold mb-2">Maximum Loan Amount</h3>
-            <p id="max-loan-amount" class="text-3xl font-extrabold text-blue-900">$0</p>
+  <!-- Affordability Calculator Content -->
+  <main class="container mx-auto py-12 px-4">
+    <section class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <!-- Calculator Form -->
+      <form id="affordability-form" class="space-y-6">
+        <div class="grid grid-cols-1 gap-6">
+          <!-- Household Income Before Tax -->
+          <div>
+            <label for="household-income" class="block text-gray-700 font-semibold">Household Income Before Tax (USD per year):</label>
+            <div class="relative mt-2">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
+              <input type="text" id="household-income" name="household-income" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
           </div>
-          <!-- Estimated Monthly Payment -->
-          <div class="p-6 bg-blue-50 rounded-lg text-center">
-            <h3 class="text-xl font-bold mb-2">Estimated Monthly Payment</h3>
-            <p id="estimated-monthly-payment" class="text-3xl font-extrabold text-blue-900">$0</p>
+          <!-- Own Savings/Assets -->
+          <div>
+            <label for="own-savings" class="block text-gray-700 font-semibold">Own Savings/Assets for Down Payment (USD):</label>
+            <div class="relative mt-2">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
+              <input type="text" id="own-savings" name="own-savings" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
           </div>
-        </div>
-
-        <!-- Display Fixed Interest Rate -->
-        <div class="mt-8">
-          <h3 class="text-xl font-semibold mb-4">Loan Parameters</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Interest Rate -->
-            <div>
-              <label class="block text-gray-700 font-medium">
-                Interest Rate (%): <span id="interest-rate-label"><%= preApprovalData.expectedInterestRate.toFixed(2) %></span>
-              </label>
-            </div>
-            <!-- Loan Term Slider -->
-            <div>
-              <label for="loan-term-slider" class="block text-gray-700 font-medium">Loan Term (Years): <span id="loan-term-label"><%= preApprovalData.loanTermYears %></span></label>
-              <input type="range" id="loan-term-slider" min="10" max="30" step="5" value="<%= preApprovalData.loanTermYears %>" class="w-full mt-2">
-            </div>
-            <!-- Down Payment Slider -->
-            <div>
-              <label for="down-payment-slider" class="block text-gray-700 font-medium">Down Payment ($): <span id="down-payment-label"><%= preApprovalData.downPayment.toLocaleString() %></span></label>
-              <input type="range" id="down-payment-slider" min="0" max="<%= preApprovalData.downPayment * 2 || 100000 %>" step="1000" value="<%= preApprovalData.downPayment %>" class="w-full mt-2">
-            </div>
-            <!-- Annual Income Slider -->
-            <div>
-              <label for="annual-income-slider" class="block text-gray-700 font-medium">Annual Income ($): <span id="annual-income-label"><%= preApprovalData.annualIncome.toLocaleString() %></span></label>
-              <input type="range" id="annual-income-slider" min="<%= preApprovalData.annualIncome * 0.5 %>" max="<%= preApprovalData.annualIncome * 1.5 %>" step="1000" value="<%= preApprovalData.annualIncome %>" class="w-full mt-2">
+          <!-- Debt -->
+          <div>
+            <label for="debt" class="block text-gray-700 font-semibold">Total Debts (USD):</label>
+            <div class="relative mt-2">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
+              <input type="text" id="debt" name="debt" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             </div>
           </div>
         </div>
-
-        <!-- Charts Section (Optional) -->
-        <!-- You can add charts here if desired -->
-
-      </div>
-    <% } else { %>
-      <!-- Not Logged In / No Pre-Approval Data -->
-      <form id="affordability-form" class="max-w-2xl mx-auto bg-white p-6 rounded shadow-md">
-        <!-- Input Fields -->
-        <!-- Existing input fields go here -->
-        <!-- ... -->
-        <button type="submit" class="w-full bg-blue-900 text-white py-2 mt-4 rounded">Calculate</button>
+        <!-- Submit Button -->
+        <button type="submit" class="w-full bg-blue-900 text-white px-6 py-4 rounded-md text-lg font-semibold hover:bg-blue-800 transition duration-300">Calculate</button>
       </form>
 
-      <% if (!isLoggedIn) { %>
-        <!-- Prompt to Log In/Sign Up -->
-        <div class="text-center mt-6">
-          <p class="text-lg">For more detailed insights, please <a href="/login" class="text-blue-600 underline">Log In</a> or <a href="/signup" class="text-blue-600 underline">Sign Up</a>.</p>
+      <!-- Result Section -->
+      <div id="result" class="mt-12 hidden">
+        <div class="text-center">
+          <h2 class="text-3xl font-semibold mb-4 text-blue-900">Estimated Price Range</h2>
+          <p class="mb-2 text-xl">You can buy for approximately:</p>
+          <p id="price-range" class="text-4xl font-bold text-blue-900">$0 - $0</p>
+          <p class="mt-6 mb-2 text-xl">With an estimated down payment of:</p>
+          <p id="down-payment-display" class="text-3xl font-bold text-blue-900">$0</p>
+          <p class="mt-8 text-gray-700">
+            This calculation is indicative and offers a rough estimate of the affordable price range.
+            Please contact <a href="/contact-us" class="text-blue-600 font-medium hover:underline">our financial advisors</a> for a personalized calculation tailored to your specific financial situation.
+          </p>
         </div>
-      <% } %>
-    <% } %>
+      </div>
+    </section>
   </main>
 
-  <!-- Pass data to client-side script -->
-  <script>
-    const isLoggedIn = <%= JSON.stringify(isLoggedIn) %>;
-    const preApprovalData = <%- JSON.stringify(preApprovalData || null) %>;
-  </script>
+  <!-- Chatbot -->
+  <%- include('partials/chatbot.ejs') %>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white text-center py-4 mt-12">
+    <p>© 2024 Pasaana. All rights reserved.</p>
+  </footer>
 
   <!-- Include Calculator Script -->
   <script src="/affordability-calculator.js"></script>

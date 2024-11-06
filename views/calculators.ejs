@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Housing Calculators | Pasaana</title>
+  <meta name="description" content="Explore our range of housing calculators to make informed decisions.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="bg-gray-100">
+  <!-- Navigation Bar -->
+  <%- include('partials/navbar.ejs') %>
+
+  <!-- Main Content -->
+  <main class="container mx-auto py-12 px-4">
+    <h1 class="text-4xl font-bold text-blue-900 mb-8 text-center">Housing Calculators</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Affordability Calculator Card -->
+      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+        <h2 class="text-2xl font-semibold mb-4">Affordability Calculator</h2>
+        <p class="text-gray-700 mb-6">Find out how much home you can afford based on your income and expenses.</p>
+        <a href="/affordability-calculator" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700">
+          Use Calculator
+        </a>
+      </div>
+
+      <!-- Mortgage Calculator Card -->
+      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+        <h2 class="text-2xl font-semibold mb-4">Mortgage Calculator</h2>
+        <p class="text-gray-700 mb-6">Calculate your monthly mortgage payments and compare rates.</p>
+        <a href="/mortgage-calculator" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700">
+          Use Calculator
+        </a>
+      </div>
+
+      <!-- Placeholder for Additional Calculators -->
+      <!-- <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+        <h2 class="text-2xl font-semibold mb-4">[Calculator Name]</h2>
+        <p class="text-gray-700 mb-6">[Calculator Description]</p>
+        <a href="/calculator-link" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700">
+          Use Calculator
+        </a>
+      </div> -->
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white text-center py-4 mt-12">
+    <p>© 2024 Pasaana. All rights reserved.</p>
+  </footer>
+</body>
+</html>
