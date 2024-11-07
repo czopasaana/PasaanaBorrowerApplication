@@ -6,6 +6,7 @@ module.exports = {
     './views/**/*.ejs',
     './public/**/*.html',
     './public/**/*.js',
+    './src/**/*.js',
   ],
   theme: {
     extend: {
@@ -25,6 +26,8 @@ module.exports = {
     'duration-300',
     'ease-in-out',
     'open',
+    'text-blue-500',
+    'bg-blue-500',
   ],
 };
 

@@ -1264,3 +1264,25 @@ tr:nth-child(even) {
     grid-template-columns: 1fr;
   }
 }
+
+/* FAQ Accordion Styles */
+.faq-answer {
+  display: none;
+}
+
+.faq-question {
+  cursor: pointer;
+}
+
+/* Responsive Image Styles */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Hero Background Image */
+.hero-background {
+  background-image: url('/images/hero-image.jpeg');
+  background-size: cover;
+  background-position: center;
+}

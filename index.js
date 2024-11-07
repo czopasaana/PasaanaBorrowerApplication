@@ -209,6 +209,10 @@ app.get('/', (req, res) => {
 
 // Sign Up Page
 app.get('/signup', (req, res) => {
+  if (req.session.user) {
+    // User is already logged in, redirect to profile page
+    return res.redirect('/profile');
+  }
   if (req.query.from === 'navbar') {
     // Clear any existing returnTo value
     delete req.session.returnTo;
@@ -259,6 +263,10 @@ app.post('/signup', async (req, res) => {
 
 // Sign In Page
 app.get('/login', (req, res) => {
+  if (req.session.user) {
+    // User is already logged in, redirect to profile page
+    return res.redirect('/profile');
+  }
   if (req.query.from === 'navbar') {
     // Clear any existing returnTo value
     delete req.session.returnTo;
@@ -625,9 +633,9 @@ app.get('/adjustable-rate', (req, res) => {
   res.render('adjustable-rate');
 });
 
-// F-Kort Variable Short Term Loan Page Route
-app.get('/f-kort-variable-loan', (req, res) => {
-  res.render('f-kort-variable-loan');
+// F-1 Variable Short Term Loan Page Route
+app.get('/f1-loan', (req, res) => {
+  res.render('f1-loan');
 });
 
 // Realtor Service Page Route
