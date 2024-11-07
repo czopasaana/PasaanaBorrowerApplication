@@ -8,8 +8,8 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const { OpenAI } = require('openai');
 
-const { DefaultAzureCredential, ManagedIdentityCredential, ChainedTokenCredential, AzureCliCredential } = require('@azure/identity');
-const { SecretClient } = require('@azure/keyvault-secrets');
+// Import the getConnection function from Db.js
+const { getConnection } = require('./Db');
 const sql = require('mssql');
 
 const openai = new OpenAI({
@@ -24,6 +24,35 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+
+// Set EJS as the templating engine
+app.set('view engine', 'ejs');
+// Optional: Set the views directory explicitly if it's not in the default location
+app.set('views', path.join(__dirname, 'views'));
+
+// Database connection
+let pool;
+
+async function connectToDatabase() {
+  try {
+    // Get a connection pool from the Db module
+    pool = await getConnection();
+    console.log('Connected to Azure SQL database.');
+  } catch (err) {
+    console.error('Database connection failed:', err);
+    // Output more detailed information
+    console.error('Error Stack:', err.stack);
+  }
+}
+
+connectToDatabase().then(() => {
+  // Start the server after successfully connecting to the database
+  app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+  });
+}).catch(err => {
+  console.error('Failed to start server:', err);
+});
 
 // Middleware to make 'user' and 'isPreApproved' available in all EJS templates
 app.use(async (req, res, next) => {
@@ -52,114 +81,6 @@ app.use(async (req, res, next) => {
   }
 
   next();
-});
-
-// Set EJS as the templating engine
-app.set('view engine', 'ejs');
-// Optional: Set the views directory explicitly if it's not in the default location
-app.set('views', path.join(__dirname, 'views'));
-
-// Azure Key Vault and SQL Database Connection
-let sqlConfig = {};
-
-async function getSqlConfig() {
-  try {
-    const isAzure = process.env.WEBSITE_SITE_NAME && process.env.WEBSITE_SITE_NAME.toLowerCase() === 'pasaana';
-
-    let credentialOptions = {};
-
-    if (isAzure) {
-      // Retrieve the client ID of the user-assigned managed identity from environment variable
-      const miClientId = process.env.USER_ASSIGNED_MI_CLIENT_ID;
-
-      if (!miClientId) {
-        throw new Error('Managed Identity Client ID is not set in environment variables.');
-      }
-
-      // Specify the managed identity client ID
-      credentialOptions = { managedIdentityClientId: miClientId };
-    }
-
-    // Create the credential with options
-    const credential = new DefaultAzureCredential(credentialOptions);
-
-    // Use credential to instantiate SecretClient
-    const keyVaultUrl = process.env.KEY_VAULT_URL;
-    const secretClient = new SecretClient(keyVaultUrl, credential);
-
-    // Retrieve server and database names
-    const serverNameSecret = await secretClient.getSecret('SqlServerName');
-    const databaseNameSecret = await secretClient.getSecret('SqlDatabaseName');
-
-    const serverName = serverNameSecret.value;
-    const databaseName = databaseNameSecret.value;
-
-    if (isAzure) {
-      // Obtain access token for SQL Database
-      const accessToken = await credential.getToken('https://database.windows.net/');
-
-      sqlConfig = {
-        server: serverName,
-        authentication: {
-          type: 'azure-active-directory-access-token',
-          options: {
-            token: accessToken.token,
-          },
-        },
-        options: {
-          database: databaseName,
-          encrypt: true,
-        },
-        connectionTimeout: 30000,
-      };
-    } else {
-      // Running locally
-      sqlConfig = {
-        server: serverName,
-        authentication: {
-          type: 'azure-active-directory-default',
-        },
-        options: {
-          database: databaseName,
-          encrypt: true,
-        },
-        connectionTimeout: 30000,
-      };
-    }
-  } catch (err) {
-    console.error('Error retrieving SQL configuration:', err);
-  }
-}
-
-let pool;
-
-async function connectToDatabase() {
-  try {
-    await getSqlConfig(); // Ensure sqlConfig is populated
-    
-    // Validate that sqlConfig has the necessary properties
-    if (!sqlConfig.server || !sqlConfig.authentication || !sqlConfig.options) {
-      throw new Error('SQL configuration is incomplete.');
-    }
-
-    // Connect to the database using the sqlConfig object
-    pool = await sql.connect(sqlConfig);
-    console.log('Connected to Azure SQL database.');
-  } catch (err) {
-    console.error('Database connection failed:', err);
-    // Output more detailed information
-    console.error('SQL Config:', sqlConfig);
-    console.error('Error Stack:', err.stack);
-  }
-}
-
-connectToDatabase().then(() => {
-  // Start the server after successfully connecting to the database
-  app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-  });
-}).catch(err => {
-  console.error('Failed to start server:', err);
 });
 
 // **Ensure Authenticated Middleware Function**
