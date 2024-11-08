@@ -9,48 +9,91 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Custom Styles -->
   <link rel="stylesheet" href="/styles.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-50 font-inter">
   <!-- Navigation Bar -->
   <%- include('partials/navbar.ejs') %>
 
-  <!-- Main Content -->
-  <main class="container mx-auto py-12 px-4">
-    <h1 class="text-4xl font-bold text-blue-900 mb-8 text-center">Housing Calculators</h1>
+  <!-- Hero Section -->
+  <section class="bg-white calculators-background">
+    <div class="max-w-7xl mx-auto py-16 sm:py-24 lg:py-32 relative z-10">
+      <div class="text-center">
+        <h1 class="text-4xl tracking-tight font-extrabold sm:text-5xl md:text-6xl drop-shadow-md">
+          <span class="block xl:inline text-white">Housing Calculators</span>
+        </h1>
+        <p class="mt-5 max-w-md mx-auto text-xl font-semibold text-white sm:text-2xl md:mt-8 drop-shadow-md">
+          Empowering you to make informed financial decisions.
+        </p>
+</section>
 
+  <!-- Main Content -->
+  <main id="calculators" class="container mx-auto py-12 px-4">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <!-- Affordability Calculator Card -->
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
         <h2 class="text-2xl font-semibold mb-4">Affordability Calculator</h2>
         <p class="text-gray-700 mb-6">Find out how much home you can afford based on your income and expenses.</p>
-        <a href="/affordability-calculator" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700">
-          Use Calculator
-        </a>
+        <a href="/affordability-calculator" class="inline-block bg-blue-900 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-800 transition">Use Calculator</a>
       </div>
 
       <!-- Mortgage Calculator Card -->
-      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
         <h2 class="text-2xl font-semibold mb-4">Mortgage Calculator</h2>
         <p class="text-gray-700 mb-6">Calculate your monthly mortgage payments and compare rates.</p>
-        <a href="/mortgage-calculator" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700">
-          Use Calculator
-        </a>
+        <a href="/mortgage-calculator" class="inline-block bg-blue-900 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-800 transition">Use Calculator</a>
       </div>
 
-      <!-- Placeholder for Additional Calculators -->
-      <!-- <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-        <h2 class="text-2xl font-semibold mb-4">[Calculator Name]</h2>
-        <p class="text-gray-700 mb-6">[Calculator Description]</p>
-        <a href="/calculator-link" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700">
-          Use Calculator
-        </a>
-      </div> -->
+      <!-- Another Calculator Card -->
+      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+        <h2 class="text-2xl font-semibold mb-4">Another Calculator</h2>
+        <p class="text-gray-700 mb-6">Compare different loan options to find the best fit for you.</p>
+        <a href="/loan-comparison-calculator" class="inline-block bg-blue-900 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-800 transition">Use Calculator</a>
+      </div>
+
+     <!-- Another Calculator Card 2 -->
+      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+        <h2 class="text-2xl font-semibold mb-4">Another Calculator</h2>
+        <p class="text-gray-700 mb-6">Compare different loan options to find the best fit for you.</p>
+        <a href="/loan-comparison-calculator" class="inline-block bg-blue-900 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-800 transition">Use Calculator</a>
+      </div>
+
+      <!-- Another Calculator Card 3 -->
+      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+        <h2 class="text-2xl font-semibold mb-4">Another Calculator</h2>
+        <p class="text-gray-700 mb-6">Compare different loan options to find the best fit for you.</p>
+        <a href="/loan-comparison-calculator" class="inline-block bg-blue-900 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-800 transition">Use Calculator</a>
+      </div>
+
+      <!-- Another Calculator Card 4 -->
+      <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+        <h2 class="text-2xl font-semibold mb-4">Another Calculator</h2>
+        <p class="text-gray-700 mb-6">Compare different loan options to find the best fit for you.</p>
+        <a href="/loan-comparison-calculator" class="inline-block bg-blue-900 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-800 transition">Use Calculator</a>
+      </div>
     </div>
   </main>
 
+  <!-- Call to Action Section -->
+  <section class="bg-gray-100 py-16">
+    <div class="container mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-4 text-blue-900">
+        Ready to Take the Next Step?
+      </h2>
+      <p class="text-lg mb-8 text-gray-700">
+        Our experts are here to help you find the perfect mortgage solution.
+      </p>
+      <a href="/signup" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded">
+        Create Your Free Account Now
+      </a>
+    </div>
+  </section>
+
   <!-- Footer -->
-  <footer class="bg-blue-900 text-white text-center py-4 mt-12">
+  <footer class="bg-blue-900 text-white text-center py-4">
     <p>© 2024 Pasaana. All rights reserved.</p>
   </footer>
 </body>
 </html>
+

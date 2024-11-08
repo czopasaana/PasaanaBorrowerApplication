@@ -1207,7 +1207,27 @@ select {
   background-image: url('/images/hero-image.jpeg');
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: bottom;
+  background-position: center;
+  position: relative;
+  z-index: 1;
+}
+
+.mortgage-background {
+  background-image: url('/images/mortgages-main-image.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  z-index: 1;
+}
+
+.calculators-background {
+  background-image: url('/images/calculators-main-image.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  z-index: 1;
 }
 
 /* Ensure the navbar is positioned and has a higher z-index */
@@ -1222,17 +1242,6 @@ select {
   z-index: 101; /* Higher than navbar */
 }
 
-/* Adjust the hero background */
-.hero-background {
-  position: relative;
-  z-index: 1;
-}
-
-/* If there is an overlay on the hero section, adjust its z-index */
-.hero-background .overlay {
-  position: absolute;
-  z-index: 2;
-}
 
 /* Additional styles for the loan details table */
 table {
@@ -1280,9 +1289,87 @@ img {
   height: auto;
 }
 
-/* Hero Background Image */
-.hero-background {
-  background-image: url('/images/hero-image.jpeg');
-  background-size: cover;
-  background-position: center;
+/* Custom Slider Styles */
+input[type="range"].slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  margin: 0;
+}
+
+/* Slider Track */
+input[type="range"].slider::before {
+  content: '';
+  position: absolute;
+  height: 6px;
+  width: 100%;
+  background-color: #cbd5e1; /* Tailwind's gray-300 */
+  border-radius: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Slider Fill */
+input[type="range"].slider::after {
+  content: '';
+  position: absolute;
+  height: 6px;
+  width: var(--slider-percentage, 0%);
+  background-color: #1E3A8A; /* Brand primary color */
+  border-radius: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Slider Thumb */
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #1E3A8A; /* Brand primary color */
+  border-radius: 50%;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+input[type="range"].slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #1E3A8A;
+  border: none;
+  border-radius: 50%;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+input[type="range"].slider:focus {
+  outline: none;
+}
+
+/* Hide default track styles */
+input[type="range"].slider::-webkit-slider-runnable-track {
+  background: transparent;
+}
+input[type="range"].slider::-moz-range-track {
+  background: transparent;
+}
+
+/* Adjust Loan Option Card Styles */
+.adjust-loan-card {
+  padding: 1rem; /* Reduced padding */
+  margin-bottom: 1rem; /* Reduced margin */
+  border-radius: 0.5rem; /* 8px radius */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+}
+
+/* Adjust Title Styling */
+.adjust-loans-title {
+  font-size: 1.25rem; /* Adjusted font size */
+  margin-bottom: 1rem; /* Reduced margin */
 }

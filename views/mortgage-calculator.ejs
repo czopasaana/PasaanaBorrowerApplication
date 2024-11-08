@@ -33,12 +33,12 @@
           <!-- Property Price -->
           <div>
             <label for="property-price" class="block text-gray-700 font-semibold">Property Price (USD):</label>
-            <input type="number" id="property-price" name="propertyPrice" placeholder="e.g., 1,000,000" required autofocus class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" step="any">
+            <input type="number" id="property-price" name="propertyPrice" placeholder="e.g., 1,000,000" required autofocus class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" step="any" min="0">
           </div>
           <!-- Down Payment -->
           <div>
             <label for="down-payment" class="block text-gray-700 font-semibold">Your Down Payment (USD):</label>
-            <input type="number" id="down-payment" name="downPayment" placeholder="Minimum 5% of property price" required class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" step="any">
+            <input type="number" id="down-payment" name="downPayment" placeholder="Minimum 5% of property price" required class="w-full mt-2 border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" step="any" min="0">
             <p id="down-payment-message" class="text-sm text-gray-600 mt-1"></p>
           </div>
           <!-- Loan Options -->
@@ -46,23 +46,24 @@
             <label class="block text-gray-700 font-semibold">Select Loan Types to Compare:</label>
             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Fixed-Rate Loan Option -->
-              <div class="border p-4 rounded-md">
+              <div class="border p-4 rounded-md hover:shadow-md transition-shadow duration-300">
                 <label class="inline-flex items-center">
                   <input type="checkbox" class="form-checkbox text-blue-600" name="loanTypes" value="fixed-rate" id="loan-fixed-rate">
                   <span class="ml-2 text-gray-700">Fixed-Rate Loan</span>
                 </label>
               </div>
 
-              <!-- F-Kort Loan Option -->
-              <div class="border p-4 rounded-md">
+              <!-- Adjustable-Rate Loan F1 Option -->
+              <div class="border p-4 rounded-md hover:shadow-md transition-shadow duration-300">
                 <label class="inline-flex items-center">
-                  <input type="checkbox" class="form-checkbox text-blue-600" name="loanTypes" value="f-kort" id="loan-f-kort">
-                  <span class="ml-2 text-gray-700">F-Kort (Variable Short-Term Loan)</span>
+                  <!-- Changed value from "f1" to "f-kort" to match database -->
+                  <input type="checkbox" class="form-checkbox text-blue-600" name="loanTypes" value="f-kort" id="loan-f1">
+                  <span class="ml-2 text-gray-700">Adjustable-Rate Loan F1</span>
                 </label>
               </div>
 
               <!-- Adjustable-Rate Loan F3 Option -->
-              <div class="border p-4 rounded-md">
+              <div class="border p-4 rounded-md hover:shadow-md transition-shadow duration-300">
                 <label class="inline-flex items-center">
                   <input type="checkbox" class="form-checkbox text-blue-600" name="loanTypes" value="f3" id="loan-f3">
                   <span class="ml-2 text-gray-700">Adjustable-Rate Loan F3</span>
@@ -70,7 +71,7 @@
               </div>
 
               <!-- Adjustable-Rate Loan F5 Option -->
-              <div class="border p-4 rounded-md">
+              <div class="border p-4 rounded-md hover:shadow-md transition-shadow duration-300">
                 <label class="inline-flex items-center">
                   <input type="checkbox" class="form-checkbox text-blue-600" name="loanTypes" value="f5" id="loan-f5">
                   <span class="ml-2 text-gray-700">Adjustable-Rate Loan F5</span>
@@ -91,9 +92,9 @@
           </div>
 
           <!-- Adjust Loans Section -->
-          <div id="adjust-loans-section" class="mt-8 hidden">
-            <h3 class="text-2xl font-bold mb-4 text-center">Adjust Your Loans</h3>
-            <div id="adjust-loans-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div id="adjust-loans-section" class="mt-6 hidden">
+            <h3 class="text-xl md:text-2xl font-bold mb-3 text-center">Adjust Your Loans</h3>
+            <div id="adjust-loans-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <!-- Adjustable sliders for selected loans will be injected here -->
             </div>
           </div>
@@ -129,6 +130,7 @@
   </footer>
 
   <!-- JavaScript -->
-  <script src="/calculator.js"></script>
+  <script src="/mortgage-calculator.js"></script>
 </body>
 </html>
+
