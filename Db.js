@@ -15,7 +15,7 @@ options: {},
 },
 };
 
-async function getConnection() {
+async function getConnection(retryCount = 3, retryDelay = 2000) {
 const token = await getToken();
 const config = {
 ...baseConfig,
@@ -27,8 +27,22 @@ token: token,
 },
 };
 
+for (let attempt = 1; attempt <= retryCount; attempt++) {
+try {
 const pool = await sql.connect(config);
 return pool;
+} catch (error) {
+console.error(`Database connection attempt ${attempt} failed:`, error.message);
+
+if (attempt < retryCount) {
+console.log(`Retrying in ${retryDelay / 1000} seconds...`);
+await new Promise(resolve => setTimeout(resolve, retryDelay));
+} else {
+console.error('All retry attempts failed.');
+throw error;
+}
+}
+}
 }
 
 async function getData() {
