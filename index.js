@@ -12,6 +12,9 @@ const { OpenAI } = require('openai');
 const { getConnection } = require('./Db');
 const sql = require('mssql');
 
+// Import necessary modules at the top
+const { BlobServiceClient } = require('@azure/storage-blob');
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
@@ -604,5 +607,149 @@ app.get('/api/loan-types', async (req, res) => {
   }
 });
 
+// Property Details Route
+app.get('/property/:id', async (req, res) => {
+  const propertyId = parseInt(req.params.id);
+
+  try {
+    // Fetch property details
+    const propertyResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, propertyId)
+      .query(`SELECT * FROM Properties WHERE PropertyID = @PropertyID`);
+
+    if (propertyResult.recordset.length === 0) {
+      return res.status(404).send('Property not found');
+    }
+
+    const property = propertyResult.recordset[0];
+
+    // Fetch images
+    const imagesResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, propertyId)
+      .query(`SELECT * FROM Images WHERE PropertyID = @PropertyID ORDER BY Category, ImageNumber`);
+
+    const images = imagesResult.recordset;
+
+    // Generate image URLs using Azure Blob Storage SAS token
+    const sasToken = process.env.AZURE_STORAGE_SAS_TOKEN; 
+    const storageAccountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
+    const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME; 
+
+    const blobServiceClient = new BlobServiceClient(
+      `https://${storageAccountName}.blob.core.windows.net`
+    );
+
+    for (const image of images) {
+      // Remove 'images/' prefix from FileName
+      const blobName = image.FileName.replace(/^images\//, '');
+
+      const blobClient = blobServiceClient
+        .getContainerClient(containerName)
+        .getBlobClient(blobName);
+
+      // Determine the separator ('?' or '&')
+      const separator = blobClient.url.includes('?') ? '&' : '?';
+
+      // Generate the URL with SAS token
+      const urlWithSasToken = `${blobClient.url}${separator}${sasToken}`;
+
+      image.Url = urlWithSasToken;
+    }
+
+    // Fetch related data (Bedrooms, Bathrooms, etc.)
+    const bedroomsResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, propertyId)
+      .query(`SELECT * FROM Bedrooms WHERE PropertyID = @PropertyID ORDER BY BedroomNumber`);
+
+    const bathroomsResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, propertyId)
+      .query(`SELECT * FROM Bathrooms WHERE PropertyID = @PropertyID`);
+
+    const priceHistoryResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, propertyId)
+      .query(`SELECT * FROM PriceHistory WHERE PropertyID = @PropertyID ORDER BY DateListed DESC`);
+
+    const taxHistoryResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, propertyId)
+      .query(`SELECT * FROM TaxHistory WHERE PropertyID = @PropertyID ORDER BY Year DESC`);
+
+    const neighborhoodResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, propertyId)
+      .query(`
+        SELECT n.*
+        FROM Neighborhoods n
+        JOIN PropertyNeighborhoods pn ON pn.NeighborhoodID = n.NeighborhoodID
+        WHERE pn.PropertyID = @PropertyID
+      `);
+
+    const schoolsResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, propertyId)
+      .query(`
+        SELECT s.*
+        FROM Schools s
+        JOIN PropertySchools ps ON ps.SchoolID = s.SchoolID
+        WHERE ps.PropertyID = @PropertyID
+      `);
+
+    const amenitiesResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, propertyId)
+      .query(`
+        SELECT a.*
+        FROM Amenities a
+        JOIN PropertyAmenities pa ON pa.AmenityID = a.AmenityID
+        WHERE pa.PropertyID = @PropertyID
+      `);
+
+    const environmentalRisksResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, propertyId)
+      .query(`SELECT * FROM EnvironmentalRisks WHERE PropertyID = @PropertyID`);
+
+    const marketTrendsResult = await pool
+      .request()
+      .input('City', sql.VarChar, property.City)
+      .input('State', sql.VarChar, property.State)
+      .query(`
+        SELECT * FROM MarketTrends WHERE City = @City AND State = @State
+      `);
+
+    const nearbyHomeValuesResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, propertyId)
+      .query(`SELECT * FROM NearbyHomeValues WHERE PropertyID = @PropertyID`);
+
+    // Render the property details page
+    res.render('property', {
+      property,
+      images,
+      bedrooms: bedroomsResult.recordset,
+      bathrooms: bathroomsResult.recordset,
+      priceHistory: priceHistoryResult.recordset,
+      taxHistory: taxHistoryResult.recordset,
+      neighborhoods: neighborhoodResult.recordset,
+      schools: schoolsResult.recordset,
+      amenities: amenitiesResult.recordset,
+      environmentalRisks: environmentalRisksResult.recordset,
+      marketTrends: marketTrendsResult.recordset[0],
+      nearbyHomeValues: nearbyHomeValuesResult.recordset,
+    });
+  } catch (error) {
+    console.error('Error fetching property details:', error.message);
+    res.status(500).send('An error occurred while fetching property details.');
+  }
+});
+
 // **Add the static middleware after your routes**
 app.use(express.static('public'));
+
+
+

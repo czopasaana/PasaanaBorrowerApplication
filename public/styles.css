@@ -1373,3 +1373,21 @@ input[type="range"].slider::-moz-range-track {
   font-size: 1.25rem; /* Adjusted font size */
   margin-bottom: 1rem; /* Reduced margin */
 }
+
+/* Property Page Styles */
+.property-gallery img {
+  object-fit: cover;
+  height: 200px;
+  width: 100%;
+}
+
+.property-details table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.property-details th,
+.property-details td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #e2e8f0; /* Tailwind's gray-300 */
+}
