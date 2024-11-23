@@ -1391,3 +1391,109 @@ input[type="range"].slider::-moz-range-track {
   padding: 0.5rem;
   border-bottom: 1px solid #e2e8f0; /* Tailwind's gray-300 */
 }
+
+/* Ensure action buttons retain white text color */
+.action-button {
+  color: white; /* Ensure text is white */
+  text-decoration: none; /* Remove underline */
+}
+
+/* Handle visited state */
+.action-button:visited {
+  color: white;
+}
+
+/* Handle focus state */
+.action-button:focus {
+  color: white;
+  outline: none; /* Remove default outline */
+}
+
+/* Handle active state */
+.action-button:active {
+  color: white;
+}
+
+/* Handle hover state (already white but to be thorough) */
+.action-button:hover {
+  color: white;
+}
+
+.category-button.active {
+  background-color: #2563EB; /* Tailwind's blue-600 */
+  color: white;
+}
+
+/* Styles for the toggle buttons */
+.container > .bg-white > button {
+  background-color: transparent;
+}
+
+.container > .bg-white > button:hover {
+  background-color: #f9fafb; /* Tailwind's gray-50 */
+}
+
+/* Ensure only one section is open at a time */
+.container > .bg-white > div.hidden {
+  display: none;
+}
+
+/* Open section */
+.container > .bg-white > div:not(.hidden) {
+  display: block;
+}
+
+/* Optional: Add transition effect */
+.container > .bg-white > div {
+  transition: max-height 0.3s ease-out;
+}
+
+/* Adjust main image to occupy full height */
+.flex-1 img {
+  height: 100%;
+}
+
+/* Hide scrollbar for thumbnail images if needed */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ensure the "See all photos" link resembles a button on hover */
+.see-all-photos {
+  cursor: pointer;
+}
+
+.see-all-photos:hover {
+  text-decoration: underline;
+}
+
+/* Adjust the size of the main image and thumbnails */
+.main-image {
+  height: 500px;
+}
+
+.thumbnail-image {
+  height: 120px;
+}
+
+/* CTA Button Styles */
+.cta-button {
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #1e40af; /* Darker shade for hover effect */
+}
+
+/* Default property card height */
+.property-card {
+  min-height: 450px; /* Map View height */
+}
+
+/* Increase height when in List View */
+.list-view .property-card {
+  min-height: 600px; /* List View height */
+}
+
+
+

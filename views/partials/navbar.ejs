@@ -20,7 +20,7 @@
           <!-- Dropdown Menu -->
           <div id="buyDropdownMenu" class="dropdown-menu absolute left-0 mt-2 w-56 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
             <a href="/realtor-service" class="block px-4 py-2 hover:bg-blue-800">Learn About Our Realtor Services</a>
-            <a href="/property/1" class="block px-4 py-2 hover:bg-blue-800">Explore Homes</a>
+            <a href="/explorer" class="block px-4 py-2 hover:bg-blue-800">Explore Homes</a>
           </div>
         </div>
         <!-- Home Loans Dropdown Structure -->
@@ -49,6 +49,21 @@
           <!-- Dropdown Menu -->
           <div id="mortgageDropdownMenu" class="dropdown-menu absolute left-0 mt-2 w-48 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
             <a href="/calculators" class="block px-4 py-2 hover:bg-blue-800">Try Our Housing Calculators</a>
+          </div>
+        </div>
+        <!-- Advising Dropdown Structure -->
+        <div class="relative inline-block">
+          <button id="advisingDropdownButton" class="text-white hover:text-gray-200 flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false">
+            Advising
+            <!-- Dropdown Icon -->
+            <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414L10 13.414 5.293 8.707a1 1 0 010-1.414z" />
+            </svg>
+          </button>
+          <!-- Dropdown Menu -->
+          <div id="advisingDropdownMenu" class="dropdown-menu absolute left-0 mt-2 w-64 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
+            <a href="/home-loans-advisor" class="block px-4 py-2 hover:bg-blue-800">Talk to a Home Loans Advisor</a>
+            <a href="/realtor-advisor" class="block px-4 py-2 hover:bg-blue-800">Talk to a Realtor Advisor</a>
           </div>
         </div>
         <!-- Additional Links (if any) -->
@@ -80,6 +95,7 @@
         <li><a href="/mortgage-loans" class="block px-4 py-2 hover:bg-blue-800">Mortgage Loans</a></li>
         <li><a href="/preapproval" class="block px-4 py-2 hover:bg-blue-800">Apply Now</a></li>
         <li><a href="/calculators" class="block px-4 py-2 hover:bg-blue-800">Try Our Housing Calculators</a></li>
+        <li><a href="/talk-to-advisor" class="block px-4 py-2 hover:bg-blue-800">Talk to an Advisor</a></li>
         <% if (user) { %>
           <li><a href="/profile" class="block px-4 py-2 hover:bg-blue-800">Profile</a></li>
           <li><a href="/logout" class="block px-4 py-2 hover:bg-blue-800">Sign Out</a></li>

@@ -9,9 +9,10 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <!-- Swiper CSS for image carousel -->
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
-  <!-- Include jQuery if needed -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- Custom Styles -->
+  <link rel="stylesheet" href="/styles.css">
+  <!-- Include jQuery for AJAX requests -->
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
     /* Custom scrollbar for the image carousel */
     .swiper-container::-webkit-scrollbar {
@@ -36,319 +37,792 @@
     function formatText(value) {
       return value != null && value.toString().trim() !== '' ? value : 'N/A';
     }
+
+    // Add this function to format category names
+    function formatCategoryName(category) {
+      return category.replace(/([a-z])([A-Z])/g, '$1 $2');
+    }
+  %>
+
+  <!-- Prepare Image Categories for JavaScript -->
+  <%
+    // Group Images by category for use in JavaScript
+    const imagesByCategory = {};
+
+    // Add an "All" category that includes all images
+    imagesByCategory['All'] = images;
+
+    images.forEach(image => {
+      const category = image.Category || 'Other';
+      if (!imagesByCategory[category]) {
+        imagesByCategory[category] = [];
+      }
+      imagesByCategory[category].push(image);
+    });
+
+    // Get unique categories and ensure "All" is first
+    const imageCategories = Object.keys(imagesByCategory);
+
+    // Move "All" category to the first position if it's not already there
+    const allIndex = imageCategories.indexOf('All');
+    if (allIndex > 0) {
+      imageCategories.splice(allIndex, 1);
+      imageCategories.unshift('All');
+    }
   %>
 
   <!-- Hero Section -->
-  <div class="container mx-auto px-4 py-12">
-    <div class="flex flex-col md:flex-row items-center">
-      <!-- Left Column -->
-      <div class="md:w-1/2 mb-6 md:mb-0">
-        <h1 class="text-5xl font-bold mb-2"><%= property.Address %></h1>
-        <p class="text-2xl mb-4"><%= property.City %>, <%= property.State %> <%= property.ZipCode %></p>
-        <h2 class="text-3xl font-semibold mb-6"><%= formatCurrency(property.ListingPrice) %></h2>
-        <!-- Action Buttons -->
-        <div class="flex flex-wrap items-center space-x-4">
-          <button class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none">Schedule a Visit</button>
-          <button class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none">Contact Agent</button>
-          <button class="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300 focus:outline-none">Save Property</button>
-        </div>
+  <div class="container mx-auto px-4 py-6">
+    <!-- Back to Search and Logo -->
+    <div class="flex justify-between items-center mb-4">
+      <a href="/explorer" class="text-blue-600 hover:underline">&larr; Back to Search</a>
+      <img src="/path-to-logo.png" alt="Pasaana Logo" class="h-8">
+      <div class="flex space-x-4">
+        <button class="text-gray-600 hover:text-blue-600">Save</button>
+        <button class="text-gray-600 hover:text-blue-600">Share</button>
+        <button class="text-gray-600 hover:text-blue-600">Hide</button>
       </div>
-      <!-- Right Column -->
-      <div class="md:w-1/2">
-        <% if (images && images.length > 0) { %>
-          <img src="<%= images[0].Url %>" alt="Featured Image" class="w-full h-auto rounded-lg">
+    </div>
+
+    <!-- Images Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <!-- Main Image -->
+      <div class="md:col-span-2">
+        <% 
+          // Find the image with Category 'Main' or fallback to the first image
+          const mainImage = images.find(image => image.Category === 'Main') || images[0];
+        %>
+        <% if (mainImage) { %>
+          <img src="<%= mainImage.Url %>" alt="Featured Image" class="w-full h-full object-cover rounded-lg">
         <% } else { %>
           <div class="w-full h-full bg-gray-300 flex items-center justify-center rounded-lg">
             <span class="text-gray-600">No Image Available</span>
           </div>
         <% } %>
       </div>
-    </div>
-  </div>
-
-  <!-- Quick Facts -->
-  <section class="container mx-auto px-4 py-6">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-      <!-- Bedrooms -->
-      <div class="bg-white shadow rounded-lg p-4">
-        <svg class="w-8 h-8 mx-auto mb-2 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C8.69 2 6 4.69 6 8v2H5c-1.1 0-2 .9-2 2v8h2v-2h14v2h2v-8c0-1.1-.9-2-2-2h-1V8c0-3.31-2.69-6-6-6zm4 8H8V8c0-2.21 1.79-4 4-4s4 1.79 4 4v2z"/>
-        </svg>
-        <p class="text-lg font-semibold"><%= property.Bedrooms != null ? property.Bedrooms : 'N/A' %> Bedrooms</p>
-      </div>
-      <!-- Bathrooms -->
-      <div class="bg-white shadow rounded-lg p-4">
-        <svg class="w-8 h-8 mx-auto mb-2 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M7 4V2h10v2h5v2H2V4h5zm2 7h6V9H9v2zm-7 2v9h2v-4h14v4h2v-9H2z"/>
-        </svg>
-        <p class="text-lg font-semibold"><%= property.TotalBathrooms != null ? property.TotalBathrooms : 'N/A' %> Bathrooms</p>
-      </div>
-      <!-- Square Footage -->
-      <div class="bg-white shadow rounded-lg p-4">
-        <svg class="w-8 h-8 mx-auto mb-2 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M3 5v14h18V5H3zm16 12H5V7h14v10z"/>
-        </svg>
-        <p class="text-lg font-semibold"><%= formatNumber(property.PropertySize) %> Sq Ft</p>
-      </div>
-      <!-- Lot Size -->
-      <div class="bg-white shadow rounded-lg p-4">
-        <svg class="w-8 h-8 mx-auto mb-2 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2l-5.5 9h11zM2 13h20v9H2z"/>
-        </svg>
-        <p class="text-lg font-semibold"><%= property.LotSize != null ? property.LotSize + ' Acres' : 'N/A' %></p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Tabs for Content Sections -->
-  <div class="container mx-auto px-4">
-    <div class="flex flex-wrap border-b border-gray-200">
-      <button class="py-4 px-6 text-blue-600 border-b-2 border-blue-600 focus:outline-none" onclick="openTab(event, 'details')">Details</button>
-      <button class="py-4 px-6 text-gray-600 hover:text-blue-600 focus:outline-none" onclick="openTab(event, 'gallery')">Gallery</button>
-      <button class="py-4 px-6 text-gray-600 hover:text-blue-600 focus:outline-none" onclick="openTab(event, 'priceHistory')">Price History</button>
-      <button class="py-4 px-6 text-gray-600 hover:text-blue-600 focus:outline-none" onclick="openTab(event, 'schools')">Schools</button>
-      <button class="py-4 px-6 text-gray-600 hover:text-blue-600 focus:outline-none" onclick="openTab(event, 'map')">Map</button>
-    </div>
-  </div>
-
-  <!-- Tab Content -->
-  <div class="container mx-auto px-4 py-6">
-    <!-- Details Tab -->
-    <div id="details" class="tab-content">
-      <!-- Property Details -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-        <!-- Left Column -->
-        <div>
-          <h2 class="text-2xl font-semibold mb-4">Property Details</h2>
-          <div class="bg-white shadow rounded-lg divide-y divide-gray-200">
-            <div class="flex items-center py-4 px-6">
-              <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7v13h20V7L12 2zm0 2.18l7 3.25v.82H5v-.82l7-3.25zM4 9h16v10H4V9z"/>
-              </svg>
-              <span><strong>Property Type:</strong> <%= formatText(property.PropertyType) %></span>
-            </div>
-            <div class="flex items-center py-4 px-6">
-              <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6 19h12v2H6v-2zM6 3h12v12H6V3zm10 10V5H8v8h8z"/>
-              </svg>
-              <span><strong>Year Built:</strong> <%= property.YearBuilt != null ? property.YearBuilt : 'N/A' %></span>
-            </div>
-            <div class="flex items-center py-4 px-6">
-              <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 7V3L2 12h3v8h6v-6h2v6h6v-8h3z"/>
-              </svg>
-              <span><strong>Garage Capacity:</strong> <%= property.GarageCapacity != null ? property.GarageCapacity : 'N/A' %></span>
-            </div>
-            <div class="flex items-center py-4 px-6">
-              <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zM3 9h2V7H3v2zm4 0h14V7H7v2zm0 8h14v-2H7v2zm0-6h14v-2H7v2z"/>
-              </svg>
-              <span><strong>Price per Sq Ft:</strong> <%= formatCurrency(property.PricePerSqFt) %></span>
-            </div>
+      <!-- Thumbnail Images -->
+      <div class="grid grid-cols-2 gap-2">
+        <% images.slice(1, 5).forEach(function(image) { %>
+          <img src="<%= image.Url %>" alt="Property Image" class="w-full h-32 object-cover rounded-lg">
+        <% }); %>
+        <% if (images.length > 5) { %>
+          <!-- 'See all photos' button -->
+          <div class="relative w-full h-32">
+            <img src="<%= images[5].Url %>" alt="Property Image" class="w-full h-full object-cover rounded-lg">
+            <button onclick="openPhotoOverlay()" class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white text-lg font-semibold rounded-lg">
+              See all photos
+            </button>
           </div>
-        </div>
-        <!-- Right Column -->
-        <div>
-          <h2 class="text-2xl font-semibold mb-4">Additional Information</h2>
-          <div class="bg-white shadow rounded-lg divide-y divide-gray-200">
-            <div class="flex items-center py-4 px-6">
-              <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-              </svg>
-              <% if (neighborhoods && neighborhoods.length > 0) { %>
-                <span><strong>Neighborhood:</strong> <%= formatText(neighborhoods[0].Name) %></span>
-              <% } else { %>
-                <span><strong>Neighborhood:</strong> N/A</span>
-              <% } %>
-            </div>
-            <div class="flex items-center py-4 px-6">
-              <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M5 13l4 4L19 7"/>
-              </svg>
-              <span><strong>Taxes:</strong> <%= formatCurrency(property.Taxes) %></span>
-            </div>
-            <div class="flex items-center py-4 px-6">
-              <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v12l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
-              </svg>
-              <span><strong>Last Sold Price:</strong> <%= property.LastSoldPrice != null ? formatCurrency(property.LastSoldPrice) + ' (' + property.YearLastSold + ')' : 'N/A' %></span>
-            </div>
-            <div class="flex items-center py-4 px-6">
-              <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M16 13h-3V9h-2v4H8l4 4 4-4z"/>
-              </svg>
-              <span><strong>Age:</strong> <%= property.Age != null ? property.Age + ' years' : 'N/A' %></span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Bedrooms and Bathrooms -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Bedrooms -->
-        <section>
-          <h3 class="text-2xl font-semibold mb-4">Bedrooms</h3>
-          <div class="space-y-4">
-            <% bedrooms.forEach(function(bedroom) { %>
-              <div class="bg-white shadow rounded-lg p-4">
-                <h4 class="font-semibold mb-2">Bedroom <%= bedroom.BedroomNumber %></h4>
-                <p>Dimensions: <%= bedroom.Dimensions %></p>
-              </div>
-            <% }); %>
-          </div>
-        </section>
-        <!-- Bathrooms -->
-        <section>
-          <h3 class="text-2xl font-semibold mb-4">Bathrooms</h3>
-          <div class="space-y-4">
-            <% bathrooms.forEach(function(bathroom, index) { %>
-              <div class="bg-white shadow rounded-lg p-4">
-                <h4 class="font-semibold mb-2">Bathroom <%= index + 1 %></h4>
-                <p>Type: <%= bathroom.BathroomType %></p>
-              </div>
-            <% }); %>
-          </div>
-        </section>
-      </div>
-    </div>
-
-    <!-- Gallery Tab -->
-    <div id="gallery" class="tab-content hidden">
-      <!-- Image Gallery Slider -->
-      <section>
-        <h2 class="text-2xl font-semibold mb-4">Photo Gallery</h2>
-        <div class="swiper-container">
-          <div class="swiper-wrapper">
-            <% images.forEach(function(image) { %>
-              <div class="swiper-slide">
-                <img src="<%= image.Url %>" alt="<%= image.Category %> <%= image.ImageNumber %>" class="rounded-lg object-cover w-full h-96">
-              </div>
-            <% }); %>
-          </div>
-          <!-- Swiper navigation buttons -->
-          <div class="swiper-button-next"></div>
-          <div class="swiper-button-prev"></div>
-        </div>
-      </section>
-    </div>
-
-    <!-- Price History Tab -->
-    <div id="priceHistory" class="tab-content hidden">
-      <!-- Price History Table -->
-      <section>
-        <h3 class="text-2xl font-semibold mb-4">Price History</h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-gray-200">
-                <th class="py-3 px-4 text-sm font-semibold text-gray-700">Date Listed</th>
-                <th class="py-3 px-4 text-sm font-semibold text-gray-700">Price</th>
-                <th class="py-3 px-4 text-sm font-semibold text-gray-700">Price per Sq Ft</th>
-                <th class="py-3 px-4 text-sm font-semibold text-gray-700">Days on Market</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% priceHistory.forEach(function(entry, index) { %>
-                <tr class="<%= index % 2 === 0 ? 'bg-white' : 'bg-gray-50' %> hover:bg-gray-100">
-                  <td class="py-3 px-4"><%= entry.DateListed.toDateString() %></td>
-                  <td class="py-3 px-4"><%= formatCurrency(entry.Price) %></td>
-                  <td class="py-3 px-4"><%= formatCurrency(entry.PricePerSqFt) %></td>
-                  <td class="py-3 px-4"><%= entry.DaysOnMarket %></td>
-                </tr>
-              <% }); %>
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </div>
-
-    <!-- Schools Tab -->
-    <div id="schools" class="tab-content hidden">
-      <!-- Nearby Schools -->
-      <section>
-        <h3 class="text-2xl font-semibold mb-4">Nearby Schools</h3>
-        <% if (schools && schools.length > 0) { %>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <% schools.forEach(function(school) { %>
-              <div class="bg-white shadow rounded-lg p-6">
-                <h4 class="text-xl font-semibold mb-2"><%= formatText(school.Name) %></h4>
-                <p class="mb-1"><strong>Level:</strong> <%= formatText(school.Level) %></p>
-                <p class="mb-1"><strong>Grades:</strong> <%= formatText(school.Grades) %></p>
-                <p class="mb-1"><strong>Distance:</strong> <%= school.Distance != null ? school.Distance + ' miles' : 'N/A' %></p>
-                <p class="mb-1"><strong>Students:</strong> <%= school.Students != null ? school.Students : 'N/A' %></p>
-                <p class="mb-1 flex items-center">
-                  <strong>Rating:</strong>
-                  <% if (school.Rating != null) { %>
-                    <span class="ml-2 inline-block bg-green-500 text-white px-2 py-1 rounded-full text-xs"><%= school.Rating %>/10</span>
-                  <% } else { %>
-                    <span class="ml-2">N/A</span>
-                  <% } %>
-                </p>
-              </div>
-            <% }); %>
-          </div>
-        <% } else { %>
-          <p>No nearby school information available.</p>
         <% } %>
-      </section>
+      </div>
     </div>
 
-    <!-- Map Tab -->
-    <div id="map" class="tab-content hidden">
-      <!-- Map Section -->
-      <section>
-        <h3 class="text-2xl font-semibold mb-4">Location</h3>
-        <div class="w-full h-96">
-          <!-- Embed a map with the property's location -->
-          <iframe src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=<%= encodeURIComponent(property.Address + ', ' + property.City + ', ' + property.State + ' ' + property.ZipCode) %>" class="w-full h-full rounded-lg" allowfullscreen></iframe>
+    <!-- Photo Overlay -->
+    <div id="photo-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+      <!-- Overlay Background to capture clicks -->
+      <div class="absolute inset-0" id="overlay-background"></div>
+
+      <!-- Overlay Content -->
+      <div id="photo-overlay-content" class="bg-white w-4/5 h-4/5 overflow-y-auto relative rounded-lg">
+        <!-- Sticky Header -->
+        <div class="sticky top-0 bg-white z-20">
+          <!-- Header content -->
+          <div class="flex items-center justify-start px-4 py-4 border-b space-x-4">
+            <!-- Back to Listing Button -->
+            <button onclick="closePhotoOverlay()" class="bg-gray-800 text-white px-4 py-2 rounded-md focus:outline-none">
+              &larr; Back to listing
+            </button>
+            <!-- Category Buttons -->
+            <div class="flex flex-wrap items-center space-x-2">
+              <% imageCategories.forEach(function(category, index) { %>
+                <button
+                  onclick="showOverlayGalleryCategory('<%= category.replace(/'/g, "\\'") %>', this)"
+                  class="overlay-category-button py-2 px-4 rounded <%= index === 0 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800' %> hover:bg-blue-700 focus:outline-none">
+                  <%= formatCategoryName(category) %>
+                </button>
+              <% }); %>
+            </div>
+          </div>
         </div>
-      </section>
+        <!-- Overlay Content Body -->
+        <div class="container mx-auto px-4 py-6">
+          <!-- Images -->
+          <% imageCategories.forEach(function(category, index) { %>
+            <div id="overlay-gallery-category-<%= category.replace(/\s+/g, '-') %>" class="overlay-gallery-category <%= index === 0 ? '' : 'hidden' %>">
+              <div class="grid grid-cols-2 gap-4">
+                <% imagesByCategory[category].forEach(function(image) { %>
+                  <img src="<%= image.Url %>" alt="<%= image.Category %> <%= image.ImageNumber %>" class="w-full h-auto object-cover rounded-lg">
+                <% }); %>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Property Summary -->
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold mb-1"><%= property.Address %></h1>
+      <p class="text-xl text-gray-600 mb-2"><%= property.City %>, <%= property.State %> <%= property.ZipCode %></p>
+      <div class="flex flex-wrap items-center space-x-4 mb-2">
+        <h2 class="text-3xl font-semibold"><%= formatCurrency(property.ListingPrice) %></h2>
+        <span class="text-gray-600">
+          <%= property.Bedrooms != null ? property.Bedrooms : 'N/A' %> bds |
+          <%= property.TotalBathrooms != null ? property.TotalBathrooms : 'N/A' %> ba |
+          <%= formatNumber(property.PropertySize) %> sqft
+        </span>
+      </div>
+      <p class="text-gray-600 mb-4">Est. Mortgage: <span class="font-semibold"><%= formatCurrency(property.EstimatedMortgage) %>/month</span></p>
+      <!-- CTA Buttons -->
+      <div class="flex flex-wrap items-center space-x-4">
+        <button class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none">Request a Tour</button>
+        <button class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none">Contact Agent</button>
+
+        <!-- Add Virtual Tour Button -->
+        <% if (property.VirtualTourUrl) { %>
+          <a href="<%= property.VirtualTourUrl %>" target="_blank" class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 focus:outline-none">
+            3D Tour & Videos
+          </a>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Property Details Icons -->
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
+      <div class="flex items-center space-x-2">
+        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2L2 7v13h20V7L12 2z"></path>
+        </svg>
+        <span>Type: <%= formatText(property.PropertyType) %></span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M6 19h12v2H6v-2zM6 3h12v12H6V3zm10 10V5H8v8h8z"></path>
+        </svg>
+        <span>Year Built: <%= property.YearBuilt != null ? property.YearBuilt : 'N/A' %></span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M5 13h2v-2H5v2zm0 4h2v-2H5v2zM5 9h2V7H5v2zm4 0h10V7H9v2zm0 8h10v-2H9v2zm0-6h10v-2H9v2z"></path>
+        </svg>
+        <span>Lot Size: <%= property.LotSize != null ? property.LotSize + ' Acres' : 'N/A' %></span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M4 4h16v2H4V4zm0 4h16v12H4V8zm6 2v8h4v-8h-4z"></path>
+        </svg>
+        <span>Price/Sqft: <%= formatCurrency(property.PricePerSqFt) %></span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 7V3L2 12h3v8h6v-6h2v6h6v-8h3z"></path>
+        </svg>
+        <span>HOA: <%= property.HOAFees != null ? formatCurrency(property.HOAFees) + '/month' : 'N/A' %></span>
+      </div>
+      <% if (property.Taxes) { %>
+      <div class="flex items-center space-x-2">
+        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M5 13h14v8H5v-8zm2 6h10v-4H7v4zM19 3H5v8h14V3zm-2 6H7V5h10v4z"></path>
+        </svg>
+        <span>Taxes: <%= formatCurrency(property.Taxes) %>/year</span>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Special Features Section -->
+    <div class="mb-6">
+      <%
+        // Mock data for special features and description
+        const mockSpecialFeatures = ['Spacious backyard', 'Modern kitchen', 'Energy-efficient appliances'];
+        const mockDescription = 'This beautiful property offers an open floor plan with plenty of natural light, perfect for both entertaining and everyday living. Located in a friendly neighborhood close to shopping and schools.';
+        
+        // Use mock data if actual data is missing
+        const specialFeaturesList = (property.SpecialFeatures && property.SpecialFeatures.length > 0) ? property.SpecialFeatures : mockSpecialFeatures;
+        const propertyDescription = property.Description || mockDescription;
+      %>
+      <h3 class="text-xl font-semibold mb-2">What's Special</h3>
+      <div class="flex flex-wrap items-center space-x-2 mb-2">
+        <% specialFeaturesList.forEach(function(feature) { %>
+          <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm"><%= feature %></span>
+        <% }); %>
+      </div>
+      <p class="text-gray-700"><%= propertyDescription %></p>
     </div>
   </div>
+
+  <!-- Vertical Collapsible Sections -->
+  <div class="container mx-auto px-4 py-6 space-y-4">
+
+    <!-- Details Section -->
+    <div class="bg-white rounded-lg shadow">
+      <button class="toggle-button w-full flex justify-between items-center p-4 font-semibold text-xl border-b" onclick="toggleSection('details', this)">
+        <span>Details</span>
+        <!-- Arrow Icon -->
+        <svg class="w-6 h-6 transition-transform duration-200 transform -rotate-180" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+        </svg>
+      </button>
+      <div id="details" class="p-4">
+        <!-- Property Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <!-- Left Column -->
+          <div>
+            <h2 class="text-2xl font-semibold mb-4">Property Details</h2>
+            <div class="bg-white shadow rounded-lg divide-y divide-gray-200">
+              <div class="flex items-center py-4 px-6">
+                <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L2 7v13h20V7L12 2zm0 2.18l7 3.25v.82H5v-.82l7-3.25zM4 9h16v10H4V9z"/>
+                </svg>
+                <span><strong>Property Type:</strong> <%= formatText(property.PropertyType) %></span>
+              </div>
+              <div class="flex items-center py-4 px-6">
+                <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 19h12v2H6v-2zM6 3h12v12H6V3zm10 10V5H8v8h8z"/>
+                </svg>
+                <span><strong>Year Built:</strong> <%= property.YearBuilt != null ? property.YearBuilt : 'N/A' %></span>
+              </div>
+              <div class="flex items-center py-4 px-6">
+                <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 7V3L2 12h3v8h6v-6h2v6h6v-8h3z"/>
+                </svg>
+                <span><strong>Garage Capacity:</strong> <%= property.GarageCapacity != null ? property.GarageCapacity : 'N/A' %></span>
+              </div>
+              <div class="flex items-center py-4 px-6">
+                <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zM3 9h2V7H3v2zm4 0h14V7H7v2zm0 8h14v-2H7v2zm0-6h14v-2H7v2z"/>
+                </svg>
+                <span><strong>Price per Sq Ft:</strong> <%= formatCurrency(property.PricePerSqFt) %></span>
+              </div>
+            </div>
+          </div>
+          <!-- Right Column -->
+          <div>
+            <h2 class="text-2xl font-semibold mb-4">Additional Information</h2>
+            <div class="bg-white shadow rounded-lg divide-y divide-gray-200">
+              <div class="flex items-center py-4 px-6">
+                <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                </svg>
+                <% if (neighborhoods && neighborhoods.length > 0) { %>
+                  <span><strong>Neighborhood:</strong> <%= formatText(neighborhoods[0].Name) %></span>
+                <% } else { %>
+                  <span><strong>Neighborhood:</strong> N/A</span>
+                <% } %>
+              </div>
+              <div class="flex items-center py-4 px-6">
+                <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M5 13l4 4L19 7"/>
+                </svg>
+                <span><strong>Taxes:</strong> <%= formatCurrency(property.Taxes) %></span>
+              </div>
+              <div class="flex items-center py-4 px-6">
+                <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 3H5c-1.1 0-2 .9-2 2v12l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                </svg>
+                <span><strong>Last Sold Price:</strong> <%= property.LastSoldPrice != null ? formatCurrency(property.LastSoldPrice) + ' (' + property.YearLastSold + ')' : 'N/A' %></span>
+              </div>
+              <div class="flex items-center py-4 px-6">
+                <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M16 13h-3V9h-2v4H8l4 4 4-4z"/>
+                </svg>
+                <span><strong>Age:</strong> <%= property.Age != null ? property.Age + ' years' : 'N/A' %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bedrooms and Bathrooms -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Bedrooms -->
+          <section>
+            <h3 class="text-2xl font-semibold mb-4">Bedrooms</h3>
+            <div class="space-y-4">
+              <% bedrooms.forEach(function(bedroom) { %>
+                <div class="bg-white shadow rounded-lg p-4">
+                  <h4 class="font-semibold mb-2">Bedroom <%= bedroom.BedroomNumber %></h4>
+                  <p>Dimensions: <%= formatText(bedroom.Dimensions) %></p>
+                </div>
+              <% }); %>
+            </div>
+          </section>
+          <!-- Bathrooms -->
+          <section>
+            <h3 class="text-2xl font-semibold mb-4">Bathrooms</h3>
+            <div class="space-y-4">
+              <% bathrooms.forEach(function(bathroom, index) { %>
+                <div class="bg-white shadow rounded-lg p-4">
+                  <h4 class="font-semibold mb-2">Bathroom <%= index + 1 %></h4>
+                  <p>Type: <%= formatText(bathroom.BathroomType) %></p>
+                </div>
+              <% }); %>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- Price History Section -->
+    <div class="bg-white rounded-lg shadow">
+      <button class="toggle-button w-full flex justify-between items-center p-4 font-semibold text-xl border-b" onclick="toggleSection('priceHistory', this)">
+        <span>Price History</span>
+        <!-- Arrow Icon -->
+        <svg class="w-6 h-6 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+        </svg>
+      </button>
+      <div id="priceHistory" class="p-4 hidden">
+        <!-- Price History Content -->
+        <section>
+          <h3 class="text-2xl font-semibold mb-4">Price History</h3>
+          <% if (priceHistory && priceHistory.length > 0) { %>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-gray-200">
+                    <th class="py-3 px-4 text-sm font-semibold text-gray-700">Date Listed</th>
+                    <th class="py-3 px-4 text-sm font-semibold text-gray-700">Price</th>
+                    <th class="py-3 px-4 text-sm font-semibold text-gray-700">Price per Sq Ft</th>
+                    <th class="py-3 px-4 text-sm font-semibold text-gray-700">Days on Market</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% priceHistory.forEach(function(entry, index) { %>
+                    <tr class="<%= index % 2 === 0 ? 'bg-white' : 'bg-gray-50' %> hover:bg-gray-100">
+                      <td class="py-3 px-4"><%= new Date(entry.DateListed).toLocaleDateString() %></td>
+                      <td class="py-3 px-4"><%= formatCurrency(entry.Price) %></td>
+                      <td class="py-3 px-4"><%= formatCurrency(entry.PricePerSqFt) %></td>
+                      <td class="py-3 px-4"><%= entry.DaysOnMarket %></td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <p>No price history available for this property.</p>
+          <% } %>
+        </section>
+      </div>
+    </div>
+    
+    <!-- Monthly Payment Section -->
+    <div class="bg-white rounded-lg shadow">
+      <button class="toggle-button w-full flex justify-between items-center p-4 font-semibold text-xl border-b" onclick="toggleSection('monthlyPayment', this)">
+        <span>Monthly Payment</span>
+        <!-- Arrow Icon -->
+        <svg class="w-6 h-6 transition-transform duration-200 transform -rotate-180" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+        </svg>
+      </button>
+      <div id="monthlyPayment" class="p-4">
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row md:space-x-6">
+          <!-- Left Column -->
+          <div class="md:w-1/2">
+            <h2 class="text-3xl font-semibold mb-4">Monthly Payment</h2>
+          </div>
+
+            <!-- Adjust the Pie Chart container -->
+            <div class="relative mb-6">
+              <canvas id="payment-breakdown-chart" class="w-full h-64"></canvas>
+              <!-- Estimated Payment Value Positioned Over the Chart -->
+              <div id="estimated-payment" class="absolute inset-0 flex items-center justify-center">
+                <span class="text-gray-800 text-3xl font-bold">
+                  Est. <span id="estimated-payment-value">$0.00</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="flex flex-col space-y-2">
+              <div class="flex items-center">
+                <span class="w-4 h-4 bg-blue-500 mr-2"></span>
+                <span>Principal & Interest: <span id="legend-principal-interest">$0.00</span></span>
+              </div>
+              <div class="flex items-center">
+                <span class="w-4 h-4 bg-teal-500 mr-2"></span>
+                <span>Property Taxes: <span id="legend-property-taxes">$0.00</span></span>
+              </div>
+              <div class="flex items-center">
+                <span class="w-4 h-4 bg-purple-500 mr-2"></span>
+                <span>Home Insurance: <span id="legend-home-insurance">$0.00</span></span>
+              </div>
+            </div>
+          </div>
+          <!-- Right Column -->
+          <div class="md:w-1/2 mt-6 md:mt-0">
+            <h3 class="text-xl font-semibold mb-4">Customize this payment</h3>
+            <div class="space-y-4">
+              <div>
+                <label for="custom-down-payment" class="block text-gray-700 font-semibold">Down Payment</label>
+                <input type="number" id="custom-down-payment" value="50000" class="w-full px-4 py-2 border rounded-md" />
+              </div>
+              <div>
+                <label for="custom-interest-rate" class="block text-gray-700 font-semibold">Interest Rate (%)</label>
+                <input type="number" id="custom-interest-rate" value="3.5" class="w-full px-4 py-2 border rounded-md" />
+              </div>
+              <div>
+                <button onclick="signInToSaveChanges()" class="px-4 py-2 bg-blue-600 text-white rounded-md">
+                  Sign in to save changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Payment Calculator -->
+        <div class="mt-6">
+          <details open>
+            <summary class="text-lg font-semibold cursor-pointer focus:outline-none">Breakdown of Estimated Monthly Payment</summary>
+            <ul class="mt-4 space-y-2">
+              <!-- Principal & Interest -->
+              <li>
+                <details>
+                  <summary class="flex justify-between items-center cursor-pointer">
+                    <span>Principal & Interest</span>
+                    <span><span id="breakdown-principal-interest">$0.00</span></span>
+                  </summary>
+                  <div class="mt-2 text-gray-600">
+                    <!-- Additional details or inputs can go here -->
+                  </div>
+                </details>
+              </li>
+              <!-- Mortgage Insurance -->
+              <li>
+                <details>
+                  <summary class="flex justify-between items-center cursor-pointer">
+                    <span>Mortgage Insurance</span>
+                    <span><span id="breakdown-mortgage-insurance">$0.00</span></span>
+                  </summary>
+                  <div class="mt-2 text-gray-600">
+                    <!-- Additional details or inputs can go here -->
+                  </div>
+                </details>
+              </li>
+              <!-- Property Taxes -->
+              <li>
+                <details>
+                  <summary class="flex justify-between items-center cursor-pointer">
+                    <span>Property Taxes</span>
+                    <span><span id="breakdown-property-taxes">$0.00</span></span>
+                  </summary>
+                  <div class="mt-2 text-gray-600">
+                    <!-- Additional details or inputs can go here -->
+                  </div>
+                </details>
+              </li>
+              <!-- Home Insurance -->
+              <li>
+                <details>
+                  <summary class="flex justify-between items-center cursor-pointer">
+                    <span>Home Insurance</span>
+                    <span><span id="breakdown-home-insurance">$0.00</span></span>
+                  </summary>
+                  <div class="mt-2 text-gray-600">
+                    <!-- Additional details or inputs can go here -->
+                  </div>
+                </details>
+              </li>
+              <!-- HOA Fees -->
+              <li>
+                <details>
+                  <summary class="flex justify-between items-center cursor-pointer">
+                    <span>HOA Fees</span>
+                    <span><span id="breakdown-hoa-fees">$0.00</span></span>
+                  </summary>
+                  <div class="mt-2 text-gray-600">
+                    <!-- Additional details or inputs can go here -->
+                  </div>
+                </details>
+              </li>
+              <!-- Utilities -->
+              <li>
+                <details>
+                  <summary class="flex justify-between items-center cursor-pointer">
+                    <span>Utilities</span>
+                    <span><span id="breakdown-utilities">$0.00</span></span>
+                  </summary>
+                  <div class="mt-2 text-gray-600">
+                    <!-- Additional details or inputs can go here -->
+                  </div>
+                </details>
+              </li>
+            </ul>
+          </details>
+        </div>
+        <!-- Disclaimer -->
+        <div class="mt-6 text-sm text-gray-600">
+          <p>Calculations are estimates and provided for informational purposes only. Actual amounts may vary.</p>
+          <p>Factors affecting rates include credit score and down payment amount.</p>
+        </div>
+        <!-- Call-to-Action -->
+        <div class="mt-6">
+          <button class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none">
+            Get pre-qualified
+          </button>
+        </div>
+      </div>
+
+    <!-- Schools Section -->
+    <div class="bg-white rounded-lg shadow">
+      <button class="toggle-button w-full flex justify-between items-center p-4 font-semibold text-xl border-b" onclick="toggleSection('schools', this)">
+        <span>Schools</span>
+        <!-- Arrow Icon -->
+        <svg class="w-6 h-6 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+        </svg>
+      </button>
+      <div id="schools" class="p-4 hidden">
+        <!-- Schools Content -->
+        <section>
+          <h3 class="text-2xl font-semibold mb-4">Nearby Schools</h3>
+          <% if (schools && schools.length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% schools.forEach(function(school) { %>
+                <div class="bg-white shadow rounded-lg p-6">
+                  <h4 class="text-xl font-semibold mb-2"><%= formatText(school.Name) %></h4>
+                  <p class="mb-1"><strong>Level:</strong> <%= formatText(school.Level) %></p>
+                  <p class="mb-1"><strong>Grades:</strong> <%= formatText(school.Grades) %></p>
+                  <p class="mb-1"><strong>Distance:</strong> <%= school.Distance != null ? school.Distance + ' miles' : 'N/A' %></p>
+                  <p class="mb-1"><strong>Students:</strong> <%= school.Students != null ? school.Students : 'N/A' %></p>
+                  <p class="mb-1 flex items-center">
+                    <strong>Rating:</strong>
+                    <% if (school.Rating != null) { %>
+                      <span class="ml-2 inline-block bg-green-500 text-white px-2 py-1 rounded-full text-xs"><%= school.Rating %>/10</span>
+                    <% } else { %>
+                      <span class="ml-2">N/A</span>
+                    <% } %>
+                  </p>
+                </div>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <p>No nearby school information available.</p>
+          <% } %>
+        </section>
+      </div>
+    </div>
+
+    <!-- Map Section -->
+    <div class="bg-white rounded-lg shadow">
+      <button class="toggle-button w-full flex justify-between items-center p-4 font-semibold text-xl border-b" onclick="toggleSection('map', this)">
+        <span>Map</span>
+        <!-- Arrow Icon -->
+        <svg class="w-6 h-6 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+        </svg>
+      </button>
+      <div id="map" class="p-4 hidden">
+        <!-- Map Content -->
+        <section>
+          <h3 class="text-2xl font-semibold mb-4">Location</h3>
+          <div class="w-full h-96">
+            <!-- Embed a map with the property's location -->
+            <iframe src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=<%= encodeURIComponent(property.Address + ', ' + property.City + ', ' + property.State + ' ' + property.ZipCode) %>" class="w-full h-full rounded-lg" allowfullscreen></iframe>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Tax History Section -->
+    <div class="bg-white rounded-lg shadow">
+      <button class="toggle-button w-full flex justify-between items-center p-4 font-semibold text-xl border-b" onclick="toggleSection('taxHistory', this)">
+        <span>Tax History</span>
+        <!-- Arrow Icon -->
+        <svg class="w-6 h-6 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+        </svg>
+      </button>
+      <div id="taxHistory" class="p-4 hidden">
+        <!-- Tax History Content -->
+        <section>
+          <h3 class="text-2xl font-semibold mb-4">Tax History</h3>
+          <% if (taxHistory && taxHistory.length > 0) { %>
+            <div class="overflow-x-auto">
+              <table class="min-w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-gray-200">
+                    <th class="py-3 px-4 font-semibold text-gray-700">Year</th>
+                    <th class="py-3 px-4 font-semibold text-gray-700">Taxes</th>
+                    <th class="py-3 px-4 font-semibold text-gray-700">Total Assessment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% taxHistory.forEach(function(entry, index) { %>
+                    <tr class="<%= index % 2 === 0 ? 'bg-white' : 'bg-gray-50' %> hover:bg-gray-100">
+                      <td class="py-3 px-4"><%= entry.Year %></td>
+                      <td class="py-3 px-4"><%= formatCurrency(entry.Taxes) %></td>
+                      <td class="py-3 px-4"><%= formatCurrency(entry.TotalAssessment) %></td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <p>No tax history available for this property.</p>
+          <% } %>
+        </section>
+      </div>
+    </div>
+
+    <!-- Environmental Risks Section -->
+    <div class="bg-white rounded-lg shadow">
+      <button class="toggle-button w-full flex justify-between items-center p-4 font-semibold text-xl border-b" onclick="toggleSection('environmentalRisks', this)">
+        <span>Environmental Risks</span>
+        <!-- Arrow Icon -->
+        <svg class="w-6 h-6 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+        </svg>
+      </button>
+      <div id="environmentalRisks" class="p-4 hidden">
+        <!-- Environmental Risks Content -->
+        <section>
+          <h3 class="text-2xl font-semibold mb-4">Environmental Risks</h3>
+          <% if (environmentalRisks && environmentalRisks.length > 0) { %>
+            <ul class="list-disc list-inside">
+              <% environmentalRisks.forEach(function(risk) { %>
+                <li class="mb-2">
+                  <strong><%= risk.RiskType %> (Level: <%= risk.Level %>):</strong> <%= formatText(risk.Description) %>
+                </li>
+              <% }); %>
+            </ul>
+          <% } else { %>
+            <p>No environmental risk information available for this property.</p>
+          <% } %>
+        </section>
+      </div>
+    </div>
+
+    <!-- Amenities Section -->
+    <%
+      // Group amenities by category
+      const amenitiesByCategory = {};
+      amenities.forEach(amenity => {
+        const category = amenity.Category || 'Other';
+        if (!amenitiesByCategory[category]) {
+          amenitiesByCategory[category] = [];
+        }
+        amenitiesByCategory[category].push(amenity);
+      });
+    %>
+    <div class="bg-white rounded-lg shadow">
+      <button class="toggle-button w-full flex justify-between items-center p-4 font-semibold text-xl border-b" onclick="toggleSection('amenities', this)">
+        <span>Amenities</span>
+        <!-- Arrow Icon -->
+        <svg class="w-6 h-6 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+        </svg>
+      </button>
+      <div id="amenities" class="p-4 hidden">
+        <!-- Amenities Content -->
+        <section>
+          <h2 class="text-2xl font-semibold mb-4">Amenities</h2>
+          <% if (amenitiesByCategory && Object.keys(amenitiesByCategory).length > 0) { %>
+            <% Object.keys(amenitiesByCategory).forEach(category => { %>
+              <h3 class="text-xl font-semibold mt-4 mb-2 border-b border-gray-200 pb-1"><%= category %></h3>
+              <ul class="list-disc list-inside pl-5">
+                <% amenitiesByCategory[category].forEach(amenity => { %>
+                  <li class="mb-1"><%= formatText(amenity.Name) %></li>
+                <% }); %>
+              </ul>
+            <% }); %>
+          <% } else { %>
+            <p>No amenities information available.</p>
+          <% } %>
+        </section>
+      </div>
+    </div>
+
+    <!-- Market Trends Section -->
+    <div class="bg-white rounded-lg shadow">
+      <button class="toggle-button w-full flex justify-between items-center p-4 font-semibold text-xl border-b" onclick="toggleSection('marketTrends', this)">
+        <span>Market Trends</span>
+        <!-- Arrow Icon -->
+        <svg class="w-6 h-6 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+        </svg>
+      </button>
+      <div id="marketTrends" class="p-4 hidden">
+        <!-- Market Trends Content -->
+        <section>
+          <h2 class="text-2xl font-semibold mb-4">Market Trends</h2>
+          <% if (marketTrends) { %>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="bg-white shadow rounded-lg p-4">
+                <h3 class="font-semibold text-lg mb-2">Median Listing Price</h3>
+                <p class="text-gray-700 text-2xl"><%= formatCurrency(marketTrends.ListingPriceMedian) %></p>
+              </div>
+              <div class="bg-white shadow rounded-lg p-4">
+                <h3 class="font-semibold text-lg mb-2">Price Per Sq Ft</h3>
+                <p class="text-gray-700 text-2xl"><%= formatCurrency(marketTrends.ListPricePerSqFtMedian) %></p>
+              </div>
+              <div class="bg-white shadow rounded-lg p-4">
+                <h3 class="font-semibold text-lg mb-2">Average Days on Market</h3>
+                <p class="text-gray-700 text-2xl"><%= marketTrends.DaysOnMarketMedian %></p>
+              </div>
+            </div>
+          <% } else { %>
+            <p>No market trends data available.</p>
+          <% } %>
+        </section>
+      </div>
+    </div>
+
+    <!-- Nearby Home Values Section -->
+    <div class="bg-white rounded-lg shadow">
+      <button class="toggle-button w-full flex justify-between items-center p-4 font-semibold text-xl border-b" onclick="toggleSection('nearbyHomeValues', this)">
+        <span>Nearby Home Values</span>
+        <!-- Arrow Icon -->
+        <svg class="w-6 h-6 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+        </svg>
+      </button>
+      <div id="nearbyHomeValues" class="p-4 hidden">
+        <!-- Nearby Home Values Content -->
+        <section>
+          <h2 class="text-2xl font-semibold mb-4">Nearby Home Values</h2>
+          <% if (nearbyHomeValues && nearbyHomeValues.length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% nearbyHomeValues.forEach(function(home) { %>
+                <div class="bg-white shadow rounded-lg p-6">
+                  <h4 class="text-xl font-semibold mb-2"><%= formatText(home.Address) %></h4>
+                  <p><strong>Estimated Value:</strong> <%= formatCurrency(home.ValueEstimate) %></p>
+                  <p><strong>Beds:</strong> <%= home.Bedrooms != null ? home.Bedrooms : 'N/A' %></p>
+                  <p><strong>Baths:</strong> <%= home.Bathrooms != null ? home.Bathrooms : 'N/A' %></p>
+                  <p><strong>Sq Ft:</strong> <%= formatNumber(home.SquareFeet) %></p>
+                </div>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <p>No nearby home values available.</p>
+          <% } %>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <!-- Chatbot Section-->
   <%- include('partials/chatbot.ejs') %>
 
   <!-- Footer -->
-  <footer class="bg-gray-800 text-white text-center py-6">
-    <div class="container mx-auto px-4">
-      <p>© 2024 Pasaana. All rights reserved.</p>
-    </div>
+  <footer class="bg-blue-900 text-white text-center py-4">
+    <p>© 2024 Pasaana. All rights reserved.</p>
   </footer>
 
   <!-- Swiper JS for the image carousel -->
   <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-  <!-- Initialize Swiper -->
+
+  <!-- Include Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Pass server-side variables to client-side JavaScript -->
   <script>
-    var swiper = new Swiper('.swiper-container', {
-      loop: true,
-      spaceBetween: 10,
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-    });
+    var imageCategories = <%- JSON.stringify(imageCategories) %>;
+    var property = <%- JSON.stringify(property) %>;
   </script>
-  <!-- Tab Functionality -->
-  <script>
-    function openTab(evt, tabName) {
-      var i, tabcontent, tablinks;
-      tabcontent = document.getElementsByClassName('tab-content');
-      for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].classList.add('hidden');
-      }
-      tablinks = document.querySelectorAll('.flex.flex-wrap button');
-      for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].classList.remove('text-blue-600', 'border-blue-600');
-        tablinks[i].classList.add('text-gray-600');
-      }
-      document.getElementById(tabName).classList.remove('hidden');
-      evt.currentTarget.classList.add('text-blue-600', 'border-blue-600');
-    }
-    // Set default tab
-    document.addEventListener('DOMContentLoaded', function() {
-      document.querySelector('.tab-content').classList.remove('hidden');
-    });
-  </script>
+
+  <!-- Include your external JavaScript file -->
+  <script src="/property.js"></script>
 </body>
 </html>
 

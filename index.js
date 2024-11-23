@@ -748,6 +748,66 @@ app.get('/property/:id', async (req, res) => {
   }
 });
 
+// Explorer Page Route
+app.get('/explorer', async (req, res) => {
+  try {
+    // Fetch PropertyID 1 from the database
+    const propertyResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, 1)
+      .query('SELECT * FROM Properties WHERE PropertyID = @PropertyID');
+
+    const imagesResult = await pool
+      .request()
+      .input('PropertyID', sql.Int, 1)
+      .query('SELECT * FROM Images WHERE PropertyID = @PropertyID ORDER BY ImageNumber');
+
+    if (propertyResult.recordset.length === 0) {
+      return res.status(404).send('Property not found');
+    }
+
+    const property = propertyResult.recordset[0];
+    const images = imagesResult.recordset;
+
+    // Generate image URLs using Azure Blob Storage SAS token
+    const sasToken = process.env.AZURE_STORAGE_SAS_TOKEN; 
+    const storageAccountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
+    const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME; 
+
+    const blobServiceClient = new BlobServiceClient(
+      `https://${storageAccountName}.blob.core.windows.net`
+    );
+
+    for (const image of images) {
+      // Remove 'images/' prefix from FileName
+      const blobName = image.FileName.replace(/^images\//, '');
+
+      const blobClient = blobServiceClient
+        .getContainerClient(containerName)
+        .getBlobClient(blobName);
+
+      // Determine the separator ('?' or '&')
+      const separator = blobClient.url.includes('?') ? '&' : '?';
+
+      // Generate the URL with SAS token
+      const urlWithSasToken = `${blobClient.url}${separator}${sasToken}`;
+
+      image.Url = urlWithSasToken;
+    }
+
+    // For the purpose of the explorer page, we'll create an array with multiple instances of the same property
+    const properties = Array(10).fill(property);
+
+    res.render('explorer', {
+      properties,
+      images,
+    });
+  } catch (error) {
+    console.error('Error fetching properties for explorer:', error.message);
+    res.status(500).send('An error occurred while fetching properties.');
+  }
+});
+
 // **Add the static middleware after your routes**
 app.use(express.static('public'));
 
