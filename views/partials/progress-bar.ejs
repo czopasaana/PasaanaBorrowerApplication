@@ -1,15 +1,15 @@
-<!-- Enhanced Progress Bar Partial -->
+<!-- Updated Progress Bar Partial -->
 <div class="container mx-auto px-4 my-6">
-  <div class="flex items-start justify-between">
+  <div class="flex items-center justify-between">
     <% 
       const totalSteps = 7;
       const steps = [
-        { number: 1, title: 'Property Details' },
+        { number: 1, title: 'Basic Information' },
         { number: 2, title: 'Consent & Disclosure' },
-        { number: 3, title: 'Personal Info' },
-        { number: 4, title: 'Employment' },
-        { number: 5, title: 'Financial Info' },
-        { number: 6, title: 'Credit Check' },
+        { number: 3, title: 'Address & Residency' },
+        { number: 4, title: 'Social Security Number' },
+        { number: 5, title: 'Financial Information' },
+        { number: 6, title: 'Co-Borrower Option' },
         { number: 7, title: 'Review' },
       ];
     %>
@@ -21,7 +21,7 @@
         <% } %>
         <!-- Connector Line (after circle) -->
         <% if (index !== steps.length - 1) { %>
-          <div class="absolute right-0 top-4 w-1/2 h-1 <% if (step.number < currentStep) { %>bg-blue-600<% } else { %>bg-gray-200<% } %>"></div>
+          <div class="absolute right-0 top-4 w-1/2 h-1 <% if (steps[index + 1].number <= currentStep) { %>bg-blue-600<% } else { %>bg-gray-200<% } %>"></div>
         <% } %>
         <!-- Step Circle -->
         <div class="z-10 rounded-full h-8 w-8 flex items-center justify-center <% if (step.number <= currentStep) { %>bg-blue-600 text-white<% } else { %>bg-gray-200 text-gray-500<% } %>">

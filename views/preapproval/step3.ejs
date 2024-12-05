@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/styles.css">
   <!-- Include jQuery for AJAX requests -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -19,74 +21,84 @@
   <!-- Main Content -->
   <main class="flex-grow container mx-auto py-0 px-4">
     <div class="max-w-3xl mx-auto bg-white p-10 rounded-xl shadow-2xl">
-      <h2 class="text-3xl font-bold text-blue-900 mb-8">Step 3: Personal Information</h2>
-      <form action="/preapproval/step/3" method="post">
-        <!-- Full Legal Name -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div>
-            <label for="firstName" class="block text-gray-700 font-medium mb-2">First Name:</label>
-            <input type="text" name="firstName" id="firstName" placeholder="First Name" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <div>
-            <label for="lastName" class="block text-gray-700 font-medium mb-2">Last Name:</label>
-            <input type="text" name="lastName" id="lastName" placeholder="Last Name" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-        </div>
-        <!-- Date of Birth -->
+      <h2 class="text-3xl font-bold text-blue-900 mb-8">Step 3: Address and Residency</h2>
+      <form action="/preapproval/step/3" method="post" id="step3-form">
+        <!-- Section 1: Current Address -->
+        <h3 class="text-2xl font-semibold text-blue-800 mb-6">1. Current Address</h3>
+
+        <!-- Street Address -->
         <div class="mb-6">
-          <label for="dob" class="block text-gray-700 font-medium mb-2">Date of Birth:</label>
-          <input type="date" name="dob" id="dob" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label for="streetAddress" class="block text-gray-800 font-medium mb-2">Street Address<span class="text-red-500">*</span></label>
+          <input type="text" name="streetAddress" id="streetAddress" placeholder="Enter your street address" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p id="streetAddressError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid street address.</p>
         </div>
-        <!-- Contact Information -->
+
+        <!-- City -->
         <div class="mb-6">
-          <label for="email" class="block text-gray-700 font-medium mb-2">Email Address:</label>
-          <input type="email" name="email" id="email" placeholder="you@example.com" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label for="city" class="block text-gray-800 font-medium mb-2">City<span class="text-red-500">*</span></label>
+          <input type="text" name="city" id="city" placeholder="City" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p id="cityError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid city.</p>
         </div>
+
+        <!-- State -->
         <div class="mb-6">
-          <label for="phone" class="block text-gray-700 font-medium mb-2">Phone Number:</label>
-          <input type="tel" name="phone" id="phone" placeholder="(XXX) XXX-XXXX" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <!-- Current Address -->
-        <div class="mb-6">
-          <label for="streetAddress" class="block text-gray-700 font-medium mb-2">Street Address:</label>
-          <input type="text" name="streetAddress" id="streetAddress" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div>
-            <label for="city" class="block text-gray-700 font-medium mb-2">City:</label>
-            <input type="text" name="city" id="city" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <!-- State -->
-          <div>
-            <label for="state" class="block text-gray-700 font-medium mb-2">State:</label>
-            <select name="state" id="state" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Select State</option>
-              <% const states = [
-                'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-                'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-                'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-                'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-                'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-              ]; %>
-              <% states.forEach(function(state) { %>
-                <option value="<%= state %>"><%= state %></option>
-              <% }); %>
-            </select>
-          </div>
-        </div>
-        <div class="mb-6">
-          <label for="zipCode" class="block text-gray-700 font-medium mb-2">ZIP Code:</label>
-          <input type="text" name="zipCode" id="zipCode" required pattern="\d{5}" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <!-- Residency Status -->
-        <div class="mb-6">
-          <label for="residencyStatus" class="block text-gray-700 font-medium mb-2">Do you own or rent your current residence?</label>
-          <select name="residencyStatus" id="residencyStatus" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Select an option</option>
-            <option value="own">Own</option>
-            <option value="rent">Rent</option>
-            <option value="other">Other</option>
+          <label for="state" class="block text-gray-800 font-medium mb-2">State<span class="text-red-500">*</span></label>
+          <select name="state" id="state" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select State</option>
+            <% const states = [
+              'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+              'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+              'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+              'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+              'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+            ]; %>
+            <% states.forEach(function(state) { %>
+              <option value="<%= state %>"><%= state %></option>
+            <% }); %>
           </select>
+          <p id="stateError" class="text-red-500 text-sm mt-1 hidden">Please select a state.</p>
+        </div>
+
+        <!-- ZIP Code -->
+        <div class="mb-6">
+          <label for="zipCode" class="block text-gray-800 font-medium mb-2">ZIP Code<span class="text-red-500">*</span></label>
+          <input type="text" name="zipCode" id="zipCode" placeholder="ZIP Code" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p id="zipCodeError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid 5-digit ZIP code.</p>
+        </div>
+
+        <!-- Section 2: Housing Status -->
+        <h3 class="text-2xl font-semibold text-blue-800 mb-6">2. Housing Status</h3>
+        <div class="mb-6">
+          <label class="block text-gray-800 font-medium mb-2">Do you own or rent your current residence?<span class="text-red-500">*</span></label>
+          <select name="housingStatus" id="housingStatus" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select an option</option>
+            <option value="Own">Own</option>
+            <option value="Rent">Rent</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <!-- If "Other", specify -->
+        <div id="otherHousingContainer" class="mb-6 hidden">
+          <label for="otherHousing" class="block text-gray-800 font-medium mb-2">Please specify:<span class="text-red-500">*</span></label>
+          <input type="text" name="otherHousing" id="otherHousing" placeholder="Please specify your housing status" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Section 3: Previous Addresses -->
+        <h3 class="text-2xl font-semibold text-blue-800 mb-6">3. Previous Addresses (if applicable)</h3>
+        <div class="mb-6">
+          <label class="block text-gray-800 font-medium mb-2">Have you lived at your current address for less than two years?<span class="text-red-500">*</span></label>
+          <select name="livedLessThanTwoYears" id="livedLessThanTwoYears" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select an option</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <!-- Previous Addresses Container -->
+        <div id="previousAddressesContainer" class="mb-6 hidden">
+          <!-- Previous address fields will be appended here -->
+          <div id="previousAddresses"></div>
+          <button type="button" id="addPreviousAddress" class="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-500 transition duration-300 mt-4">Add Previous Address</button>
         </div>
 
         <button type="submit" class="w-full bg-blue-900 text-white py-3 mt-6 rounded-full font-semibold text-lg shadow-md hover:bg-blue-800 transition duration-300">Continue</button>
@@ -98,5 +110,100 @@
   <footer class="bg-blue-900 text-white text-center py-6">
     <p>© 2024 Pasaana. All rights reserved.</p>
   </footer>
+
+  <!-- JavaScript for dynamic fields and validation -->
+  <script>
+    $(document).ready(function() {
+      // Handle other housing status
+      $('#housingStatus').on('change', function() {
+        if ($(this).val() === 'Other') {
+          $('#otherHousingContainer').removeClass('hidden');
+          $('#otherHousing').prop('required', true);
+        } else {
+          $('#otherHousingContainer').addClass('hidden');
+          $('#otherHousing').prop('required', false);
+        }
+      });
+
+      // Handle previous addresses
+      let totalMonths = 0;
+
+      $('#livedLessThanTwoYears').on('change', function() {
+        if ($(this).val() === 'Yes') {
+          $('#previousAddressesContainer').removeClass('hidden');
+          $('#previousAddresses').empty();
+          addPreviousAddressField();
+        } else {
+          $('#previousAddressesContainer').addClass('hidden');
+          $('#previousAddresses').empty();
+          totalMonths = 0;
+        }
+      });
+
+      $('#addPreviousAddress').on('click', function() {
+        addPreviousAddressField();
+      });
+
+      function addPreviousAddressField() {
+        const index = $('.previousAddress').length;
+        const addressField = `
+          <div class="previousAddress mb-6 border-t pt-6">
+            <h4 class="text-xl font-semibold text-blue-700 mb-4">Previous Address ${index + 1}</h4>
+            <!-- Street Address -->
+            <div class="mb-4">
+              <label for="previousStreetAddress_${index}" class="block text-gray-800 font-medium mb-2">Street Address<span class="text-red-500">*</span></label>
+              <input type="text" name="previousAddresses[${index}][streetAddress]" id="previousStreetAddress_${index}" placeholder="Enter your previous street address" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <!-- City -->
+            <div class="mb-4">
+              <label for="previousCity_${index}" class="block text-gray-800 font-medium mb-2">City<span class="text-red-500">*</span></label>
+              <input type="text" name="previousAddresses[${index}][city]" id="previousCity_${index}" placeholder="City" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <!-- State -->
+            <div class="mb-4">
+              <label for="previousState_${index}" class="block text-gray-800 font-medium mb-2">State<span class="text-red-500">*</span></label>
+              <select name="previousAddresses[${index}][state]" id="previousState_${index}" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Select State</option>
+                <% states.forEach(function(state) { %>
+                  <option value="<%= state %>"><%= state %></option>
+                <% }); %>
+              </select>
+            </div>
+            <!-- ZIP Code -->
+            <div class="mb-4">
+              <label for="previousZipCode_${index}" class="block text-gray-800 font-medium mb-2">ZIP Code<span class="text-red-500">*</span></label>
+              <input type="text" name="previousAddresses[${index}][zipCode]" id="previousZipCode_${index}" placeholder="ZIP Code" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+          </div>
+        `;
+        $('#previousAddresses').append(addressField);
+      }
+
+      // Real-time validation for ZIP Code
+      $('#zipCode').on('input', function() {
+        const zipPattern = /^\d{5}$/;
+        const isValid = zipPattern.test($(this).val());
+        $('#zipCodeError').toggleClass('hidden', isValid);
+      });
+
+      // Form submission validation
+      $('#step3-form').on('submit', function(e) {
+        let isFormValid = true;
+
+        // ZIP Code validation
+        const zipPattern = /^\d{5}$/;
+        if (!zipPattern.test($('#zipCode').val())) {
+          $('#zipCodeError').removeClass('hidden');
+          isFormValid = false;
+        }
+
+        // Additional validation can be added here
+
+        if (!isFormValid) {
+          e.preventDefault();
+        }
+      });
+    });
+  </script>
 </body>
 </html>

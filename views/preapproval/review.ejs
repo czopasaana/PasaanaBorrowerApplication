@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pre-Approval - Step 7</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/styles.css">
+  <!-- Include jQuery for interactions -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-50 to-indigo-50 min-h-screen flex flex-col">
+  <!-- Navigation Bar -->
+  <%- include('../partials/navbar.ejs') %>
+
+  <!-- Progress Bar -->
+  <%- include('../partials/progress-bar.ejs', { currentStep: 7 }) %>
+
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto py-0 px-4">
+    <div class="max-w-4xl mx-auto bg-white p-10 rounded-xl shadow-2xl">
+      <h2 class="text-3xl font-bold text-blue-900 mb-8">Step 7: Review and Confirmation</h2>
+      <!-- Review Sections -->
+      <form action="/preapproval/submit" method="post" id="review-form">
+        <% 
+          // Declare all variables once at the top
+          const step1Data = data.step1 || {};
+          const step3Data = data.step3 || {};
+          const step4Data = data.step4 || {};
+          const step5Data = data.step5 || {};
+          const coBorrowerData = data.coBorrower || {};
+        %>
+
+        <!-- Basic Information -->
+        <div class="mb-6">
+          <div class="flex justify-between items-center bg-gray-100 p-4 rounded-md cursor-pointer toggle-section" data-target="#basicInfo">
+            <h3 class="text-2xl font-semibold text-blue-800">Basic Information</h3>
+            <button type="button" class="text-blue-500 hover:text-blue-700 focus:outline-none">
+              Edit
+            </button>
+          </div>
+          <div id="basicInfo" class="mt-4">
+            <ul class="list-disc list-inside mb-4 text-gray-700">
+              <li><strong>First Name:</strong> <%= step1Data.firstName %></li>
+              <li><strong>Last Name:</strong> <%= step1Data.lastName %></li>
+              <li><strong>Date of Birth:</strong> <%= step1Data.dateOfBirth %></li>
+              <li><strong>Email:</strong> <%= step1Data.email %></li>
+              <li><strong>Phone Number:</strong> <%= step1Data.phoneNumber %></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Address and Residency -->
+        <div class="mb-6">
+          <div class="flex justify-between items-center bg-gray-100 p-4 rounded-md cursor-pointer toggle-section" data-target="#addressResidency">
+            <h3 class="text-2xl font-semibold text-blue-800">Address and Residency</h3>
+            <button type="button" class="text-blue-500 hover:text-blue-700 focus:outline-none">
+              Edit
+            </button>
+          </div>
+          <div id="addressResidency" class="mt-4">
+            <ul class="list-disc list-inside mb-4 text-gray-700">
+              <li><strong>Street Address:</strong> <%= step3Data.streetAddress %></li>
+              <li><strong>City:</strong> <%= step3Data.city %></li>
+              <li><strong>State:</strong> <%= step3Data.state %></li>
+              <li><strong>Zip Code:</strong> <%= step3Data.zipCode %></li>
+              <li><strong>Residency Status:</strong> <%= step3Data.residencyStatus %></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Social Security Number -->
+        <div class="mb-6">
+          <div class="flex justify-between items-center bg-gray-100 p-4 rounded-md cursor-pointer toggle-section" data-target="#ssnInfo">
+            <h3 class="text-2xl font-semibold text-blue-800">Social Security Number</h3>
+            <button type="button" class="text-blue-500 hover:text-blue-700 focus:outline-none">
+              Edit
+            </button>
+          </div>
+          <div id="ssnInfo" class="mt-4">
+            <ul class="list-disc list-inside mb-4 text-gray-700">
+              <li><strong>SSN:</strong> ***-**-<%= step4Data.ssn ? step4Data.ssn.slice(-4) : 'XXXX' %></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Basic Financial Information -->
+        <div class="mb-6">
+          <div class="flex justify-between items-center bg-gray-100 p-4 rounded-md cursor-pointer toggle-section" data-target="#financialInfo">
+            <h3 class="text-2xl font-semibold text-blue-800">Basic Financial Information</h3>
+            <button type="button" class="text-blue-500 hover:text-blue-700 focus:outline-none">
+              Edit
+            </button>
+          </div>
+          <div id="financialInfo" class="mt-4">
+            <ul class="list-disc list-inside mb-4 text-gray-700">
+              <li><strong>Employment Status:</strong> <%= step5Data.employmentStatus %></li>
+              <% if (step5Data.employmentStatus === 'Employed' || step5Data.employmentStatus === 'Self-Employed') { %>
+                <li><strong>Employer's Name:</strong> <%= step5Data.employerName %></li>
+                <li><strong>Length of Employment:</strong> <%= step5Data.employmentLength %></li>
+              <% } else if (step5Data.employmentStatus === 'Other') { %>
+                <li><strong>Employment Details:</strong> <%= step5Data.otherEmploymentDetail %></li>
+              <% } %>
+              <li><strong>Annual Income:</strong> $<%= parseFloat(step5Data.annualIncome || 0).toLocaleString() %></li>
+              <li><strong>Monthly Debt Obligations:</strong> $<%= parseFloat(step5Data.monthlyDebt || 0).toLocaleString() %></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Co-Borrower's Information -->
+        <% if (data.addCoBorrower === 'yes' && data.coBorrower) { %>
+          <div class="mb-6">
+            <div class="flex justify-between items-center bg-gray-100 p-4 rounded-md cursor-pointer toggle-section" data-target="#coBorrowerInfo">
+              <h3 class="text-2xl font-semibold text-blue-800">Co-Borrower's Information</h3>
+              <button type="button" class="text-blue-500 hover:text-blue-700 focus:outline-none">
+                Edit
+              </button>
+            </div>
+            <div id="coBorrowerInfo" class="mt-4">
+              <ul class="list-disc list-inside mb-4 text-gray-700">
+                <li><strong>First Name:</strong> <%= coBorrowerData.coFirstName %></li>
+                <li><strong>Last Name:</strong> <%= coBorrowerData.coLastName %></li>
+                <li><strong>Date of Birth:</strong> <%= coBorrowerData.coDateOfBirth %></li>
+                <li><strong>Email:</strong> <%= coBorrowerData.coEmail %></li>
+                <li><strong>Phone Number:</strong> <%= coBorrowerData.coPhoneNumber %></li>
+                <li><strong>SSN:</strong> ***-**-<%= coBorrowerData.coSSN ? coBorrowerData.coSSN.slice(-4) : 'XXXX' %></li>
+                <li><strong>Employment Status:</strong> <%= coBorrowerData.coEmploymentStatus %></li>
+                <% if (coBorrowerData.coEmploymentStatus === 'Employed' || coBorrowerData.coEmploymentStatus === 'Self-Employed') { %>
+                  <li><strong>Employer's Name:</strong> <%= coBorrowerData.coEmployerName %></li>
+                  <li><strong>Length of Employment:</strong> <%= coBorrowerData.coEmploymentLength %></li>
+                <% } else if (coBorrowerData.coEmploymentStatus === 'Other') { %>
+                  <li><strong>Employment Details:</strong> <%= coBorrowerData.coOtherEmploymentDetail %></li>
+                <% } %>
+                <li><strong>Annual Income:</strong> $<%= parseFloat(coBorrowerData.coAnnualIncome || 0).toLocaleString() %></li>
+                <li><strong>Monthly Debt Obligations:</strong> $<%= parseFloat(coBorrowerData.coMonthlyDebt || 0).toLocaleString() %></li>
+              </ul>
+            </div>
+          </div>
+        <% } %>
+
+        <!-- Confirmation Checkbox -->
+        <div class="mb-6">
+          <label class="inline-flex items-center">
+            <input type="checkbox" name="confirmAccuracy" required class="form-checkbox h-5 w-5 text-blue-600">
+            <span class="ml-2 text-gray-700">I confirm that the information provided is accurate and complete to the best of my knowledge.</span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full bg-blue-900 text-white py-3 mt-6 rounded-full font-semibold text-lg shadow-md hover:bg-blue-800 transition duration-300">Submit Application</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white text-center py-6 mt-8">
+    <p>© 2024 Pasaana. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript for Collapsible Sections -->
+  <script>
+    $(document).ready(function() {
+      // Collapsible Sections
+      $('.toggle-section').on('click', function() {
+        const target = $(this).data('target');
+        $(target).slideToggle();
+      });
+
+      // Edit Buttons
+      $('.toggle-section button').on('click', function(e) {
+        e.stopPropagation(); // Prevent the toggle when clicking the edit button
+        const section = $(this).closest('.toggle-section').data('target');
+        // Extract the step number from the section ID (e.g., '#basicInfo' -> step3)
+        let stepNumber = '';
+        switch(section) {
+          case '#basicInfo':
+            stepNumber = 3;
+            break;
+          case '#addressResidency':
+            stepNumber = 3;
+            break;
+          case '#ssnInfo':
+            stepNumber = 4;
+            break;
+          case '#financialInfo':
+            stepNumber = 5;
+            break;
+          case '#coBorrowerInfo':
+            stepNumber = 6;
+            break;
+          default:
+            stepNumber = 1;
+        }
+        window.location.href = `/preapproval/step/${stepNumber}`;
+      });
+    });
+  </script>
+</body>
+</html>

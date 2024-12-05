@@ -273,8 +273,13 @@ app.get('/preapproval', ensureAuthenticated, preventPreApprovedAccess, (req, res
 app.get('/preapproval/step/:step', ensureAuthenticated, preventPreApprovedAccess, enforceStepOrder, (req, res) => {
   const step = parseInt(req.params.step);
 
-  // If step is beyond the last step, redirect to review
-  if (step > 8) {
+  // Initialize session data if it doesn't exist
+  if (!req.session.preApprovalData) {
+    req.session.preApprovalData = {};
+  }
+
+  // If step is beyond the last step, redirect to review or final step
+  if (step > 6) {
     return res.redirect('/preapproval/review');
   }
 
@@ -292,6 +297,30 @@ app.post('/preapproval/step/:step', ensureAuthenticated, preventPreApprovedAcces
   // Save current step data to session
   req.session.preApprovalData[`step${step}`] = req.body;
 
+  // Process special logic for certain steps
+  if (step === 6) {
+    // Handle co-borrower information
+    const { addCoBorrower } = req.body;
+    req.session.preApprovalData.addCoBorrower = addCoBorrower;
+
+    if (addCoBorrower === 'yes') {
+      // Save co-borrower data
+      const coBorrowerData = {
+        firstName: req.body.coFirstName,
+        lastName: req.body.coLastName,
+        dateOfBirth: req.body.coDateOfBirth,
+        email: req.body.coEmail,
+        phoneNumber: req.body.coPhoneNumber,
+        ssn: req.body.coSSN,
+        employmentStatus: req.body.coEmploymentStatus,
+        annualIncome: req.body.coAnnualIncome,
+        monthlyDebt: req.body.coMonthlyDebt || 0, // Include co-borrower's monthly debt if collected
+        // Include other fields as needed
+      };
+      req.session.preApprovalData.coBorrower = coBorrowerData;
+    }
+  }
+
   // Mark this step as completed
   if (!req.session.completedSteps) {
     req.session.completedSteps = [];
@@ -300,7 +329,7 @@ app.post('/preapproval/step/:step', ensureAuthenticated, preventPreApprovedAcces
     req.session.completedSteps.push(step);
   }
 
-  if (step < 7) {
+  if (step < 6) {
     // Redirect to the next step
     res.redirect(`/preapproval/step/${step + 1}`);
   } else {
@@ -310,9 +339,9 @@ app.post('/preapproval/step/:step', ensureAuthenticated, preventPreApprovedAcces
 });
 
 // Review Pre-Approval Data
-app.get('/preapproval/review', (req, res) => {
+app.get('/preapproval/review', ensureAuthenticated, (req, res) => {
   const data = req.session.preApprovalData;
-  res.render('preapproval/step7', { data });
+  res.render('preapproval/review', { data });
 });
 
 // Handle Submission
@@ -343,43 +372,26 @@ app.post('/preapproval/submit', ensureAuthenticated, preventPreApprovedAccess, a
   }
 });
 
-// Function to calculate the pre-approved loan amount
 function calculatePreApprovedLoanAmount(applicationData) {
-  // Extract annual income
-  let annualIncome = Number(applicationData.step4.annualIncome || 0);
+  // Extract annual income from Step 5
+  let annualIncome = Number(applicationData.step5.annualIncome || 0);
 
-  // If the user is self-employed, use selfAnnualIncome
-  if (applicationData.step4.employmentStatus === 'self_employed') {
-    annualIncome = Number(applicationData.step4.selfAnnualIncome || 0);
+  // Include co-borrower's income if applicable
+  if (applicationData.addCoBorrower === 'yes' && applicationData.coBorrower) {
+    const coAnnualIncome = Number(applicationData.coBorrower.annualIncome || 0);
+    annualIncome += coAnnualIncome;
   }
 
-  // Include additional income if applicable
-  if (applicationData.step4.additionalIncome === 'yes') {
-    const additionalIncomeAmounts = applicationData.step4.additionalIncomeAmount || [];
-    const totalAdditionalIncome = additionalIncomeAmounts.reduce(
-      (sum, amount) => sum + Number(amount || 0),
-      0
-    );
-    annualIncome += totalAdditionalIncome;
-  }
-
-  // Calculate monthly income
+  // Calculate combined monthly income
   const monthlyIncome = annualIncome / 12;
 
-  // Extract monthly debts
-  let monthlyDebts = 0;
-  monthlyDebts += Number(applicationData.step5.creditCardPayments || 0);
-  monthlyDebts += Number(applicationData.step5.autoLoanPayments || 0);
-  monthlyDebts += Number(applicationData.step5.studentLoanPayments || 0);
-  if (applicationData.step5.hasOtherDebts === 'yes') {
-    const otherDebtPayments = applicationData.step5.otherDebtPayment || [];
-    monthlyDebts += otherDebtPayments.reduce(
-      (sum, amount) => sum + Number(amount || 0),
-      0
-    );
-  }
-  if (applicationData.step5.hasAlimony === 'yes') {
-    monthlyDebts += Number(applicationData.step5.alimonyPayment || 0);
+  // Extract monthly debts from Step 5
+  let monthlyDebts = Number(applicationData.step5.monthlyDebt || 0);
+
+  // Include co-borrower's debts if applicable
+  if (applicationData.addCoBorrower === 'yes' && applicationData.coBorrower) {
+    const coMonthlyDebt = Number(applicationData.coBorrower.monthlyDebt || 0);
+    monthlyDebts += coMonthlyDebt;
   }
 
   // Maximum Housing Expense (Front-End Ratio)
@@ -409,9 +421,9 @@ function calculatePreApprovedLoanAmount(applicationData) {
 
   let maxLoanAmount = P * (1 - Math.pow(1 + r, -n)) / r;
 
-  // Include down payment
-  const downPayment = Number(applicationData.step5.savingsBalance || 0);
-  maxLoanAmount += downPayment;
+  // Include down payment if collected
+  // const downPayment = Number(applicationData.step5.downPayment || 0);
+  // maxLoanAmount += downPayment;
 
   // Return the maximum loan amount rounded to the nearest dollar
   return Math.round(maxLoanAmount);
@@ -450,90 +462,11 @@ app.get('/preapproval/thank-you', ensureAuthenticated, async (req, res) => {
     // Render the thank-you page with the loan amount
     res.render('preapproval/thank-you', {
       maximumLoanAmount,
+      isPreApproved: true, // Assuming pre-approval logic, adjust as needed
     });
   } catch (error) {
     console.error('Error fetching application data:', error);
     res.redirect('/preapproval');
-  }
-});
-
-// Calculators Selection Page Route
-app.get('/calculators', (req, res) => {
-  res.render('calculators');
-});
-
-// Ensure existing calculator routes are defined
-// Affordability Calculator Route
-app.get('/affordability-calculator', (req, res) => {
-  res.render('affordability-calculator', {
-    isLoggedIn: req.session.user != null,
-    preApprovalData: req.session.preApprovalData,
-  });
-});
-
-// Mortgage Calculator Route
-app.get('/mortgage-calculator', (req, res) => {
-  res.render('mortgage-calculator');
-});
-
-// Chat Route using Chat Completion API
-app.post('/chat', async (req, res) => {
-  const message = req.body.message;
-
-  try {
-    const completion = await openai.chat.completions.create({
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a helpful assistant that guides users through the mortgage application process.',
-        },
-        { role: 'user', content: message },
-      ],
-      model: 'gpt-3.5-turbo',
-    });
-
-    const reply = completion.choices[0].message.content.trim();
-    res.json({ reply });
-  } catch (error) {
-    console.error('Error communicating with OpenAI:', error.response ? error.response.data : error.message);
-    res.status(500).json({ error: 'An error occurred while processing your request.' });
-  }
-});
-
-// Add a new route for AI-based predictions
-app.post('/api/predict', async (req, res) => {
-  const {
-    annualIncome,
-    monthlyDebts,
-    salaryGrowthRate,
-    expenseGrowthRate,
-    years
-  } = req.body;
-
-  // Construct the AI prompt
-  const prompt = `
-    Predict the annual income and debts over ${years} years, given:
-    - Starting Annual Income: $${annualIncome}
-    - Monthly Debts: $${monthlyDebts}
-    - Annual Salary Growth Rate: ${salaryGrowthRate * 100}%
-    - Annual Expense Growth Rate: ${expenseGrowthRate * 100}%
-    Provide the results in a JSON array with "year", "income", and "debts" fields.
-  `;
-
-  try {
-    const completion = await openai.chat.completions.create({
-      messages: [{ role: 'user', content: prompt }],
-      model: 'gpt-3.5-turbo',
-    });
-
-    // Extract and parse AI response
-    const aiResponse = completion.choices[0].message.content;
-    const projections = JSON.parse(aiResponse);
-
-    res.json({ projections });
-  } catch (error) {
-    console.error('Error with OpenAI API:', error);
-    res.status(500).json({ error: 'Prediction failed.' });
   }
 });
 
@@ -810,6 +743,8 @@ app.get('/explorer', async (req, res) => {
 
 // **Add the static middleware after your routes**
 app.use(express.static('public'));
+
+
 
 
 

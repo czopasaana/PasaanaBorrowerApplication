@@ -6,12 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/styles.css">
   <!-- Include jQuery for AJAX requests -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-gradient-to-r from-blue-50 to-indigo-50 min-h-screen flex flex-col">
   <!-- Navigation Bar -->
-  <%- include('../partials/navbar.ejs') %>  
+  <%- include('../partials/navbar.ejs') %>
 
   <!-- Progress Bar -->
   <%- include('../partials/progress-bar.ejs', { currentStep: 5 }) %>
@@ -19,110 +21,90 @@
   <!-- Main Content -->
   <main class="flex-grow container mx-auto py-0 px-4">
     <div class="max-w-3xl mx-auto bg-white p-10 rounded-xl shadow-2xl">
-      <h2 class="text-3xl font-bold text-blue-900 mb-8">Step 5: Financial Information</h2>
+      <h2 class="text-3xl font-bold text-blue-900 mb-8">Step 5: Basic Financial Information</h2>
       <form action="/preapproval/step/5" method="post" id="step5-form">
-        <!-- Assets Section -->
-        <h3 class="text-2xl font-semibold text-blue-800 mb-6">Assets</h3>
-        <!-- Checking Account Balance -->
+        <!-- Annual Income -->
         <div class="mb-6">
-          <label for="checkingBalance" class="block text-gray-700 font-medium mb-2">Checking Account Balance (USD):</label>
-          <input type="number" name="checkingBalance" id="checkingBalance" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label for="annualIncome" class="block text-gray-800 font-medium mb-2">
+            What is your total gross annual income before taxes?<span class="text-red-500">*</span>
+          </label>
+          <input type="number" name="annualIncome" id="annualIncome" placeholder="Enter amount in USD" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p class="text-gray-600 mt-2 text-sm">
+            <em>Include all income sources such as salary, wages, bonuses, and rental income.</em>
+          </p>
+          <p id="annualIncomeError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid income amount.</p>
         </div>
-        <!-- Savings Account Balance -->
+
+        <!-- Employment Status -->
         <div class="mb-6">
-          <label for="savingsBalance" class="block text-gray-700 font-medium mb-2">Savings Account Balance (USD):</label>
-          <input type="number" name="savingsBalance" id="savingsBalance" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <!-- Investments -->
-        <div class="mb-6">
-          <label for="hasInvestments" class="block text-gray-700 font-medium mb-2">Do you have any investment accounts?</label>
-          <select name="hasInvestments" id="hasInvestments" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label for="employmentStatus" class="block text-gray-800 font-medium mb-2">
+            What is your current employment status?<span class="text-red-500">*</span>
+          </label>
+          <select name="employmentStatus" id="employmentStatus" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Select an option</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
+            <option value="Employed">Employed</option>
+            <option value="Self-Employed">Self-Employed</option>
+            <option value="Retired">Retired</option>
+            <option value="Other">Other</option>
           </select>
         </div>
-        <!-- Investment Details -->
-        <div id="investmentDetails" class="mb-6 hidden">
+
+        <!-- Employed or Self-Employed Details -->
+        <div id="employmentDetails" class="mb-6 hidden">
+          <!-- Employer's Name -->
           <div class="mb-6">
-            <label for="investmentValue" class="block text-gray-700 font-medium mb-2">Total Investment Value (USD):</label>
-            <input type="number" name="investmentValue" id="investmentValue" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <label for="employerName" class="block text-gray-800 font-medium mb-2">Employer's Name<span class="text-red-500">*</span></label>
+            <input type="text" name="employerName" id="employerName" placeholder="Enter your employer's name" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <p id="employerNameError" class="text-red-500 text-sm mt-1 hidden">Please enter your employer's name.</p>
           </div>
-        </div>
-        <!-- Retirement Accounts -->
-        <div class="mb-6">
-          <label for="hasRetirement" class="block text-gray-700 font-medium mb-2">Do you have any retirement accounts (e.g., 401(k), IRA)?</label>
-          <select name="hasRetirement" id="hasRetirement" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Select an option</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </div>
-        <!-- Retirement Account Details -->
-        <div id="retirementDetails" class="mb-6 hidden">
+
+          <!-- Length of Employment -->
           <div class="mb-6">
-            <label for="retirementValue" class="block text-gray-700 font-medium mb-2">Total Retirement Account Value (USD):</label>
-            <input type="number" name="retirementValue" id="retirementValue" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <label for="employmentLength" class="block text-gray-800 font-medium mb-2">Length of Employment<span class="text-red-500">*</span></label>
+            <input type="text" name="employmentLength" id="employmentLength" placeholder="e.g., 5 years, 3 months" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <p id="employmentLengthError" class="text-red-500 text-sm mt-1 hidden">Please enter the length of your employment.</p>
           </div>
         </div>
 
-        <!-- Liabilities Section -->
-        <h3 class="text-2xl font-semibold text-blue-800 mt-10 mb-6">Liabilities (Debts)</h3>
-        <!-- Credit Card Payments -->
+        <!-- Other Employment Status -->
+        <div id="otherEmploymentStatus" class="mb-6 hidden">
+          <label for="otherEmploymentDetail" class="block text-gray-800 font-medium mb-2">Please specify your employment status<span class="text-red-500">*</span></label>
+          <input type="text" name="otherEmploymentDetail" id="otherEmploymentDetail" placeholder="Enter your employment status" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p id="otherEmploymentDetailError" class="text-red-500 text-sm mt-1 hidden">Please specify your employment status.</p>
+        </div>
+
+        <!-- Monthly Debt Obligations -->
         <div class="mb-6">
-          <label for="creditCardPayments" class="block text-gray-700 font-medium mb-2">Monthly Credit Card Payments (USD):</label>
-          <input type="number" name="creditCardPayments" id="creditCardPayments" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label for="monthlyDebt" class="block text-gray-800 font-medium mb-2">
+            What is your estimated total monthly debt payments (e.g., car loans, student loans, credit cards)?<span class="text-red-500">*</span>
+          </label>
+          <input type="number" name="monthlyDebt" id="monthlyDebt" placeholder="Enter amount in USD" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p class="text-gray-600 mt-2 text-sm">
+            <em>Include all recurring debt payments. For assistance estimating, click <a href="#" id="debtCalculatorLink" class="text-blue-600 hover:underline">here</a>.</em>
+          </p>
+          <p id="monthlyDebtError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid debt amount.</p>
         </div>
-        <!-- Auto Loans -->
-        <div class="mb-6">
-          <label for="autoLoanPayments" class="block text-gray-700 font-medium mb-2">Monthly Auto Loan Payments (USD):</label>
-          <input type="number" name="autoLoanPayments" id="autoLoanPayments" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <!-- Student Loans -->
-        <div class="mb-6">
-          <label for="studentLoanPayments" class="block text-gray-700 font-medium mb-2">Monthly Student Loan Payments (USD):</label>
-          <input type="number" name="studentLoanPayments" id="studentLoanPayments" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <!-- Other Debts -->
-        <div class="mb-6">
-          <label for="hasOtherDebts" class="block text-gray-700 font-medium mb-2">Do you have any other debts?</label>
-          <select name="hasOtherDebts" id="hasOtherDebts" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Select an option</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </div>
-        <!-- Other Debts Details -->
-        <div id="otherDebtsDetails" class="mb-6 hidden">
-          <div id="otherDebtsEntries">
-            <!-- Template for other debts entry -->
-            <div class="other-debt-entry mb-6">
-              <div class="mb-6">
-                <label class="block text-gray-700 font-medium mb-2">Type of Debt:</label>
-                <input type="text" name="otherDebtType[]" class="otherDebtType w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              </div>
-              <div class="mb-6">
-                <label class="block text-gray-700 font-medium mb-2">Monthly Payment Amount (USD):</label>
-                <input type="number" name="otherDebtPayment[]" class="otherDebtPayment w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              </div>
-            </div>
-          </div>
-          <button type="button" id="addOtherDebt" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">Add Another Debt</button>
-        </div>
-        <!-- Alimony/Child Support -->
-        <div class="mb-6">
-          <label for="hasAlimony" class="block text-gray-700 font-medium mb-2">Do you pay alimony or child support?</label>
-          <select name="hasAlimony" id="hasAlimony" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Select an option</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </div>
-        <!-- Alimony/Child Support Details -->
-        <div id="alimonyDetails" class="mb-6 hidden">
-          <div class="mb-6">
-            <label for="alimonyPayment" class="block text-gray-700 font-medium mb-2">Monthly Payment Amount (USD):</label>
-            <input type="number" name="alimonyPayment" id="alimonyPayment" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+        <!-- Debt Calculation Assistance Modal -->
+        <div id="debtCalculatorModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+          <div class="bg-white rounded-lg p-6 max-w-lg w-full">
+            <h3 class="text-xl font-semibold mb-4">Monthly Debt Calculation Assistance</h3>
+            <p class="mb-4">Add up your monthly payments for the following debts:</p>
+            <ul class="list-disc list-inside mb-4">
+              <li>Car Loans</li>
+              <li>Student Loans</li>
+              <li>Credit Card Minimum Payments</li>
+              <li>Personal Loans</li>
+              <li>Any Other Debt Payments</li>
+            </ul>
+            <p class="mb-2">For example, if you pay:</p>
+            <ul class="list-disc list-inside mb-4">
+              <li>$200 for car loan</li>
+              <li>$150 for student loan</li>
+              <li>$50 for credit cards</li>
+            </ul>
+            <p>Your total monthly debt payments would be <strong>$400</strong>.</p>
+            <button id="closeDebtCalculator" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">Close</button>
           </div>
         </div>
 
@@ -136,94 +118,92 @@
     <p>© 2024 Pasaana. All rights reserved.</p>
   </footer>
 
-  <!-- JavaScript to handle conditional display and required attributes -->
+  <!-- JavaScript for Validation and Interactivity -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const hasInvestments = document.getElementById('hasInvestments');
-      const investmentDetails = document.getElementById('investmentDetails');
-      const hasRetirement = document.getElementById('hasRetirement');
-      const retirementDetails = document.getElementById('retirementDetails');
-      const hasOtherDebts = document.getElementById('hasOtherDebts');
-      const otherDebtsDetails = document.getElementById('otherDebtsDetails');
-      const addOtherDebt = document.getElementById('addOtherDebt');
-      const otherDebtsEntries = document.getElementById('otherDebtsEntries');
-      const hasAlimony = document.getElementById('hasAlimony');
-      const alimonyDetails = document.getElementById('alimonyDetails');
-
-      // Toggle Investment Details
-      hasInvestments.addEventListener('change', function() {
-        if (this.value === 'yes') {
-          investmentDetails.classList.remove('hidden');
-          addRequiredToFields(investmentDetails);
+    $(document).ready(function() {
+      // Employment Status Change Handler
+      $('#employmentStatus').on('change', function() {
+        const status = $(this).val();
+        if (status === 'Employed' || status === 'Self-Employed') {
+          $('#employmentDetails').removeClass('hidden');
+          $('#employerName, #employmentLength').prop('required', true);
+          $('#otherEmploymentStatus').addClass('hidden');
+          $('#otherEmploymentDetail').prop('required', false);
+        } else if (status === 'Other') {
+          $('#otherEmploymentStatus').removeClass('hidden');
+          $('#otherEmploymentDetail').prop('required', true);
+          $('#employmentDetails').addClass('hidden');
+          $('#employerName, #employmentLength').prop('required', false);
         } else {
-          investmentDetails.classList.add('hidden');
-          removeRequiredFromFields(investmentDetails);
+          $('#employmentDetails').addClass('hidden');
+          $('#employerName, #employmentLength').prop('required', false);
+          $('#otherEmploymentStatus').addClass('hidden');
+          $('#otherEmploymentDetail').prop('required', false);
         }
       });
 
-      // Toggle Retirement Details
-      hasRetirement.addEventListener('change', function() {
-        if (this.value === 'yes') {
-          retirementDetails.classList.remove('hidden');
-          addRequiredToFields(retirementDetails);
-        } else {
-          retirementDetails.classList.add('hidden');
-          removeRequiredFromFields(retirementDetails);
+      // Real-time validation for Annual Income
+      $('#annualIncome').on('input', function() {
+        const isValid = $(this).val() !== '' && !isNaN($(this).val()) && parseFloat($(this).val()) >= 0;
+        $('#annualIncomeError').toggleClass('hidden', isValid);
+      });
+
+      // Real-time validation for Monthly Debt
+      $('#monthlyDebt').on('input', function() {
+        const isValid = $(this).val() !== '' && !isNaN($(this).val()) && parseFloat($(this).val()) >= 0;
+        $('#monthlyDebtError').toggleClass('hidden', isValid);
+      });
+
+      // Debt Calculator Modal
+      $('#debtCalculatorLink').on('click', function(e) {
+        e.preventDefault();
+        $('#debtCalculatorModal').removeClass('hidden');
+      });
+
+      $('#closeDebtCalculator').on('click', function() {
+        $('#debtCalculatorModal').addClass('hidden');
+      });
+
+      // Form submission validation
+      $('#step5-form').on('submit', function(e) {
+        let isFormValid = true;
+
+        // Annual Income validation
+        if ($('#annualIncome').val() === '' || isNaN($('#annualIncome').val()) || parseFloat($('#annualIncome').val()) < 0) {
+          $('#annualIncomeError').removeClass('hidden');
+          isFormValid = false;
+        }
+
+        // Monthly Debt validation
+        if ($('#monthlyDebt').val() === '' || isNaN($('#monthlyDebt').val()) || parseFloat($('#monthlyDebt').val()) < 0) {
+          $('#monthlyDebtError').removeClass('hidden');
+          isFormValid = false;
+        }
+
+        // Employment Details validation
+        const employmentStatus = $('#employmentStatus').val();
+        if (employmentStatus === '') {
+          isFormValid = false;
+        } else if (employmentStatus === 'Employed' || employmentStatus === 'Self-Employed') {
+          if ($('#employerName').val().trim() === '') {
+            $('#employerNameError').removeClass('hidden');
+            isFormValid = false;
+          }
+          if ($('#employmentLength').val().trim() === '') {
+            $('#employmentLengthError').removeClass('hidden');
+            isFormValid = false;
+          }
+        } else if (employmentStatus === 'Other') {
+          if ($('#otherEmploymentDetail').val().trim() === '') {
+            $('#otherEmploymentDetailError').removeClass('hidden');
+            isFormValid = false;
+          }
+        }
+
+        if (!isFormValid) {
+          e.preventDefault();
         }
       });
-
-      // Toggle Other Debts Details
-      hasOtherDebts.addEventListener('change', function() {
-        if (this.value === 'yes') {
-          otherDebtsDetails.classList.remove('hidden');
-          addRequiredToFields(otherDebtsDetails);
-        } else {
-          otherDebtsDetails.classList.add('hidden');
-          removeRequiredFromFields(otherDebtsDetails);
-        }
-      });
-
-      // Add Another Debt Entry
-      addOtherDebt.addEventListener('click', function() {
-        const newEntry = document.createElement('div');
-        newEntry.classList.add('other-debt-entry', 'mb-6');
-        newEntry.innerHTML = `
-          <div class="mb-6">
-            <label class="block text-gray-700 font-medium mb-2">Type of Debt:</label>
-            <input type="text" name="otherDebtType[]" class="otherDebtType w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-          </div>
-          <div class="mb-6">
-            <label class="block text-gray-700 font-medium mb-2">Monthly Payment Amount (USD):</label>
-            <input type="number" name="otherDebtPayment[]" class="otherDebtPayment w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-          </div>
-        `;
-        otherDebtsEntries.appendChild(newEntry);
-      });
-
-      // Toggle Alimony Details
-      hasAlimony.addEventListener('change', function() {
-        if (this.value === 'yes') {
-          alimonyDetails.classList.remove('hidden');
-          addRequiredToFields(alimonyDetails);
-        } else {
-          alimonyDetails.classList.add('hidden');
-          removeRequiredFromFields(alimonyDetails);
-        }
-      });
-
-      function addRequiredToFields(section) {
-        const inputs = section.querySelectorAll('input, select');
-        inputs.forEach(input => {
-          input.setAttribute('required', 'required');
-        });
-      }
-
-      function removeRequiredFromFields(section) {
-        const inputs = section.querySelectorAll('input, select');
-        inputs.forEach(input => {
-          input.removeAttribute('required');
-        });
-      }
     });
   </script>
 </body>

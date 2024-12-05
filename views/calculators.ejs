@@ -17,7 +17,8 @@
   <%- include('partials/navbar.ejs') %>
 
   <!-- Hero Section -->
-  <section class="bg-white calculators-background">
+  <section class="calculators-background relative z-20">
+    <div class="absolute inset-0 bg-black opacity-30"></div>
     <div class="max-w-7xl mx-auto py-16 sm:py-24 lg:py-32 relative z-10">
       <div class="text-center">
         <h1 class="text-4xl tracking-tight font-extrabold sm:text-5xl md:text-6xl drop-shadow-md">
@@ -26,7 +27,9 @@
         <p class="mt-5 max-w-md mx-auto text-xl font-semibold text-white sm:text-2xl md:mt-8 drop-shadow-md">
           Empowering you to make informed financial decisions.
         </p>
-</section>
+      </div>
+    </div>
+  </section>
 
   <!-- Main Content -->
   <main id="calculators" class="container mx-auto py-12 px-4">

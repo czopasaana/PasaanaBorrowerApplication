@@ -6,39 +6,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/styles.css">
   <!-- Include jQuery for AJAX requests -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-gradient-to-r from-blue-50 to-indigo-50 min-h-screen flex flex-col">
   <!-- Navigation Bar -->
-  <%- include('../partials/navbar.ejs') %>    
+  <%- include('../partials/navbar.ejs') %>
 
   <!-- Progress Bar -->
   <%- include('../partials/progress-bar.ejs', { currentStep: 6 }) %>
 
   <!-- Main Content -->
   <main class="flex-grow container mx-auto py-0 px-4">
-    <div class="max-w-xl mx-auto bg-white p-10 rounded-xl shadow-2xl">
-      <h2 class="text-3xl font-bold text-blue-900 mb-8">Step 6: Credit Check Authorization</h2>
-      <form action="/preapproval/step/6" method="post">
-        <!-- Credit Check Message -->
+    <div class="max-w-3xl mx-auto bg-white p-10 rounded-xl shadow-2xl">
+      <h2 class="text-3xl font-bold text-blue-900 mb-8">Step 6: Co-Borrower Option</h2>
+      <form action="/preapproval/step/6" method="post" id="step6-form">
+        <!-- Add Co-Borrower Prompt -->
         <div class="mb-6">
-          <p class="text-gray-700 mb-4">
-            To provide an accurate pre-approval, we need to review your credit history.
-            This will be a <strong>soft inquiry</strong> and will <span class="underline">not affect your credit score</span>.
-          </p>
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="authorizeCreditCheck" required class="form-checkbox h-5 w-5 text-blue-600">
-            <span class="ml-2 text-gray-700">I authorize Pasaana to perform a soft credit check.</span>
+          <label for="addCoBorrower" class="block text-gray-800 font-medium mb-2">
+            Would you like to add a co-borrower to your application?<br>
+            <span class="text-gray-600 text-sm">Adding a co-borrower may increase your approved loan amount or improve your loan options.</span>
+            <span class="text-red-500">*</span>
           </label>
-        </div>
-        <!-- SSN Input -->
-        <div class="mb-6">
-          <label for="ssn" class="block text-gray-700 font-medium mb-2">Social Security Number (SSN):</label>
-          <input type="text" name="ssn" id="ssn" placeholder="XXX-XX-XXXX" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select name="addCoBorrower" id="addCoBorrower" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
         </div>
 
-        <button type="submit" class="w-full bg-blue-900 text-white py-3 mt-6 rounded-full font-semibold text-lg shadow-md hover:bg-blue-800 transition duration-300">Continue</button>
+        <!-- Co-Borrower's Information -->
+        <div id="coBorrowerInfo" class="hidden">
+          <h3 class="text-2xl font-semibold text-blue-800 mt-6 mb-4">Co-Borrower's Information</h3>
+          <!-- Personal Information -->
+          <div class="mb-6">
+            <label for="coFirstName" class="block text-gray-800 font-medium mb-2">First Name<span class="text-red-500">*</span></label>
+            <input type="text" name="coFirstName" id="coFirstName" placeholder="First Name" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div class="mb-6">
+            <label for="coLastName" class="block text-gray-800 font-medium mb-2">Last Name<span class="text-red-500">*</span></label>
+            <input type="text" name="coLastName" id="coLastName" placeholder="Last Name" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- Date of Birth -->
+          <div class="mb-6">
+            <label for="coDateOfBirth" class="block text-gray-800 font-medium mb-2">Date of Birth<span class="text-red-500">*</span></label>
+            <input type="date" name="coDateOfBirth" id="coDateOfBirth" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- Contact Information -->
+          <div class="mb-6">
+            <label for="coEmail" class="block text-gray-800 font-medium mb-2">Email Address<span class="text-red-500">*</span></label>
+            <input type="email" name="coEmail" id="coEmail" placeholder="you@example.com" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div class="mb-6">
+            <label for="coPhoneNumber" class="block text-gray-800 font-medium mb-2">Phone Number<span class="text-red-500">*</span></label>
+            <input type="tel" name="coPhoneNumber" id="coPhoneNumber" placeholder="(XXX) XXX-XXXX" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- Social Security Number -->
+          <div class="mb-6">
+            <label for="coSSN" class="block text-gray-800 font-medium mb-2">Social Security Number<span class="text-red-500">*</span></label>
+            <input type="text" name="coSSN" id="coSSN" placeholder="XXX-XX-XXXX" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- Employment Status -->
+          <div class="mb-6">
+            <label for="coEmploymentStatus" class="block text-gray-800 font-medium mb-2">Employment Status<span class="text-red-500">*</span></label>
+            <select name="coEmploymentStatus" id="coEmploymentStatus" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">Select an option</option>
+              <option value="Employed">Employed</option>
+              <option value="Self-Employed">Self-Employed</option>
+              <option value="Retired">Retired</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <!-- Annual Income -->
+          <div class="mb-6">
+            <label for="coAnnualIncome" class="block text-gray-800 font-medium mb-2">Annual Gross Income (USD)<span class="text-red-500">*</span></label>
+            <input type="number" name="coAnnualIncome" id="coAnnualIncome" placeholder="Enter amount in USD" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- Other necessary fields can be added similarly -->
+        </div>
+
+        <button type="submit" class="w-full bg-blue-900 text-white py-3 mt-8 rounded-full font-semibold text-lg shadow-md hover:bg-blue-800 transition duration-300">Continue</button>
       </form>
     </div>
   </main>
@@ -47,5 +96,42 @@
   <footer class="bg-blue-900 text-white text-center py-6">
     <p>© 2024 Pasaana. All rights reserved.</p>
   </footer>
+
+  <!-- JavaScript to handle conditional display and validation -->
+  <script>
+    $(document).ready(function() {
+      $('#addCoBorrower').on('change', function() {
+        const value = $(this).val();
+        if (value === 'yes') {
+          $('#coBorrowerInfo').removeClass('hidden');
+          addRequiredToFields($('#coBorrowerInfo'));
+        } else {
+          $('#coBorrowerInfo').addClass('hidden');
+          removeRequiredFromFields($('#coBorrowerInfo'));
+        }
+      });
+
+      function addRequiredToFields(section) {
+        section.find('input, select').each(function() {
+          $(this).attr('required', 'required');
+        });
+      }
+
+      function removeRequiredFromFields(section) {
+        section.find('input, select').each(function() {
+          $(this).removeAttr('required');
+        });
+      }
+
+      // Real-time validation for SSN
+      $('#coSSN').on('input', function() {
+        const ssnPattern = /^(?!000|666|9\d{2})(\d{3})[- ]?(?!00)(\d{2})[- ]?(?!0000)(\d{4})$/;
+        const isValid = ssnPattern.test($(this).val());
+        // Toggle error message or styling as needed
+      });
+
+      // Additional validation can be added as needed
+    });
+  </script>
 </body>
 </html>

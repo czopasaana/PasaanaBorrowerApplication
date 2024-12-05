@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/styles.css">
   <!-- Include jQuery for AJAX requests -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -19,40 +21,193 @@
   <!-- Main Content -->
   <main class="flex-grow container mx-auto py-0 px-4">
     <div class="max-w-3xl mx-auto bg-white p-10 rounded-xl shadow-2xl">
-      <h2 class="text-3xl font-bold text-blue-900 mb-8">Step 1: Property Details</h2>
+      <h2 class="text-3xl font-bold text-blue-900 mb-8">Step 1: Basic Information</h2>
       <form action="/preapproval/step/1" method="post" id="step1-form">
-        <!-- Home Search Status -->
+        <!-- Section A: Personal Information -->
+        <h3 class="text-2xl font-semibold text-blue-800 mb-6">A. Personal Information</h3>
+
+        <!-- Full Legal Name -->
         <div class="mb-6">
-          <label for="homeStatus" class="block text-gray-800 font-medium mb-2">Have you found a specific property you're interested in?</label>
-          <select name="homeStatus" id="homeStatus" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label for="firstName" class="block text-gray-800 font-medium mb-2">First Name<span class="text-red-500">*</span></label>
+          <input type="text" name="firstName" id="firstName" placeholder="First Name" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p id="firstNameError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid first name.</p>
+        </div>
+        <div class="mb-6">
+          <label for="lastName" class="block text-gray-800 font-medium mb-2">Last Name<span class="text-red-500">*</span></label>
+          <input type="text" name="lastName" id="lastName" placeholder="Last Name" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p id="lastNameError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid last name.</p>
+        </div>
+
+        <!-- Date of Birth -->
+        <div class="mb-6">
+          <label for="dateOfBirth" class="block text-gray-800 font-medium mb-2">Date of Birth<span class="text-red-500">*</span></label>
+          <input type="date" name="dateOfBirth" id="dateOfBirth" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p id="dateOfBirthError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid date of birth.</p>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="mb-6">
+          <label for="email" class="block text-gray-800 font-medium mb-2">Email Address<span class="text-red-500">*</span></label>
+          <input type="email" name="email" id="email" value="<%= user.email %>" readonly class="w-full border border-gray-300 rounded-lg p-3 bg-gray-100 cursor-not-allowed focus:outline-none">
+        </div>
+        <div class="mb-6">
+          <label for="phoneNumber" class="block text-gray-800 font-medium mb-2">Phone Number<span class="text-red-500">*</span></label>
+          <input type="tel" name="phoneNumber" id="phoneNumber" placeholder="(XXX) XXX-XXXX" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p id="phoneNumberError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid phone number.</p>
+        </div>
+
+        <!-- Property Details -->
+        <div class="mb-6">
+          <label for="haveProperty" class="block text-gray-800 font-medium mb-2">Do you have a specific property in mind?<span class="text-red-500">*</span></label>
+          <select name="haveProperty" id="haveProperty" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Select an option</option>
-            <option value="yes">Yes, I have a property in mind</option>
-            <option value="no">No, I'm still looking</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
           </select>
         </div>
 
-        <!-- If Yes: Property Address -->
-        <div id="propertyDetails" class="mb-6 hidden">
-          <label for="propertyAddress" class="block text-gray-800 font-medium mb-2">Property Address:</label>
+        <!-- If "Yes": Property Address -->
+        <div id="propertyAddressContainer" class="mb-6 hidden">
+          <label for="propertyAddress" class="block text-gray-800 font-medium mb-2">Property Address<span class="text-red-500">*</span></label>
           <input type="text" name="propertyAddress" id="propertyAddress" placeholder="Enter the property's address" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p id="propertyAddressError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid property address.</p>
         </div>
 
-        <!-- If No: Preferred Location and Price Range -->
-        <div id="searchPreferences" class="mb-6 hidden">
-          <label for="priceRange" class="block text-gray-800 font-medium mb-2">What's your target price range for a home?</label>
-          <select name="priceRange" id="priceRange" class="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">Select a price range</option>
-            <option value="under_100k">Under $100,000</option>
-            <option value="100k_200k">$100,000 - $200,000</option>
-            <option value="200k_300k">$200,001 - $300,000</option>
-            <option value="300k_400k">$300,001 - $400,000</option>
-            <option value="400k_500k">$400,001 - $500,000</option>
-            <option value="500k_750k">$500,001 - $750,000</option>
-            <option value="750k_1m">$750,001 - $1,000,000</option>
-            <option value="over_1m">Over $1,000,000</option>
-          </select>
-          <label for="preferredLocation" class="block text-gray-800 font-medium mb-2">Where are you looking to buy a home?</label>
-          <input type="text" name="preferredLocation" id="preferredLocation" placeholder="Enter city, state, or ZIP code" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <!-- Section B: Demographic Information -->
+        <h3 class="text-2xl font-semibold text-blue-800 mt-10 mb-4">B. Demographic Information</h3>
+        <p class="text-gray-700 mb-6">
+          The following information is requested by the Federal Government for certain types of loans related to a dwelling to monitor compliance with equal credit opportunity, fair housing, and home mortgage disclosure laws. You are not required to provide this information but are encouraged to do so. Your decision will not affect your application in any way.
+        </p>
+
+        <!-- Option to skip all demographic questions -->
+        <div class="mb-6">
+          <input type="checkbox" id="skipDemographics" name="skipDemographics" class="mr-2">
+          <label for="skipDemographics" class="text-gray-800 font-medium">I do not wish to provide this information.</label>
+        </div>
+
+        <!-- Demographic Questions -->
+        <div id="demographicsSection">
+          <!-- Ethnicity -->
+          <div class="mb-6">
+            <label class="block text-gray-800 font-medium mb-2">What is your ethnicity?</label>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="radio" name="ethnicity" value="Hispanic or Latino" class="form-radio text-blue-600">
+                <span class="ml-2">Hispanic or Latino</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="radio" name="ethnicity" value="Not Hispanic or Latino" class="form-radio text-blue-600">
+                <span class="ml-2">Not Hispanic or Latino</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="radio" name="ethnicity" value="I do not wish to provide this information" class="form-radio text-blue-600">
+                <span class="ml-2">I do not wish to provide this information</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Race -->
+          <div class="mb-6">
+            <label class="block text-gray-800 font-medium mb-2">What is your race? (Check all that apply)</label>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="checkbox" name="race" value="American Indian or Alaska Native" class="form-checkbox text-blue-600">
+                <span class="ml-2">American Indian or Alaska Native</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="checkbox" name="race" value="Asian" class="form-checkbox text-blue-600">
+                <span class="ml-2">Asian</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="checkbox" name="race" value="Black or African American" class="form-checkbox text-blue-600">
+                <span class="ml-2">Black or African American</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="checkbox" name="race" value="Native Hawaiian or Other Pacific Islander" class="form-checkbox text-blue-600">
+                <span class="ml-2">Native Hawaiian or Other Pacific Islander</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="checkbox" name="race" value="White" class="form-checkbox text-blue-600">
+                <span class="ml-2">White</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="checkbox" name="race" value="I do not wish to provide this information" class="form-checkbox text-blue-600">
+                <span class="ml-2">I do not wish to provide this information</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Sex -->
+          <div class="mb-6">
+            <label class="block text-gray-800 font-medium mb-2">What is your sex?</label>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="radio" name="sex" value="Female" class="form-radio text-blue-600">
+                <span class="ml-2">Female</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="radio" name="sex" value="Male" class="form-radio text-blue-600">
+                <span class="ml-2">Male</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="radio" name="sex" value="Other" class="form-radio text-blue-600">
+                <span class="ml-2">Other</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="radio" name="sex" value="I do not wish to provide this information" class="form-radio text-blue-600">
+                <span class="ml-2">I do not wish to provide this information</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Marital Status -->
+          <div class="mb-6">
+            <label class="block text-gray-800 font-medium mb-2">What is your marital status?</label>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="radio" name="maritalStatus" value="Married" class="form-radio text-blue-600">
+                <span class="ml-2">Married</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="radio" name="maritalStatus" value="Separated" class="form-radio text-blue-600">
+                <span class="ml-2">Separated</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="radio" name="maritalStatus" value="Unmarried (including single, divorced, widowed)" class="form-radio text-blue-600">
+                <span class="ml-2">Unmarried (including single, divorced, widowed)</span>
+              </label>
+            </div>
+            <div>
+              <label class="inline-flex items-center mb-2">
+                <input type="radio" name="maritalStatus" value="I do not wish to provide this information" class="form-radio text-blue-600">
+                <span class="ml-2">I do not wish to provide this information</span>
+              </label>
+            </div>
+          </div>
         </div>
 
         <button type="submit" class="w-full bg-blue-900 text-white py-3 mt-6 rounded-full font-semibold text-lg shadow-md hover:bg-blue-800 transition duration-300">Continue</button>
@@ -65,24 +220,94 @@
     <p>© 2024 Pasaana. All rights reserved.</p>
   </footer>
 
-  <!-- JavaScript to handle conditional display -->
+  <!-- JavaScript to handle conditional display and validation -->
   <script>
-    document.getElementById('homeStatus').addEventListener('change', function() {
-      const propertyDetails = document.getElementById('propertyDetails');
-      const searchPreferences = document.getElementById('searchPreferences');
-      if (this.value === 'yes') {
-        propertyDetails.classList.remove('hidden');
-        searchPreferences.classList.add('hidden');
-        document.getElementById('propertyAddress').required = true;
-      } else if (this.value === 'no') {
-        propertyDetails.classList.add('hidden');
-        searchPreferences.classList.remove('hidden');
-        document.getElementById('propertyAddress').required = false;
-      } else {
-        propertyDetails.classList.add('hidden');
-        searchPreferences.classList.add('hidden');
-        document.getElementById('propertyAddress').required = false;
-      }
+    $(document).ready(function() {
+      // Handle property details display
+      $('#haveProperty').on('change', function() {
+        if ($(this).val() === 'yes') {
+          $('#propertyAddressContainer').removeClass('hidden');
+          $('#propertyAddress').prop('required', true);
+        } else {
+          $('#propertyAddressContainer').addClass('hidden');
+          $('#propertyAddress').prop('required', false);
+        }
+      });
+
+      // Handle demographic information skip
+      $('#skipDemographics').on('change', function() {
+        if ($(this).is(':checked')) {
+          $('#demographicsSection').hide();
+          // Clear all demographic inputs
+          $('#demographicsSection').find('input').prop('checked', false);
+        } else {
+          $('#demographicsSection').show();
+        }
+      });
+
+      // Real-time validation for name fields
+      $('#firstName').on('input', function() {
+        const isValid = $(this).val().trim().length > 0;
+        $('#firstNameError').toggleClass('hidden', isValid);
+      });
+
+      $('#lastName').on('input', function() {
+        const isValid = $(this).val().trim().length > 0;
+        $('#lastNameError').toggleClass('hidden', isValid);
+      });
+
+      // Real-time validation for date of birth
+      $('#dateOfBirth').on('change', function() {
+        const isValid = $(this).val() !== '';
+        $('#dateOfBirthError').toggleClass('hidden', isValid);
+      });
+
+      // Real-time validation for phone number
+      $('#phoneNumber').on('input', function() {
+        const phonePattern = /^\(?([0-9]{3})\)?[- ]?([0-9]{3})[- ]?([0-9]{4})$/;
+        const isValid = phonePattern.test($(this).val());
+        $('#phoneNumberError').toggleClass('hidden', isValid);
+      });
+
+      // Form submission validation
+      $('#step1-form').on('submit', function(e) {
+        let isFormValid = true;
+
+        // First Name validation
+        if ($('#firstName').val().trim() === '') {
+          $('#firstNameError').removeClass('hidden');
+          isFormValid = false;
+        }
+
+        // Last Name validation
+        if ($('#lastName').val().trim() === '') {
+          $('#lastNameError').removeClass('hidden');
+          isFormValid = false;
+        }
+
+        // Date of Birth validation
+        if ($('#dateOfBirth').val() === '') {
+          $('#dateOfBirthError').removeClass('hidden');
+          isFormValid = false;
+        }
+
+        // Phone Number validation
+        const phonePattern = /^\(?([0-9]{3})\)?[- ]?([0-9]{3})[- ]?([0-9]{4})$/;
+        if (!phonePattern.test($('#phoneNumber').val())) {
+          $('#phoneNumberError').removeClass('hidden');
+          isFormValid = false;
+        }
+
+        // Property Address validation if applicable
+        if ($('#haveProperty').val() === 'yes' && $('#propertyAddress').val().trim() === '') {
+          $('#propertyAddressError').removeClass('hidden');
+          isFormValid = false;
+        }
+
+        if (!isFormValid) {
+          e.preventDefault();
+        }
+      });
     });
   </script>
 </body>
