@@ -3,30 +3,291 @@
 <head>
   <meta charset="UTF-8">
   <title>My Profile</title>
-  <link rel="stylesheet" href="/styles.css">
   <!-- Include Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Link to Custom CSS -->
   <link rel="stylesheet" href="/styles.css">
-   <!-- Include jQuery for AJAX requests -->
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Include jQuery for AJAX requests -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+    // Pass isPreApproved status to client-side
+    window.isPreApproved = <%= isPreApproved ? 'true' : 'false' %>;
+  </script>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 flex flex-col min-h-screen">
   <!-- Navigation Bar -->
   <%- include('partials/navbar.ejs') %>
 
-  <main class="container mx-auto py-12 px-4">
-    <section class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-      <h1 class="text-3xl font-bold text-blue-900 mb-6">Welcome, <%= user.Email %>!</h1>
-      <p class="text-lg text-gray-700 mb-6">Your email: <%= user.Email %></p>
+  <main class="flex flex-1">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white rounded-lg shadow-lg p-6 h-full sticky top-0">
+      <h2 class="text-xl font-bold text-blue-900 mb-4">Navigation</h2>
+      <ul class="space-y-2">
+        <li>
+          <button class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium" data-tab="homeTab">Home</button>
+        </li>
+        <li>
+          <button class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium" data-tab="mortgageAppTab">Mortgage Application</button>
+        </li>
+        <li>
+          <button class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium" data-tab="accountSettingsTab">Account Settings</button>
+        </li>
+        <li>
+          <button class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium" data-tab="messagesTab">Messages</button>
+        </li>
+      </ul>
+    </aside>
 
+    <!-- Main Content Area (Tabs)-->
+    <section class="flex-1 py-12 px-8 overflow-y-auto mx-auto max-w-3xl">
+
+      <!-- Home Tab Content -->
+      <section id="homeTab" class="tab-content hidden">
+        <div class="max-w-xl bg-white p-8 rounded-lg shadow-lg mb-12">
+          <h1 class="text-3xl font-bold text-blue-900 mb-6">Welcome, <%= user.Email %>!</h1>
+          <p class="text-lg text-gray-700 mb-6">Your email: <%= user.Email %></p>
+
+          <% if (isPreApproved) { %>
+            <p class="text-green-600 font-semibold mb-6">Status: Pre-Approved</p>
+          <% } else { %>
+            <p class="text-red-600 font-semibold mb-6">Status: Not Pre-Approved</p>
+          <% } %>
+
+          <a href="/logout" class="bg-orange-500 text-white px-6 py-2 rounded-md text-lg font-semibold hover:bg-orange-600 transition">Sign Out</a>
+        </div>
+      </section>
+
+      <!-- Mortgage Application Tab Content -->
       <% if (isPreApproved) { %>
-        <p class="text-green-600 font-semibold mb-6">Status: Pre-Approved</p>
-      <% } else { %>
-        <p class="text-red-600 font-semibold mb-6">Status: Not Pre-Approved</p>
+      <section id="mortgageAppTab" class="tab-content hidden">
+        <div class="max-w-3xl bg-white p-8 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-bold text-blue-900 mb-4">Your Mortgage Application Tasks</h2>
+          <p class="mb-6 text-gray-700">Complete the required tasks below to submit your mortgage application package.</p>
+
+          <!-- Progress Bar -->
+          <div class="w-full bg-gray-200 rounded-full h-4 mb-6">
+            <div id="progressBar" class="bg-blue-600 h-4 rounded-full" style="width: 0%;"></div>
+          </div>
+
+          <!-- Task List -->
+          <div class="space-y-4">
+            <!-- Core Borrower Tasks -->
+            <div>
+              <h3 class="font-semibold text-xl text-gray-800 border-b pb-2 mb-4">Core Tasks (Required)</h3>
+              <ul class="space-y-4">
+                <li class="task-item border p-4 rounded-lg" data-task-id="loanApplication">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-gray-800 mb-1">Loan Application & Loan Details</h4>
+                      <p class="text-sm text-gray-600">Complete the Uniform Residential Loan Application (URLA) and set loan preferences.</p>
+                    </div>
+                    <div>
+                      <select class="task-status border-gray-300 rounded" data-task-id="loanApplication">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="task-item border p-4 rounded-lg" data-task-id="authorizations">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-gray-800 mb-1">Consolidated Authorizations & Consent</h4>
+                      <p class="text-sm text-gray-600">Review and e-sign authorizations for credit checks, tax transcripts, etc.</p>
+                    </div>
+                    <div>
+                      <select class="task-status border-gray-300 rounded" data-task-id="authorizations">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="task-item border p-4 rounded-lg" data-task-id="idDocuments">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-gray-800 mb-1">Identification Documents</h4>
+                      <p class="text-sm text-gray-600">Upload a clear copy of your government-issued ID.</p>
+                    </div>
+                    <div>
+                      <select class="task-status border-gray-300 rounded" data-task-id="idDocuments">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="task-item border p-4 rounded-lg" data-task-id="incomeVerification">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-gray-800 mb-1">Income Verification Documents</h4>
+                      <p class="text-sm text-gray-600">Upload required pay stubs, W-2s, tax returns, or P&L statements (for self-employed).</p>
+                    </div>
+                    <div>
+                      <select class="task-status border-gray-300 rounded" data-task-id="incomeVerification">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="task-item border p-4 rounded-lg" data-task-id="assetVerification">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-gray-800 mb-1">Asset Verification Documents</h4>
+                      <p class="text-sm text-gray-600">Upload recent bank statements or link accounts for down payment and reserves.</p>
+                    </div>
+                    <div>
+                      <select class="task-status border-gray-300 rounded" data-task-id="assetVerification">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="task-item border p-4 rounded-lg" data-task-id="liabilityVerification">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-gray-800 mb-1">Liability Verification Documents</h4>
+                      <p class="text-sm text-gray-600">Upload credit card, auto loan, student loan, and if applicable, mortgage statements.</p>
+                    </div>
+                    <div>
+                      <select class="task-status border-gray-300 rounded" data-task-id="liabilityVerification">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="task-item border p-4 rounded-lg" data-task-id="disclosures">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-gray-800 mb-1">Disclosures & Loan Estimate Review</h4>
+                      <p class="text-sm text-gray-600">Review preliminary disclosures, Loan Estimate, and e-sign to acknowledge receipt.</p>
+                    </div>
+                    <div>
+                      <select class="task-status border-gray-300 rounded" data-task-id="disclosures">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="task-item border p-4 rounded-lg" data-task-id="finalReview">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-gray-800 mb-1">Final Review & Application Submission</h4>
+                      <p class="text-sm text-gray-600">Review all info, confirm accuracy, and submit your application package.</p>
+                    </div>
+                    <div>
+                      <select class="task-status border-gray-300 rounded" data-task-id="finalReview">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Optional Tasks -->
+            <div class="mt-8">
+              <h3 class="font-semibold text-xl text-gray-800 border-b pb-2 mb-4">Optional / Conditional Tasks</h3>
+              <ul class="space-y-4">
+                <li class="task-item border p-4 rounded-lg" data-task-id="coBorrowerInfo">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-gray-800 mb-1">Co-Borrower Information & Documents (If Applicable)</h4>
+                      <p class="text-sm text-gray-600">Complete co-borrower’s info if indicated in application.</p>
+                    </div>
+                    <div>
+                      <select class="task-status border-gray-300 rounded" data-task-id="coBorrowerInfo">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="task-item border p-4 rounded-lg" data-task-id="purchaseAgreement">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-gray-800 mb-1">Upload Purchase Agreement (Purchase Only)</h4>
+                      <p class="text-sm text-gray-600">Upload the executed purchase contract for the property.</p>
+                    </div>
+                    <div>
+                      <select class="task-status border-gray-300 rounded" data-task-id="purchaseAgreement">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="task-item border p-4 rounded-lg" data-task-id="giftLetter">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-gray-800 mb-1">Upload Gift Letter (If Gift Funds Indicated)</h4>
+                      <p class="text-sm text-gray-600">If receiving gift funds, upload a signed gift letter.</p>
+                    </div>
+                    <div>
+                      <select class="task-status border-gray-300 rounded" data-task-id="giftLetter">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Submit Application Package Button -->
+          <div class="mt-8">
+            <button id="submitApplication" class="bg-gray-400 text-white px-6 py-2 rounded-md text-lg font-semibold transition cursor-not-allowed" disabled>
+              Submit Application Package
+            </button>
+          </div>
+        </div>
+      </section>
       <% } %>
 
-      <a href="/logout" class="bg-orange-500 text-white px-6 py-2 rounded-md text-lg font-semibold hover:bg-orange-600 transition">Sign Out</a>
+      <!-- Account Settings Tab Content -->
+      <section id="accountSettingsTab" class="tab-content hidden">
+        <div class="max-w-3xl bg-white p-8 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-bold text-blue-900 mb-4">Account Settings</h2>
+          <p class="text-gray-700 mb-6">Manage your account details here.</p>
+          <p>Coming soon...</p>
+        </div>
+      </section>
+
+      <!-- Messages Tab Content -->
+      <section id="messagesTab" class="tab-content hidden">
+        <div class="max-w-3xl bg-white p-8 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-bold text-blue-900 mb-4">Messages</h2>
+          <p class="text-gray-700 mb-6">Check your messages from your loan officer or support team.</p>
+          <p>Coming soon...</p>
+        </div>
+      </section>
     </section>
   </main>
 
@@ -37,5 +298,9 @@
   <footer class="bg-blue-900 text-white text-center py-4 mt-12">
     <p>© 2024 Pasaana. All rights reserved.</p>
   </footer>
+
+  <!-- Include the JS file -->
+  <script src="/profile.js"></script>
 </body>
 </html>
+

@@ -470,6 +470,20 @@ app.get('/preapproval/thank-you', ensureAuthenticated, async (req, res) => {
   }
 });
 
+// Calculators Page Route
+app.get('/calculators', (req, res) => {
+  res.render('calculators');
+});
+
+// Affordability Calculator Page Route
+app.get('/affordability-calculator', (req, res) => {
+  res.render('affordability-calculator');
+});
+
+// Mortgage Calculator Page Route
+app.get('/mortgage-calculator', (req, res) => {
+  res.render('mortgage-calculator');
+});
 // Mortgage Loans Page Route
 app.get('/mortgage-loans', (req, res) => {
   res.render('mortgage-loans');
