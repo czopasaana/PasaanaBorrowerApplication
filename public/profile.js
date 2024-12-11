@@ -63,12 +63,7 @@ $(document).ready(function() {
     $(this).addClass('bg-blue-100 text-blue-900 font-bold');
   });
 
-  // Automatically select the correct tab based on pre-approval status
-  if (window.isPreApproved) {
-    // If pre-approved, show Mortgage Application tab by default
-    $('[data-tab="mortgageAppTab"]').click();
-  } else {
-    // If not pre-approved, show Home tab by default
-    $('[data-tab="homeTab"]').click();
-  }
+// Always show Home tab by default
+$('[data-tab="homeTab"]').click();
+
 });

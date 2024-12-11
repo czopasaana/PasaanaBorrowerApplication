@@ -49,6 +49,9 @@ async function connectToDatabase() {
 }
 
 connectToDatabase().then(() => {
+  // Make the pool accessible to other parts of the app
+  app.locals.pool = pool;
+
   // Start the server after successfully connecting to the database
   app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
@@ -238,7 +241,7 @@ app.post('/login', async (req, res) => {
 // Profile Page
 app.get('/profile', ensureAuthenticated, async (req, res) => {
   try {
-    // Check if user has submitted a pre-approval application
+    // Check if user has a pre-approved application
     const preApprovalResult = await pool
       .request()
       .input('userID', sql.Int, req.session.user.userID)
@@ -246,12 +249,123 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
 
     const isPreApproved = preApprovalResult.recordset.length > 0;
 
-    res.render('profile', { user: req.session.user, isPreApproved });
+    // Fetch the user's loan application data
+    const loanAppResult = await pool
+      .request()
+      .input('UserID', sql.Int, req.session.user.userID)
+      .query('SELECT TOP 1 * FROM LoanApplications WHERE UserID = @UserID ORDER BY CreatedAt DESC');
+
+    let applicationData = null;
+    if (loanAppResult.recordset.length > 0) {
+      const row = loanAppResult.recordset[0];
+      applicationData = {
+        BorrowerFirstName: row.BorrowerFirstName,
+        BorrowerLastName: row.BorrowerLastName,
+        BorrowerSSN: row.BorrowerSSN,
+        BorrowerDOB: row.BorrowerDOB,
+        EmployerName: row.EmployerName,
+        AnnualIncome: row.AnnualIncome,
+        CheckingAccounts: row.CheckingAccounts,
+        CreditCardDebt: row.CreditCardDebt,
+        PropertyAddress: row.PropertyAddress,
+        PropertyValue: row.PropertyValue,
+        LoanPurpose: row.LoanPurpose,
+        LoanTerm: row.LoanTerm,
+        LoanType: row.LoanType,
+        RateLock: row.RateLock,
+        EmploymentType: row.EmploymentType,
+        ApplicationStatus: row.ApplicationStatus
+      };
+    }
+
+    // Fetch the user's authorizations & consent data
+    const authResult = await pool
+      .request()
+      .input('UserID', sql.Int, req.session.user.userID)
+      .query('SELECT TOP 1 * FROM AuthorizationsConsent WHERE UserID = @UserID ORDER BY CreatedAt DESC');
+
+    let authorizationsData = null;
+    if (authResult.recordset.length > 0) {
+      const row = authResult.recordset[0];
+      authorizationsData = {
+        ESignature: row.ESignature,
+        HasAgreed: row.HasAgreed,
+        ApplicationStatus: row.ApplicationStatus
+      };
+    }
+
+    // Fetch the user's identification documents data
+    const idResult = await pool
+      .request()
+      .input('UserID', sql.Int, req.session.user.userID)
+      .query('SELECT TOP 1 * FROM IdentificationDocuments WHERE UserID = @UserID ORDER BY CreatedAt DESC');
+
+    let identificationData = null;
+    if (idResult.recordset.length > 0) {
+      const row = idResult.recordset[0];
+      identificationData = {
+        IDFilePath: row.IDFilePath,
+        ApplicationStatus: row.ApplicationStatus
+      };
+    }
+
+    const incomeResult = await pool.request()
+  .input('UserID', sql.Int, req.session.user.userID)
+  .query('SELECT TOP 1 * FROM IncomeVerificationDocuments WHERE UserID = @UserID ORDER BY CreatedAt DESC');
+
+    let incomeData = null;
+    if (incomeResult.recordset.length > 0) {
+      const row = incomeResult.recordset[0];
+      incomeData = {
+        ApplicationStatus: row.ApplicationStatus
+        // Add more fields if you want to show what’s uploaded.
+        };
+      }
+
+    const assetResult = await pool.request()
+    .input('UserID', sql.Int, req.session.user.userID)
+    .query('SELECT TOP 1 * FROM AssetVerificationDocuments WHERE UserID = @UserID ORDER BY CreatedAt DESC');
+    
+    let assetData = null;
+    if (assetResult.recordset.length > 0) {
+      const row = assetResult.recordset[0];
+      assetData = {
+        ApplicationStatus: row.ApplicationStatus
+        // Add fields if you want to show if accounts are linked or files uploaded
+      };
+    }
+
+    const liabilityResult = await pool.request()
+    .input('UserID', sql.Int, req.session.user.userID)
+  .query('SELECT TOP 1 * FROM LiabilityVerificationDocuments WHERE UserID = @UserID ORDER BY CreatedAt DESC');
+
+    let liabilityData = null;
+    if (liabilityResult.recordset.length > 0) {
+      const row = liabilityResult.recordset[0];
+  liabilityData = {
+    ApplicationStatus: row.ApplicationStatus
+      };
+    }
+
+    // Pass identificationData along with other data to the template
+    res.render('profile', {
+      user: req.session.user,
+      isPreApproved,
+      applicationData,
+      authorizationsData,
+      identificationData,
+      incomeData,
+      assetData,
+      liabilityData
+    });
+
   } catch (err) {
     console.error('Error fetching user profile:', err.message);
     res.redirect('/login');
   }
 });
+
+
 
 // Sign Out Handler
 app.get('/logout', (req, res) => {
@@ -268,6 +382,27 @@ app.get('/logout', (req, res) => {
 app.get('/preapproval', ensureAuthenticated, preventPreApprovedAccess, (req, res) => {
   res.render('preapproval/index');
 });
+
+// Import mortgage routes
+const mortgageRoutes = require('./routes/mortgageRoutes'); // Make sure this file exists
+app.use('/', mortgageRoutes);
+
+const authorizationsRoutes = require('./routes/authorizationsRoutes'); 
+app.use('/', authorizationsRoutes);
+
+const identificationRoutes = require('./routes/identificationRoutes');
+app.use('/', identificationRoutes);
+
+const incomeRoutes = require('./routes/incomeRoutes');
+app.use('/', incomeRoutes);
+
+const assetRoutes = require('./routes/assetRoutes');
+app.use('/', assetRoutes);
+
+const liabilityRoutes = require('./routes/liabilityRoutes');
+app.use('/', liabilityRoutes);
+
+
 
 // Pre-Approval Steps with Enforcement
 app.get('/preapproval/step/:step', ensureAuthenticated, preventPreApprovedAccess, enforceStepOrder, (req, res) => {

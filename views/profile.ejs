@@ -40,11 +40,11 @@
     </aside>
 
     <!-- Main Content Area (Tabs)-->
-    <section class="flex-1 py-12 px-8 overflow-y-auto mx-auto max-w-3xl">
+    <section class="flex-1 py-12 px-8 overflow-y-auto w-full">
 
       <!-- Home Tab Content -->
       <section id="homeTab" class="tab-content hidden">
-        <div class="max-w-xl bg-white p-8 rounded-lg shadow-lg mb-12">
+        <div class="w-full bg-white p-8 rounded-lg shadow-lg mb-12">
           <h1 class="text-3xl font-bold text-blue-900 mb-6">Welcome, <%= user.Email %>!</h1>
           <p class="text-lg text-gray-700 mb-6">Your email: <%= user.Email %></p>
 
@@ -61,7 +61,7 @@
       <!-- Mortgage Application Tab Content -->
       <% if (isPreApproved) { %>
       <section id="mortgageAppTab" class="tab-content hidden">
-        <div class="max-w-3xl bg-white p-8 rounded-lg shadow-lg">
+        <div class="w-full bg-white p-8 rounded-lg shadow-lg">
           <h2 class="text-2xl font-bold text-blue-900 mb-4">Your Mortgage Application Tasks</h2>
           <p class="mb-6 text-gray-700">Complete the required tasks below to submit your mortgage application package.</p>
 
@@ -76,101 +76,657 @@
             <div>
               <h3 class="font-semibold text-xl text-gray-800 border-b pb-2 mb-4">Core Tasks (Required)</h3>
               <ul class="space-y-4">
-                <li class="task-item border p-4 rounded-lg" data-task-id="loanApplication">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h4 class="font-bold text-gray-800 mb-1">Loan Application & Loan Details</h4>
-                      <p class="text-sm text-gray-600">Complete the Uniform Residential Loan Application (URLA) and set loan preferences.</p>
-                    </div>
-                    <div>
-                      <select class="task-status border-gray-300 rounded" data-task-id="loanApplication">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                    </div>
-                  </div>
-                </li>
+<!-- Loan Application & Loan Details Task -->
+<li class="task-item border rounded-lg transition" data-task-id="loanApplication" data-task-status="<%= (applicationData && applicationData.ApplicationStatus) ? applicationData.ApplicationStatus : (applicationData ? 'In Progress' : 'Not Started') %>">
+  <div class="task-header cursor-pointer hover:bg-gray-50 transition flex items-center justify-between p-4 rounded-t-lg">
+    <div>
+      <h4 class="font-bold text-gray-800 mb-1">Loan Application & Loan Details</h4>
+      <p class="text-sm text-gray-600">Complete the URLA and set loan preferences.</p>
+    </div>
+    <div>
+      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (applicationData && applicationData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((applicationData && applicationData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
+        <%= (applicationData && applicationData.ApplicationStatus) ? applicationData.ApplicationStatus : (applicationData ? 'In Progress' : 'Not Started') %>
+      </span>
+    </div>
+  </div>
 
-                <li class="task-item border p-4 rounded-lg" data-task-id="authorizations">
-                  <div class="flex items-center justify-between">
+  <div class="loan-application-form hidden p-4 border-t">
+    <h5 class="text-lg font-bold text-blue-800 mb-4">Complete Your URLA & Loan Preferences</h5>
+    <p class="text-sm text-gray-700 mb-4">
+      Please fill out all required fields. You can save your progress at any time.
+    </p>
+
+    <!-- Personal Information Section -->
+    <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+      <h6 class="font-semibold text-xl text-gray-800 mb-4">Personal Information</h6>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col">
+          <label for="borrowerFirstName" class="block text-sm font-medium text-gray-700 mb-1">
+            First Name <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="borrowerFirstName" 
+            name="borrowerFirstName" 
+            required
+            placeholder="Enter your first name" 
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition" 
+            value="<%= applicationData ? applicationData.BorrowerFirstName : '' %>">
+        </div>
+        <div class="flex flex-col">
+          <label for="borrowerLastName" class="block text-sm font-medium text-gray-700 mb-1">
+            Last Name <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="borrowerLastName" 
+            name="borrowerLastName" 
+            required
+            placeholder="Enter your last name"
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+            value="<%= applicationData ? applicationData.BorrowerLastName : '' %>">
+        </div>
+        <div class="flex flex-col">
+          <label for="borrowerSSN" class="block text-sm font-medium text-gray-700 mb-1">
+            Social Security Number <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="borrowerSSN" 
+            name="borrowerSSN" 
+            required 
+            placeholder="XXX-XX-XXXX"
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+            value="<%= applicationData ? applicationData.BorrowerSSN : '' %>">
+        </div>
+        <div class="flex flex-col">
+          <label for="borrowerDOB" class="block text-sm font-medium text-gray-700 mb-1">
+            Date of Birth <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="date" 
+            id="borrowerDOB" 
+            name="borrowerDOB" 
+            required 
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+            value="<%= applicationData && applicationData.BorrowerDOB ? applicationData.BorrowerDOB.toISOString().split('T')[0] : '' %>">
+        </div>
+      </div>
+    </div>
+
+    <!-- Employment & Income Section -->
+    <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+      <h6 class="font-semibold text-xl text-gray-800 mb-4">Employment & Income</h6>
+      
+      <!-- Employment Type Field -->
+      <div class="flex flex-col mb-4">
+        <label for="employmentType" class="block text-sm font-medium text-gray-700 mb-1">
+          Employment Type <span class="text-red-500">*</span>
+        </label>
+        <select 
+          id="employmentType" 
+          name="employmentType" 
+          required
+          class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 bg-white
+                 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition">
+          <option value="">Select Employment Type</option>
+          <option value="W-2" <%= applicationData && applicationData.EmploymentType === 'W-2' ? 'selected' : '' %>>W-2</option>
+          <option value="Self-Employed" <%= applicationData && applicationData.EmploymentType === 'Self-Employed' ? 'selected' : '' %>>Self-Employed</option>
+        </select>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col">
+          <label for="employerName" class="block text-sm font-medium text-gray-700 mb-1">
+            Employer Name <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="employerName" 
+            name="employerName" 
+            required
+            placeholder="Enter your employer's name"
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+            value="<%= applicationData ? applicationData.EmployerName : '' %>">
+        </div>
+        <div class="flex flex-col">
+          <label for="annualIncome" class="block text-sm font-medium text-gray-700 mb-1">
+            Annual Income <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="number" 
+            step="0.01" 
+            id="annualIncome" 
+            name="annualIncome" 
+            required
+            placeholder="e.g. 60000"
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+            value="<%= applicationData ? applicationData.AnnualIncome : '' %>">
+        </div>
+      </div>
+    </div>
+
+    <!-- Assets & Liabilities Section -->
+    <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+      <h6 class="font-semibold text-xl text-gray-800 mb-4">Assets & Liabilities</h6>
+      <p class="text-sm text-gray-500 mb-4">Provide approximate values. Detailed documents can be uploaded in related tasks.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col">
+          <label for="checkingAccounts" class="block text-sm font-medium text-gray-700 mb-1">
+            Total Checking/Savings <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="number" 
+            step="0.01" 
+            id="checkingAccounts" 
+            name="checkingAccounts" 
+            required
+            placeholder="e.g. 15000"
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+            value="<%= applicationData ? applicationData.CheckingAccounts : '' %>">
+        </div>
+        <div class="flex flex-col">
+          <label for="creditCardDebt" class="block text-sm font-medium text-gray-700 mb-1">
+            Total Credit Card Debt
+          </label>
+          <input 
+            type="number" 
+            step="0.01" 
+            id="creditCardDebt" 
+            name="creditCardDebt" 
+            placeholder="e.g. 3000"
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+            value="<%= applicationData ? applicationData.CreditCardDebt : '' %>">
+        </div>
+      </div>
+    </div>
+
+    <!-- Property Details Section -->
+    <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+      <h6 class="font-semibold text-xl text-gray-800 mb-4">Property Details</h6>
+      <p class="text-sm text-gray-500 mb-4">If purchasing or refinancing, provide property information.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col">
+          <label for="propertyAddress" class="block text-sm font-medium text-gray-700 mb-1">
+            Property Address
+          </label>
+          <input 
+            type="text" 
+            id="propertyAddress" 
+            name="propertyAddress" 
+            placeholder="Enter the property address if known"
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+            value="<%= applicationData ? applicationData.PropertyAddress : '' %>">
+        </div>
+        <div class="flex flex-col">
+          <label for="propertyValue" class="block text-sm font-medium text-gray-700 mb-1">
+            Estimated Property Value
+          </label>
+          <input 
+            type="number" 
+            step="0.01" 
+            id="propertyValue" 
+            name="propertyValue"
+            placeholder="e.g. 250000"
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+            value="<%= applicationData ? applicationData.PropertyValue : '' %>">
+        </div>
+      </div>
+    </div>
+
+    <!-- Loan Purpose & Preferences Section -->
+    <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+      <h6 class="font-semibold text-xl text-gray-800 mb-4">Loan Purpose & Preferences</h6>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+        <div class="flex flex-col">
+          <label for="loanPurpose" class="block text-sm font-medium text-gray-700 mb-1">
+            Loan Purpose <span class="text-red-500">*</span>
+          </label>
+          <select 
+            id="loanPurpose" 
+            name="loanPurpose" 
+            required
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 bg-white
+            focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition">
+            <option value="">Select Purpose</option>
+            <option value="Purchase" <%= applicationData && applicationData.LoanPurpose === 'Purchase' ? 'selected' : '' %>>Purchase</option>
+            <option value="Refinance" <%= applicationData && applicationData.LoanPurpose === 'Refinance' ? 'selected' : '' %>>Refinance</option>
+            <option value="Other" <%= applicationData && applicationData.LoanPurpose === 'Other' ? 'selected' : '' %>>Other</option>
+          </select>
+        </div>
+        <div class="flex flex-col">
+          <label for="loanTerm" class="block text-sm font-medium text-gray-700 mb-1">
+            Desired Loan Term <span class="text-red-500">*</span>
+          </label>
+          <select 
+            id="loanTerm" 
+            name="loanTerm" 
+            required
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 bg-white
+            focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition">
+            <option value="">Select Term</option>
+            <option value="15" <%= applicationData && applicationData.LoanTerm == 15 ? 'selected' : '' %>>15 Years</option>
+            <option value="20" <%= applicationData && applicationData.LoanTerm == 20 ? 'selected' : '' %>>20 Years</option>
+            <option value="30" <%= applicationData && applicationData.LoanTerm == 30 ? 'selected' : '' %>>30 Years</option>
+          </select>
+        </div>
+        <div class="flex flex-col">
+          <label for="loanType" class="block text-sm font-medium text-gray-700 mb-1">
+            Loan Type <span class="text-red-500">*</span>
+          </label>
+          <select 
+            id="loanType" 
+            name="loanType" 
+            required
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 bg-white
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition">
+            <option value="">Select Type</option>
+            <option value="Fixed" <%= applicationData && applicationData.LoanType === 'Fixed' ? 'selected' : '' %>>Fixed</option>
+            <option value="Adjustable" <%= applicationData && applicationData.LoanType === 'Adjustable' ? 'selected' : '' %>>Adjustable</option>
+            <option value="Danish" <%= applicationData && applicationData.LoanType === 'Danish' ? 'selected' : '' %>>Danish</option>
+          </select>
+        </div>
+        <div class="flex flex-col">
+          <label for="rateLock" class="block text-sm font-medium text-gray-700 mb-1">
+            Rate Lock Preference
+          </label>
+          <select 
+            id="rateLock" 
+            name="rateLock" 
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 bg-white
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition">
+            <option value="Lock Now" <%= applicationData && applicationData.RateLock === 'Lock Now' ? 'selected' : '' %>>Lock Now</option>
+            <option value="Lock Later" <%= applicationData && applicationData.RateLock === 'Lock Later' ? 'selected' : '' %>>Lock Later</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Document Upload Section -->
+    <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+      <h6 class="font-semibold text-xl text-gray-800 mb-4">Upload Supporting Documents</h6>
+      <p class="text-sm text-gray-500 mb-4">Upload optional documents (ID, pay stubs, W-2s) here. You can add these now or later.</p>
+      <div>
+        <label class="block mb-2 text-sm font-medium text-gray-700" for="loanDocs">Upload Documents</label>
+        <input 
+          class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md p-2 cursor-pointer 
+                focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+          id="loanDocs"
+          name="loanDocs"
+          type="file"
+          multiple>
+      </div>
+    </div>
+
+    <!-- Form Buttons -->
+    <div class="flex space-x-4">
+      <!-- Only one Save button -->
+      <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition save-loan-details">
+        Save
+      </button>
+      <a href="#" class="text-blue-600 underline text-sm self-center">Contact Support</a>
+    </div>
+  </div>
+</li>
+           
+                
+                <!-- Consolidated Authorizations & Consent Task-->
+                <li class="task-item border rounded-lg transition" data-task-id="authorizations" data-task-status="<%= authorizationsData && authorizationsData.ApplicationStatus ? authorizationsData.ApplicationStatus : 'Not Started' %>">
+                  <div class="task-header cursor-pointer hover:bg-gray-50 transition flex items-center justify-between p-4 rounded-t-lg">
                     <div>
                       <h4 class="font-bold text-gray-800 mb-1">Consolidated Authorizations & Consent</h4>
                       <p class="text-sm text-gray-600">Review and e-sign authorizations for credit checks, tax transcripts, etc.</p>
                     </div>
                     <div>
-                      <select class="task-status border-gray-300 rounded" data-task-id="authorizations">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
+                      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (authorizationsData && authorizationsData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((authorizationsData && authorizationsData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
+                        <%= authorizationsData && authorizationsData.ApplicationStatus ? authorizationsData.ApplicationStatus : 'Not Started' %>
+                      </span>
+                    </div>
+                  </div>
+                
+                  <div class="authorization-form hidden p-4 border-t">
+                    <h5 class="text-lg font-bold text-blue-800 mb-4">Review & E-Sign Authorizations</h5>
+                    <p class="text-sm text-gray-700 mb-4">
+                      Please review the authorization documents below and e-sign to give consent for credit checks, verifications, and tax transcripts.
+                    </p>
+                
+                    <!-- Document Viewer Placeholder -->
+                    <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200 h-64 overflow-auto">
+                      <h6 class="font-semibold text-xl text-gray-800 mb-4">Authorization Packet</h6>
+                      <p class="text-sm text-gray-600 mb-4">Scroll through the authorization forms here. For demonstration, this is just placeholder text. In production, integrate a document viewer (PDF, etc.).</p>
+                      <div class="text-sm text-gray-500">
+                        <!-- Placeholder long text -->
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin eu iaculis lacus. Curabitur sollicitudin felis in orci malesuada, at gravida erat cursus. ... (etc.)</p>
+                      </div>
+                    </div>
+                
+                    <!-- E-Signature & Acknowledgment -->
+                    <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+                      <h6 class="font-semibold text-xl text-gray-800 mb-4">E-Signature & Consent</h6>
+                      <div class="flex flex-col mb-4">
+                        <label for="eSignature" class="block text-sm font-medium text-gray-700 mb-1">
+                          E-Signature <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                          type="text" 
+                          id="eSignature" 
+                          name="eSignature"
+                          placeholder="Type your full name as e-signature"
+                          class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                                 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                          value="<%= authorizationsData && authorizationsData.ESignature ? authorizationsData.ESignature : '' %>">
+                      </div>
+                
+                      <div class="flex items-start mb-4">
+                        <input 
+                          type="checkbox" 
+                          id="authorizationsAgree" 
+                          name="authorizationsAgree"
+                          class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          <%= authorizationsData && authorizationsData.HasAgreed ? 'checked' : '' %>>
+                        <label for="authorizationsAgree" class="ml-2 text-sm text-gray-700">
+                          I have read and agree to the terms above, including the use of my credit score and potential impacts if creditworthiness changes.
+                        </label>
+                      </div>
+                    </div>
+                
+                    <div class="flex space-x-4">
+                      <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition save-authorizations-consent">
+                        Save & Continue
+                      </button>
+                      <button type="button" class="bg-gray-300 text-gray-800 px-6 py-2 rounded-md font-semibold hover:bg-gray-400 transition close-form">
+                        Go Back
+                      </button>
+                      <a href="#" class="text-blue-600 underline text-sm self-center">Contact Support</a>
                     </div>
                   </div>
                 </li>
 
-                <li class="task-item border p-4 rounded-lg" data-task-id="idDocuments">
-                  <div class="flex items-center justify-between">
+                <!-- Identification Documents Task-->
+                <li class="task-item border rounded-lg transition" data-task-id="identification" data-task-status="<%= identificationData && identificationData.ApplicationStatus ? identificationData.ApplicationStatus : 'Not Started' %>">
+                  <div class="task-header cursor-pointer hover:bg-gray-50 transition flex items-center justify-between p-4 rounded-t-lg">
                     <div>
                       <h4 class="font-bold text-gray-800 mb-1">Identification Documents</h4>
-                      <p class="text-sm text-gray-600">Upload a clear copy of your government-issued ID.</p>
+                      <p class="text-sm text-gray-600">Upload a government-issued ID (driver’s license, passport).</p>
                     </div>
                     <div>
-                      <select class="task-status border-gray-300 rounded" data-task-id="idDocuments">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
+                      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (identificationData && identificationData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((identificationData && identificationData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
+                        <%= identificationData && identificationData.ApplicationStatus ? identificationData.ApplicationStatus : 'Not Started' %>
+                      </span>
+                    </div>
+                  </div>
+                
+                  <div class="identification-form hidden p-4 border-t">
+                    <h5 class="text-lg font-bold text-blue-800 mb-4">Upload Your Identification</h5>
+                    <p class="text-sm text-gray-700 mb-4">
+                      Please provide a clear PDF or image of your government-issued ID. You can save now and come back later.
+                    </p>
+                
+                    <!-- File Upload Section -->
+                    <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+                      <h6 class="font-semibold text-xl text-gray-800 mb-4">Upload Your ID</h6>
+                      <p class="text-sm text-gray-500 mb-4">Accepted formats: PDF, JPG, PNG. If using a mobile device, you may use your camera.</p>
+                      
+                      <div class="flex flex-col items-center justify-center w-full p-4 border-2 border-dashed border-gray-300 rounded-md hover:border-blue-300 transition">
+                        <label for="idDocs" class="text-blue-600 underline cursor-pointer">Select File</label>
+                        <input 
+                          id="idDocs" 
+                          name="idDocs" 
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          class="hidden"
+                        >
+                        <% if (identificationData && identificationData.IDFilePath) { %>
+                          <p class="text-sm text-gray-800 mt-2">Current File: <%= identificationData.IDFilePath %></p>
+                        <% } else { %>
+                          <p class="text-sm text-gray-500 mt-2">No file uploaded yet.</p>
+                        <% } %>
+                      </div>
+                    </div>
+                
+                    <!-- Buttons -->
+                    <div class="flex space-x-4">
+                      <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition save-identification-docs">
+                        Save
+                      </button>
+                      <a href="#" class="text-blue-600 underline text-sm self-center">Contact Support</a>
                     </div>
                   </div>
                 </li>
+                
+<!-- Income Verification Documents Task-->
+<% 
+// Determine employmentType from applicationData if available
+let employmentType = 'W-2';
+if (applicationData && !applicationData.EmployerName) {
+  employmentType = 'Self-Employed';
+}
+%>
 
-                <li class="task-item border p-4 rounded-lg" data-task-id="incomeVerification">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h4 class="font-bold text-gray-800 mb-1">Income Verification Documents</h4>
-                      <p class="text-sm text-gray-600">Upload required pay stubs, W-2s, tax returns, or P&L statements (for self-employed).</p>
-                    </div>
-                    <div>
-                      <select class="task-status border-gray-300 rounded" data-task-id="incomeVerification">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                    </div>
-                  </div>
-                </li>
+<li class="task-item border rounded-lg transition"
+    data-task-id="incomeVerification"
+    data-task-status="<%= (incomeData && incomeData.ApplicationStatus) ? incomeData.ApplicationStatus : 'Not Started' %>"
+    data-employment-type="<%= employmentType %>">
+  <div class="task-header cursor-pointer hover:bg-gray-50 transition flex items-center justify-between p-4 rounded-t-lg">
+    <div>
+      <h4 class="font-bold text-gray-800 mb-1">Income Verification Documents</h4>
+      <p class="text-sm text-gray-600">Upload required pay stubs, W-2s, tax returns, or P&L statements (for self-employed).</p>
+    </div>
+    <div>
+      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (incomeData && incomeData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((incomeData && incomeData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
+        <%= incomeData && incomeData.ApplicationStatus ? incomeData.ApplicationStatus : 'Not Started' %>
+      </span>
+    </div>
+  </div>
 
-                <li class="task-item border p-4 rounded-lg" data-task-id="assetVerification">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h4 class="font-bold text-gray-800 mb-1">Asset Verification Documents</h4>
-                      <p class="text-sm text-gray-600">Upload recent bank statements or link accounts for down payment and reserves.</p>
-                    </div>
-                    <div>
-                      <select class="task-status border-gray-300 rounded" data-task-id="assetVerification">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                    </div>
-                  </div>
-                </li>
+  <div class="income-verification-form hidden p-4 border-t">
+    <h5 class="text-lg font-bold text-blue-800 mb-4">Upload Your Income Verification Documents</h5>
+    <p class="text-sm text-gray-700 mb-4">
+      Please upload all applicable documents. <span class="text-gray-500">(Employment Type: <%= employmentType %>)</span>
+    </p>
 
-                <li class="task-item border p-4 rounded-lg" data-task-id="liabilityVerification">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h4 class="font-bold text-gray-800 mb-1">Liability Verification Documents</h4>
-                      <p class="text-sm text-gray-600">Upload credit card, auto loan, student loan, and if applicable, mortgage statements.</p>
-                    </div>
-                    <div>
-                      <select class="task-status border-gray-300 rounded" data-task-id="liabilityVerification">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                    </div>
-                  </div>
-                </li>
+    <!-- Conditional fields based on employment type -->
+    <% if (employmentType === 'W-2') { %>
+      <div class="mb-4">
+        <label class="block font-medium text-gray-700 mb-2">
+          Recent Pay Stubs <span class="text-red-500">*</span>
+          <span class="tooltip text-blue-600 ml-1" title="Last 30 days of pay stubs">[?]</span>
+        </label>
+        <input type="file" multiple name="payStubs" id="payStubs" class="border p-2 rounded w-full">
+      </div>
+      <div class="mb-4">
+        <label class="block font-medium text-gray-700 mb-2">
+          W-2s (Past 2 Years) <span class="text-red-500">*</span>
+          <span class="tooltip text-blue-600 ml-1" title="Last two years of W-2 forms">[?]</span>
+        </label>
+        <input type="file" multiple name="w2s" id="w2s" class="border p-2 rounded w-full">
+      </div>
+    <% } else { %>
+      <div class="mb-4">
+        <label class="block font-medium text-gray-700 mb-2">
+          Personal/Business Tax Returns (2 Years) <span class="text-red-500">*</span>
+          <span class="tooltip text-blue-600 ml-1" title="Last two years of tax returns">[?]</span>
+        </label>
+        <input type="file" multiple name="taxReturns" id="taxReturns" class="border p-2 rounded w-full">
+      </div>
+      <div class="mb-4">
+        <label class="block font-medium text-gray-700 mb-2">
+          1099 Forms <span class="text-red-500">*</span>
+          <span class="tooltip text-blue-600 ml-1" title="If applicable, last two years of 1099 forms">[?]</span>
+        </label>
+        <input type="file" multiple name="form1099s" id="form1099s" class="border p-2 rounded w-full">
+      </div>
+      <div class="mb-4">
+        <label class="block font-medium text-gray-700 mb-2">
+          Year-to-Date P&L Statements <span class="text-red-500">*</span>
+          <span class="tooltip text-blue-600 ml-1" title="Current year Profit & Loss statement">[?]</span>
+        </label>
+        <input type="file" multiple name="pnlDocs" id="pnlDocs" class="border p-2 rounded w-full">
+      </div>
+    <% } %>
+
+    <div class="flex space-x-4">
+      <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition save-income-docs">
+        Save
+      </button>
+      <a href="#" class="text-blue-600 underline text-sm self-center">Contact Support</a>
+    </div>
+  </div>
+</li>
+
+              
+
+<!-- Asset Verification Documents Task -->
+<%
+  // We'll just set required fields: bank statements, investment statements, retirement statements
+  // This example requires all three to be completed for 'Completed' status.
+%>
+
+<li class="task-item border rounded-lg transition" data-task-id="assetVerification" data-task-status="<%= (assetData && assetData.ApplicationStatus) ? assetData.ApplicationStatus : 'Not Started' %>">
+  <div class="task-header cursor-pointer hover:bg-gray-50 transition flex items-center justify-between p-4 rounded-t-lg">
+    <div>
+      <h4 class="font-bold text-gray-800 mb-1">Asset Verification Documents</h4>
+      <p class="text-sm text-gray-600">Upload recent bank, investment, and retirement account statements or link accounts.</p>
+    </div>
+    <div>
+      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (assetData && assetData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((assetData && assetData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
+        <%= assetData && assetData.ApplicationStatus ? assetData.ApplicationStatus : 'Not Started' %>
+      </span>
+    </div>
+  </div>
+
+  <div class="asset-verification-form hidden p-4 border-t">
+    <h5 class="text-lg font-bold text-blue-800 mb-4">Upload or Link Your Asset Accounts</h5>
+    <p class="text-sm text-gray-700 mb-4">Please upload 2–3 months of PDF bank statements and corresponding investment/retirement account statements. Or you can link your accounts securely.</p>
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-700 mb-2">
+        Bank Statements (2-3 months) <span class="text-red-500">*</span>
+        <span class="tooltip text-blue-600 ml-1" title="Recent checking/savings account statements in PDF format">[?]</span>
+      </label>
+      <input type="file" multiple name="bankStatements" id="bankStatements" class="border p-2 rounded w-full">
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-700 mb-2">
+        Investment Account Statements <span class="text-red-500">*</span>
+        <span class="tooltip text-blue-600 ml-1" title="Mutual funds, stocks, bonds statements">[?]</span>
+      </label>
+      <input type="file" multiple name="investmentStatements" id="investmentStatements" class="border p-2 rounded w-full">
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-700 mb-2">
+        Retirement Account Statements <span class="text-red-500">*</span>
+        <span class="tooltip text-blue-600 ml-1" title="401(k), IRA, or other retirement accounts">[?]</span>
+      </label>
+      <input type="file" multiple name="retirementStatements" id="retirementStatements" class="border p-2 rounded w-full">
+    </div>
+
+    <div class="mb-4">
+      <p class="text-sm text-gray-700 mb-2">Or link your accounts securely:</p>
+      <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition link-account-button">
+        Link Accounts
+      </button>
+      <span class="tooltip text-blue-600 ml-1" title="Linking accounts may require a secure external widget (e.g., Plaid).">[?]</span>
+    </div>
+
+    <div class="flex space-x-4">
+      <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition save-asset-docs">
+        Save
+      </button>
+      <a href="#" class="text-blue-600 underline text-sm self-center">Contact Support</a>
+    </div>
+  </div>
+</li>
+
+
+<%
+  // Check LoanPurpose from applicationData
+  let requireMortgageStatement = false;
+  if (applicationData && applicationData.LoanPurpose === 'Refinance') {
+    requireMortgageStatement = true;
+  }
+%>
+
+<li class="task-item border rounded-lg transition" 
+    data-task-id="liabilityVerification"
+    data-task-status="<%= (liabilityData && liabilityData.ApplicationStatus) ? liabilityData.ApplicationStatus : 'Not Started' %>"
+    data-loan-purpose="<%= applicationData && applicationData.LoanPurpose ? applicationData.LoanPurpose : '' %>">
+  <div class="task-header cursor-pointer hover:bg-gray-50 transition flex items-center justify-between p-4 rounded-t-lg">
+    <div>
+      <h4 class="font-bold text-gray-800 mb-1">Liability Verification Documents</h4>
+      <p class="text-sm text-gray-600">Upload statements for credit cards, auto loans, student loans, and (if refinancing) mortgage.</p>
+    </div>
+    <div>
+      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (liabilityData && liabilityData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((liabilityData && liabilityData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
+        <%= liabilityData && liabilityData.ApplicationStatus ? liabilityData.ApplicationStatus : 'Not Started' %>
+      </span>
+    </div>
+  </div>
+
+  <div class="liability-verification-form hidden p-4 border-t">
+    <h5 class="text-lg font-bold text-blue-800 mb-4">Upload Your Liability Verification Documents</h5>
+    <p class="text-sm text-gray-700 mb-4">
+      Please provide recent statements for all outstanding debts. 
+      <% if (requireMortgageStatement) { %>
+        Since you're refinancing, also provide your current mortgage statement.
+      <% } %>
+    </p>
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-700 mb-2">
+        Credit Card Statements <span class="text-red-500">*</span>
+        <span class="tooltip text-blue-600 ml-1" title="Most recent credit card statements">[?]</span>
+      </label>
+      <input type="file" multiple name="creditCardStatements" id="creditCardStatements" class="border p-2 rounded w-full">
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-700 mb-2">
+        Auto Loan Statements <span class="text-red-500">*</span>
+        <span class="tooltip text-blue-600 ml-1" title="Most recent auto loan statements">[?]</span>
+      </label>
+      <input type="file" multiple name="autoLoanStatements" id="autoLoanStatements" class="border p-2 rounded w-full">
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium text-gray-700 mb-2">
+        Student Loan Statements <span class="text-red-500">*</span>
+        <span class="tooltip text-blue-600 ml-1" title="Most recent student loan statements">[?]</span>
+      </label>
+      <input type="file" multiple name="studentLoanStatements" id="studentLoanStatements" class="border p-2 rounded w-full">
+    </div>
+
+    <% if (requireMortgageStatement) { %>
+      <div class="mb-4">
+        <label class="block font-medium text-gray-700 mb-2">
+          Current Mortgage Statement <span class="text-red-500">*</span>
+          <span class="tooltip text-blue-600 ml-1" title="Most recent mortgage statement for the property being refinanced">[?]</span>
+        </label>
+        <input type="file" multiple name="mortgageStatement" id="mortgageStatement" class="border p-2 rounded w-full">
+      </div>
+    <% } %>
+
+    <div class="flex space-x-4">
+      <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition save-liability-docs">
+        Save
+      </button>
+      <a href="#" class="text-blue-600 underline text-sm self-center">Contact Support</a>
+    </div>
+  </div>
+</li>
+
 
                 <li class="task-item border p-4 rounded-lg" data-task-id="disclosures">
                   <div class="flex items-center justify-between">
@@ -273,7 +829,7 @@
 
       <!-- Account Settings Tab Content -->
       <section id="accountSettingsTab" class="tab-content hidden">
-        <div class="max-w-3xl bg-white p-8 rounded-lg shadow-lg">
+        <div class="w-full bg-white p-8 rounded-lg shadow-lg">
           <h2 class="text-2xl font-bold text-blue-900 mb-4">Account Settings</h2>
           <p class="text-gray-700 mb-6">Manage your account details here.</p>
           <p>Coming soon...</p>
@@ -282,7 +838,7 @@
 
       <!-- Messages Tab Content -->
       <section id="messagesTab" class="tab-content hidden">
-        <div class="max-w-3xl bg-white p-8 rounded-lg shadow-lg">
+        <div class="w-full bg-white p-8 rounded-lg shadow-lg">
           <h2 class="text-2xl font-bold text-blue-900 mb-4">Messages</h2>
           <p class="text-gray-700 mb-6">Check your messages from your loan officer or support team.</p>
           <p>Coming soon...</p>
@@ -301,6 +857,9 @@
 
   <!-- Include the JS file -->
   <script src="/profile.js"></script>
+
+  <!-- Include your separate JS file for mortgage logic -->
+  <script src="/js/mortgageApplication.js"></script>
 </body>
 </html>
 
