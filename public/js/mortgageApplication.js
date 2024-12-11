@@ -42,8 +42,10 @@ $(document).ready(function() {
     } else if (taskId === 'assetVerification') {
       $taskItem.find('.asset-verification-form').toggleClass('hidden');
     } else if (taskId === 'liabilityVerification') {
-      // Liability Verification form toggle
       $taskItem.find('.liability-verification-form').toggleClass('hidden');
+    } else if (taskId === 'disclosures') {
+      // Disclosures & LE Review form toggle
+      $taskItem.find('.disclosures-form').toggleClass('hidden');
     }
     // Add other task toggles if needed
   });
@@ -350,9 +352,9 @@ $(document).ready(function() {
     });
   });
 
-  // Asset Verification logic already integrated above
+  // Asset Verification logic already integrated above (assuming from your previous code)
 
-  // Liability Verification Logic (Step 4)
+  // Liability Verification Logic
   $('.save-liability-docs').on('click', function(e) {
     e.stopPropagation();
     const $form = $(this).closest('.liability-verification-form');
@@ -369,11 +371,9 @@ $(document).ready(function() {
     }
 
     let requiredFilesPresent = true;
-    // Credit, auto, student always required
     if (creditFiles.length === 0) requiredFilesPresent = false;
     if (autoFiles.length === 0) requiredFilesPresent = false;
     if (studentFiles.length === 0) requiredFilesPresent = false;
-    // Mortgage statement required if refinance
     if (loanPurpose === 'Refinance' && mortgageFiles.length === 0) {
       requiredFilesPresent = false;
     }
@@ -439,6 +439,72 @@ $(document).ready(function() {
     });
   });
 
+  // Step 4: Add Save logic for Disclosures & Loan Estimate Review
+  $('.save-disclosures').on('click', function(e) {
+    e.stopPropagation();
+    const $form = $(this).closest('.disclosures-form');
+    const $taskItem = $form.closest('.task-item[data-task-id="disclosures"]');
+
+    const eSignature = $('#eSignatureDisclosures').val();
+    const hasECOA = $('#ecoaCheck').is(':checked');
+    const hasFCRA = $('#fcraCheck').is(':checked');
+    const hasHomeLoanToolkit = $('#homeLoanToolkitCheck').is(':checked');
+    const intentToProceed = $('#intentToProceedCheck').is(':checked');
+
+    let newStatus;
+
+    const allRequiredAck = (hasECOA && hasFCRA && hasHomeLoanToolkit && eSignature && eSignature.trim() !== '' && intentToProceed);
+
+    if (allRequiredAck) {
+      newStatus = 'Completed';
+    } else {
+      const somethingEntered = hasECOA || hasFCRA || hasHomeLoanToolkit || (eSignature && eSignature.trim() !== '') || intentToProceed;
+      if (somethingEntered) {
+        newStatus = 'In Progress';
+      } else {
+        newStatus = 'Not Started';
+      }
+    }
+
+    const formData = new FormData();
+    formData.append('eSignature', eSignature || '');
+    formData.append('hasECOA', hasECOA);
+    formData.append('hasFCRA', hasFCRA);
+    formData.append('hasHomeLoanToolkit', hasHomeLoanToolkit);
+    formData.append('intentToProceed', intentToProceed);
+    formData.append('newStatus', newStatus);
+
+    $.ajax({
+      url: '/saveDisclosures',
+      method: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        if (response.success) {
+          alert('Your disclosures and LE acknowledgments have been saved.');
+          $taskItem.attr('data-task-status', newStatus);
+          const $statusLabel = $taskItem.find('.task-status-label');
+
+          if (newStatus === 'Completed') {
+            $statusLabel.removeClass().addClass('task-status-label text-sm font-semibold px-3 py-1 rounded-full bg-green-200 text-green-800');
+            $statusLabel.text('Completed');
+          } else if (newStatus === 'In Progress') {
+            $statusLabel.removeClass().addClass('task-status-label text-sm font-semibold px-3 py-1 rounded-full bg-yellow-200 text-yellow-800');
+            $statusLabel.text('In Progress');
+          } else {
+            $statusLabel.removeClass().addClass('task-status-label text-sm font-semibold px-3 py-1 rounded-full bg-gray-200 text-gray-800');
+            $statusLabel.text('Not Started');
+          }
+
+          updateProgress();
+        } else {
+          alert('Error saving disclosures. Please try again.');
+        }
+      }
+    });
+  });
+
   // Final Submission Button
   $submitBtn.on('click', function() {
     if (!$submitBtn.prop('disabled')) {
@@ -466,6 +532,7 @@ $(document).ready(function() {
   $('[data-tab="homeTab"]').click();
   updateProgress();
 });
+
 
 
 

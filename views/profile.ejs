@@ -727,40 +727,90 @@ if (applicationData && !applicationData.EmployerName) {
   </div>
 </li>
 
+<!-- Disclosures & Loan Estimate Review Task -->
+<%
+  // Use existing maxLoanAmount from pre-approval or hardcode
+  let interestRate = '3.75%'; // example
+  let monthlyPayment = '$1,850'; // example
+  let closingCosts = '$6,500'; // example
+%>
 
-                <li class="task-item border p-4 rounded-lg" data-task-id="disclosures">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h4 class="font-bold text-gray-800 mb-1">Disclosures & Loan Estimate Review</h4>
-                      <p class="text-sm text-gray-600">Review preliminary disclosures, Loan Estimate, and e-sign to acknowledge receipt.</p>
-                    </div>
-                    <div>
-                      <select class="task-status border-gray-300 rounded" data-task-id="disclosures">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                    </div>
-                  </div>
-                </li>
+<li class="task-item border rounded-lg transition" data-task-id="disclosures" data-task-status="<%= (disclosuresData && disclosuresData.ApplicationStatus) ? disclosuresData.ApplicationStatus : 'Not Started' %>">
+  <div class="task-header cursor-pointer hover:bg-gray-50 transition flex items-center justify-between p-4 rounded-t-lg">
+    <div>
+      <h4 class="font-bold text-gray-800 mb-1">Disclosures & Loan Estimate Review</h4>
+      <p class="text-sm text-gray-600">Review and acknowledge disclosures, view preliminary Loan Estimate.</p>
+    </div>
+    <div>
+      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (disclosuresData && disclosuresData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((disclosuresData && disclosuresData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
+        <%= disclosuresData && disclosuresData.ApplicationStatus ? disclosuresData.ApplicationStatus : 'Not Started' %>
+      </span>
+    </div>
+  </div>
 
-                <li class="task-item border p-4 rounded-lg" data-task-id="finalReview">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h4 class="font-bold text-gray-800 mb-1">Final Review & Application Submission</h4>
-                      <p class="text-sm text-gray-600">Review all info, confirm accuracy, and submit your application package.</p>
-                    </div>
-                    <div>
-                      <select class="task-status border-gray-300 rounded" data-task-id="finalReview">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
+  <div class="disclosures-form hidden p-4 border-t">
+    <h5 class="text-lg font-bold text-blue-800 mb-4">Review Your Preliminary Loan Estimate & Disclosures</h5>
+    <p class="text-sm text-gray-700 mb-4">
+      These disclosures provide important information about your loan. The Loan Estimate is preliminary and may change after full underwriting and appraisal.
+    </p>
+
+    <!-- Loan Estimate Info -->
+    <div class="mb-4 bg-white p-4 border rounded-md">
+      <h6 class="font-semibold text-xl text-gray-800 mb-4">Preliminary Loan Estimate</h6>
+      <p class="text-sm text-gray-700 mb-2">Interest Rate: <span class="tooltip text-blue-600 ml-1" title="Your current estimated interest rate. May change if not locked or after underwriting.">[?]</span> <%= interestRate %></p>
+      <p class="text-sm text-gray-700 mb-2">Monthly Payment: <%= monthlyPayment %></p>
+      <p class="text-sm text-gray-700 mb-2">Estimated Closing Costs: <%= closingCosts %></p>
+      <p class="text-xs text-gray-500 mb-2">These terms are preliminary and subject to change based on final underwriting and property appraisal.</p>
+      <a href="#" class="text-blue-600 underline text-sm download-le-button">Download LE</a>
+    </div>
+
+    <!-- Disclosures Acknowledgments -->
+    <div class="mb-4 bg-white p-4 border rounded-md">
+      <h6 class="font-semibold text-xl text-gray-800 mb-4">Disclosures</h6>
+      <p class="text-sm text-gray-700 mb-2">
+        Please acknowledge the following:
+      </p>
+      <div class="flex items-center mb-2">
+        <input type="checkbox" id="ecoaCheck" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+        <label for="ecoaCheck" class="ml-2 text-sm text-gray-700">ECOA Disclosure</label>
+      </div>
+      <div class="flex items-center mb-2">
+        <input type="checkbox" id="fcraCheck" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+        <label for="fcraCheck" class="ml-2 text-sm text-gray-700">FCRA Disclosure</label>
+      </div>
+      <div class="flex items-center mb-4">
+        <input type="checkbox" id="homeLoanToolkitCheck" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+        <label for="homeLoanToolkitCheck" class="ml-2 text-sm text-gray-700">Home Loan Toolkit</label>
+      </div>
+
+      <div class="flex flex-col mb-4">
+        <label for="eSignatureDisclosures" class="block text-sm font-medium text-gray-700 mb-1">
+          E-Signature (Type Your Name) <span class="text-red-500">*</span>
+        </label>
+        <input 
+          type="text" 
+          id="eSignatureDisclosures" 
+          name="eSignatureDisclosures"
+          placeholder="Your Full Name"
+          class="border p-2 rounded-md"
+        >
+      </div>
+
+      <div class="flex items-center mb-4">
+        <input type="checkbox" id="intentToProceedCheck" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+        <label for="intentToProceedCheck" class="ml-2 text-sm text-gray-700 tooltip" title="By indicating Intent to Proceed, you confirm you wish to continue with the loan application process.">Intent to Proceed [ ? ]</label>
+      </div>
+    </div>
+
+    <div class="flex space-x-4">
+      <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition save-disclosures">
+        Acknowledge & Proceed
+      </button>
+      <a href="#" class="text-blue-600 underline text-sm self-center">Contact Support</a>
+    </div>
+  </div>
+</li>
+
 
             <!-- Optional Tasks -->
             <div class="mt-8">

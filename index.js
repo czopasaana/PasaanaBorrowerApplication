@@ -347,6 +347,18 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
       };
     }
 
+    const disclosuresResult = await pool.request()
+  .input('UserID', sql.Int, req.session.user.userID)
+  .query('SELECT TOP 1 * FROM DisclosuresAndLoanEstimate WHERE UserID = @UserID ORDER BY CreatedAt DESC');
+
+    let disclosuresData = null;
+    if (disclosuresResult.recordset.length > 0) {
+      const row = disclosuresResult.recordset[0];
+  disclosuresData = {
+    ApplicationStatus: row.ApplicationStatus
+  };
+}
+
     // Pass identificationData along with other data to the template
     res.render('profile', {
       user: req.session.user,
@@ -356,7 +368,8 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
       identificationData,
       incomeData,
       assetData,
-      liabilityData
+      liabilityData,
+      disclosuresData
     });
 
   } catch (err) {
@@ -401,6 +414,9 @@ app.use('/', assetRoutes);
 
 const liabilityRoutes = require('./routes/liabilityRoutes');
 app.use('/', liabilityRoutes);
+
+const disclosuresRoutes = require('./routes/disclosuresRoutes');
+app.use('/', disclosuresRoutes);
 
 
 
