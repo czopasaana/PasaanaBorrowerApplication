@@ -359,7 +359,52 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
   };
 }
 
-    // Pass identificationData along with other data to the template
+    // Fetch Co-Borrower Data (Optional Task)
+    const coBorrowerResult = await pool
+      .request()
+      .input('UserID', sql.Int, req.session.user.userID)
+      .query("SELECT TOP 1 * FROM CoBorrowerInfo WHERE UserID = @UserID ORDER BY CreatedAt DESC");
+
+    let coBorrowerData = null;
+    if (coBorrowerResult.recordset.length > 0) {
+      const row = coBorrowerResult.recordset[0];
+      coBorrowerData = {
+        ApplicationStatus: row.ApplicationStatus
+        // Add more fields if you stored co-borrower names or docs info
+      };
+    }
+
+    // Fetch Purchase Agreement Data (Optional Task)
+    const purchaseAgreementResult = await pool
+      .request()
+      .input('UserID', sql.Int, req.session.user.userID)
+      .query("SELECT TOP 1 * FROM PurchaseAgreement WHERE UserID = @UserID ORDER BY CreatedAt DESC");
+
+    let purchaseAgreementData = null;
+    if (purchaseAgreementResult.recordset.length > 0) {
+      const row = purchaseAgreementResult.recordset[0];
+      purchaseAgreementData = {
+        ApplicationStatus: row.ApplicationStatus
+        // Add fields if you stored a file path or timestamp
+      };
+    }
+
+    // Fetch Gift Letter Data (Optional Task)
+    const giftLetterResult = await pool
+      .request()
+      .input('UserID', sql.Int, req.session.user.userID)
+      .query("SELECT TOP 1 * FROM GiftLetter WHERE UserID = @UserID ORDER BY CreatedAt DESC");
+
+    let giftLetterData = null;
+    if (giftLetterResult.recordset.length > 0) {
+      const row = giftLetterResult.recordset[0];
+      giftLetterData = {
+        ApplicationStatus: row.ApplicationStatus
+        // If you stored the file path or other info, add here
+      };
+    }
+
+    // Render the profile page with all the data
     res.render('profile', {
       user: req.session.user,
       isPreApproved,
@@ -369,7 +414,10 @@ app.get('/profile', ensureAuthenticated, async (req, res) => {
       incomeData,
       assetData,
       liabilityData,
-      disclosuresData
+      disclosuresData,
+      coBorrowerData,
+      purchaseAgreementData,
+      giftLetterData
     });
 
   } catch (err) {
@@ -418,6 +466,14 @@ app.use('/', liabilityRoutes);
 const disclosuresRoutes = require('./routes/disclosuresRoutes');
 app.use('/', disclosuresRoutes);
 
+const coBorrowerRoutes = require('./routes/coBorrowerRoutes');
+app.use('/', coBorrowerRoutes);
+
+const purchaseAgreementRoutes = require('./routes/purchaseAgreementRoutes');
+app.use('/', purchaseAgreementRoutes);
+
+const giftLetterRoutes = require('./routes/giftLetterRoutes');
+app.use('/', giftLetterRoutes);
 
 
 // Pre-Approval Steps with Enforcement

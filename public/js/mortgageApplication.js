@@ -1,12 +1,13 @@
 $(document).ready(function() {
-  const $tasks = $('.task-item');
   const $progressBar = $('#progressBar');
   const $submitBtn = $('#submitApplication');
 
   function updateProgress() {
-    const totalTasks = $tasks.length;
+    // Count only non-optional tasks
+    const $nonOptionalTasks = $('.task-item').not('[data-optional="true"]');
+    const totalTasks = $nonOptionalTasks.length;
     let completedCount = 0;
-    $tasks.each(function() {
+    $nonOptionalTasks.each(function() {
       const status = $(this).attr('data-task-status');
       if (status === 'Completed') {
         completedCount++;
@@ -31,24 +32,46 @@ $(document).ready(function() {
   $('.task-header').on('click', function(e) {
     const $taskItem = $(this).closest('.task-item');
     const taskId = $taskItem.data('task-id');
+    const $arrow = $(this).find('.task-arrow');
+  
+    let $formToToggle; // define this variable first
+  
     if (taskId === 'loanApplication') {
-      $taskItem.find('.loan-application-form').toggleClass('hidden');
+      $formToToggle = $taskItem.find('.loan-application-form');
     } else if (taskId === 'authorizations') {
-      $taskItem.find('.authorization-form').toggleClass('hidden');
+      $formToToggle = $taskItem.find('.authorization-form');
     } else if (taskId === 'identification') {
-      $taskItem.find('.identification-form').toggleClass('hidden');
+      $formToToggle = $taskItem.find('.identification-form');
     } else if (taskId === 'incomeVerification') {
-      $taskItem.find('.income-verification-form').toggleClass('hidden');
+      $formToToggle = $taskItem.find('.income-verification-form');
     } else if (taskId === 'assetVerification') {
-      $taskItem.find('.asset-verification-form').toggleClass('hidden');
+      $formToToggle = $taskItem.find('.asset-verification-form');
     } else if (taskId === 'liabilityVerification') {
-      $taskItem.find('.liability-verification-form').toggleClass('hidden');
+      $formToToggle = $taskItem.find('.liability-verification-form');
     } else if (taskId === 'disclosures') {
-      // Disclosures & LE Review form toggle
-      $taskItem.find('.disclosures-form').toggleClass('hidden');
+      $formToToggle = $taskItem.find('.disclosures-form');
+    } else if (taskId === 'coBorrower') {
+      $formToToggle = $taskItem.find('.co-borrower-form');
+    } else if (taskId === 'purchaseAgreement') {
+      $formToToggle = $taskItem.find('.purchase-agreement-form');
+    } else if (taskId === 'giftLetter') {
+      $formToToggle = $taskItem.find('.gift-letter-form');
     }
-    // Add other task toggles if needed
+  
+    if ($formToToggle) {
+      $formToToggle.toggleClass('hidden');
+  
+      // If the form is now visible, rotate the arrow
+      if ($formToToggle.hasClass('hidden')) {
+        // Collapsed: remove rotate-180 to show arrow pointing down
+        $arrow.removeClass('rotate-180');
+      } else {
+        // Expanded: add rotate-180 to rotate the arrow upward
+        $arrow.addClass('rotate-180');
+      }
+    }
   });
+  
 
   // Save logic for Loan Application & Loan Details
   $('.save-loan-details').on('click', function(e) {
@@ -352,8 +375,6 @@ $(document).ready(function() {
     });
   });
 
-  // Asset Verification logic already integrated above (assuming from your previous code)
-
   // Liability Verification Logic
   $('.save-liability-docs').on('click', function(e) {
     e.stopPropagation();
@@ -505,9 +526,171 @@ $(document).ready(function() {
     });
   });
 
+  // Co-Borrower Logic (Optional Task)
+  $('.save-co-borrower').on('click', function(e) {
+    e.stopPropagation();
+    const $form = $(this).closest('.co-borrower-form');
+    const $taskItem = $form.closest('.task-item[data-task-id="coBorrower"]');
+
+    const firstName = $('#coBorrowerFirstName').val();
+    const lastName = $('#coBorrowerLastName').val();
+    const docs = $('#coBorrowerDocs')[0].files;
+
+    let newStatus = 'Not Started';
+
+    const somethingEntered = (firstName && firstName.trim() !== '') || (lastName && lastName.trim() !== '') || docs.length > 0;
+    const allFieldsFilled = (firstName && firstName.trim() !== '') && (lastName && lastName.trim() !== '');
+    if (allFieldsFilled && docs.length > 0) {
+      newStatus = 'Completed';
+    } else if (somethingEntered) {
+      newStatus = 'In Progress';
+    }
+
+    const formData = new FormData();
+    formData.append('coBorrowerFirstName', firstName || '');
+    formData.append('coBorrowerLastName', lastName || '');
+    for (let i = 0; i < docs.length; i++) {
+      formData.append('coBorrowerDocs', docs[i]);
+    }
+    formData.append('newStatus', newStatus);
+
+    $.ajax({
+      url: '/saveCoBorrowerInfo',
+      method: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        if (response.success) {
+          alert('Co-borrower information has been saved.');
+          $taskItem.attr('data-task-status', newStatus);
+          const $statusLabel = $taskItem.find('.task-status-label');
+
+          if (newStatus === 'Completed') {
+            $statusLabel.removeClass().addClass('task-status-label text-sm font-semibold px-3 py-1 rounded-full bg-green-200 text-green-800');
+            $statusLabel.text('Completed');
+          } else if (newStatus === 'In Progress') {
+            $statusLabel.removeClass().addClass('task-status-label text-sm font-semibold px-3 py-1 rounded-full bg-yellow-200 text-yellow-800');
+            $statusLabel.text('In Progress');
+          } else {
+            $statusLabel.removeClass().addClass('task-status-label text-sm font-semibold px-3 py-1 rounded-full bg-gray-200 text-gray-800');
+            $statusLabel.text('Not Started');
+          }
+
+          // Optional task does not affect the main progress
+          updateProgress();
+        } else {
+          alert('Error saving co-borrower info. Please try again.');
+        }
+      }
+    });
+  });
+
+  // Purchase Agreement Logic (Optional Task)
+  $('.save-purchase-agreement').on('click', function(e) {
+    e.stopPropagation();
+    const $form = $(this).closest('.purchase-agreement-form');
+    const $taskItem = $form.closest('.task-item[data-task-id="purchaseAgreement"]');
+
+    const fileInput = $('#purchaseAgreement')[0].files;
+
+    let newStatus = 'Not Started';
+
+    if (fileInput.length > 0) {
+      newStatus = 'Completed';
+    } else {
+      newStatus = 'Not Started';
+    }
+
+    const formData = new FormData();
+    if (fileInput.length > 0) {
+      formData.append('purchaseAgreement', fileInput[0]);
+    }
+    formData.append('newStatus', newStatus);
+
+    $.ajax({
+      url: '/savePurchaseAgreement',
+      method: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        if (response.success) {
+          alert('Your purchase agreement has been saved.');
+          $taskItem.attr('data-task-status', newStatus);
+          const $statusLabel = $taskItem.find('.task-status-label');
+
+          if (newStatus === 'Completed') {
+            $statusLabel.removeClass().addClass('task-status-label text-sm font-semibold px-3 py-1 rounded-full bg-green-200 text-green-800');
+            $statusLabel.text('Completed');
+          } else {
+            $statusLabel.removeClass().addClass('task-status-label text-sm font-semibold px-3 py-1 rounded-full bg-gray-200 text-gray-800');
+            $statusLabel.text('Not Started');
+          }
+
+          // Optional task does not affect main progress
+          updateProgress();
+        } else {
+          alert('Error saving purchase agreement. Please try again.');
+        }
+      }
+    });
+  });
+
+  // Gift Letter Logic (Optional Task)
+  $('.save-gift-letter').on('click', function(e) {
+    e.stopPropagation();
+    const $form = $(this).closest('.gift-letter-form');
+    const $taskItem = $form.closest('.task-item[data-task-id="giftLetter"]');
+
+    const fileInput = $('#giftLetter')[0].files;
+
+    let newStatus = 'Not Started';
+
+    if (fileInput.length > 0) {
+      newStatus = 'Completed';
+    } else {
+      newStatus = 'Not Started';
+    }
+
+    const formData = new FormData();
+    if (fileInput.length > 0) {
+      formData.append('giftLetter', fileInput[0]);
+    }
+    formData.append('newStatus', newStatus);
+
+    $.ajax({
+      url: '/saveGiftLetter',
+      method: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        if (response.success) {
+          alert('Your gift letter has been saved.');
+          $taskItem.attr('data-task-status', newStatus);
+          const $statusLabel = $taskItem.find('.task-status-label');
+
+          if (newStatus === 'Completed') {
+            $statusLabel.removeClass().addClass('task-status-label text-sm font-semibold px-3 py-1 rounded-full bg-green-200 text-green-800');
+            $statusLabel.text('Completed');
+          } else {
+            $statusLabel.removeClass().addClass('task-status-label text-sm font-semibold px-3 py-1 rounded-full bg-gray-200 text-gray-800');
+            $statusLabel.text('Not Started');
+          }
+
+          // Optional task does not affect main progress
+          updateProgress();
+        } else {
+          alert('Error saving gift letter. Please try again.');
+        }
+      }
+    });
+  });
+
   // Final Submission Button
-  $submitBtn.on('click', function() {
-    if (!$submitBtn.prop('disabled')) {
+  $('#submitApplication').on('click', function() {
+    if (!$(this).prop('disabled')) {
       $.ajax({
         url: '/finalSubmitApplication',
         method: 'POST',
@@ -532,6 +715,8 @@ $(document).ready(function() {
   $('[data-tab="homeTab"]').click();
   updateProgress();
 });
+
+
 
 
 

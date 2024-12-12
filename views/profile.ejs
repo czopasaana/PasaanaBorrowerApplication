@@ -83,7 +83,13 @@
       <h4 class="font-bold text-gray-800 mb-1">Loan Application & Loan Details</h4>
       <p class="text-sm text-gray-600">Complete the URLA and set loan preferences.</p>
     </div>
-    <div>
+    <div class="flex items-center space-x-2">
+      <!-- Arrow Icon -->
+      <svg class="task-arrow w-6 h-6 transform transition-transform duration-200 text-gray-800"
+           fill="currentColor" viewBox="0 0 20 20">
+        <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+      </svg>
+      <!-- Status Label -->
       <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (applicationData && applicationData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((applicationData && applicationData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
         <%= (applicationData && applicationData.ApplicationStatus) ? applicationData.ApplicationStatus : (applicationData ? 'In Progress' : 'Not Started') %>
       </span>
@@ -387,13 +393,20 @@
                       <h4 class="font-bold text-gray-800 mb-1">Consolidated Authorizations & Consent</h4>
                       <p class="text-sm text-gray-600">Review and e-sign authorizations for credit checks, tax transcripts, etc.</p>
                     </div>
-                    <div>
+                    <div class="flex items-center space-x-2">
+                      <!-- Arrow Icon -->
+                      <svg class="task-arrow w-6 h-6 transform transition-transform duration-200 text-gray-800"
+                           fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+                      </svg>
+                
+                      <!-- Status Label -->
                       <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (authorizationsData && authorizationsData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((authorizationsData && authorizationsData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
                         <%= authorizationsData && authorizationsData.ApplicationStatus ? authorizationsData.ApplicationStatus : 'Not Started' %>
                       </span>
                     </div>
                   </div>
-                
+                              
                   <div class="authorization-form hidden p-4 border-t">
                     <h5 class="text-lg font-bold text-blue-800 mb-4">Review & E-Sign Authorizations</h5>
                     <p class="text-sm text-gray-700 mb-4">
@@ -459,7 +472,14 @@
                       <h4 class="font-bold text-gray-800 mb-1">Identification Documents</h4>
                       <p class="text-sm text-gray-600">Upload a government-issued ID (driver’s license, passport).</p>
                     </div>
-                    <div>
+                    <div class="flex items-center space-x-2">
+                      <!-- Arrow Icon -->
+                      <svg class="task-arrow w-6 h-6 transform transition-transform duration-200 text-gray-800"
+                           fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+                      </svg>
+                
+                      <!-- Status Label -->
                       <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (identificationData && identificationData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((identificationData && identificationData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
                         <%= identificationData && identificationData.ApplicationStatus ? identificationData.ApplicationStatus : 'Not Started' %>
                       </span>
@@ -522,12 +542,20 @@ if (applicationData && !applicationData.EmployerName) {
       <h4 class="font-bold text-gray-800 mb-1">Income Verification Documents</h4>
       <p class="text-sm text-gray-600">Upload required pay stubs, W-2s, tax returns, or P&L statements (for self-employed).</p>
     </div>
-    <div>
+    <div class="flex items-center space-x-2">
+      <!-- Arrow Icon -->
+      <svg class="task-arrow w-6 h-6 transform transition-transform duration-200 text-gray-800"
+           fill="currentColor" viewBox="0 0 20 20">
+        <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+      </svg>
+
+      <!-- Status Label -->
       <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (incomeData && incomeData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((incomeData && incomeData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
         <%= incomeData && incomeData.ApplicationStatus ? incomeData.ApplicationStatus : 'Not Started' %>
       </span>
     </div>
   </div>
+
 
   <div class="income-verification-form hidden p-4 border-t">
     <h5 class="text-lg font-bold text-blue-800 mb-4">Upload Your Income Verification Documents</h5>
@@ -598,12 +626,20 @@ if (applicationData && !applicationData.EmployerName) {
       <h4 class="font-bold text-gray-800 mb-1">Asset Verification Documents</h4>
       <p class="text-sm text-gray-600">Upload recent bank, investment, and retirement account statements or link accounts.</p>
     </div>
-    <div>
+    <div class="flex items-center space-x-2">
+      <!-- Arrow Icon -->
+      <svg class="task-arrow w-6 h-6 transform transition-transform duration-200 text-gray-800"
+           fill="currentColor" viewBox="0 0 20 20">
+        <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+      </svg>
+
+      <!-- Status Label -->
       <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (assetData && assetData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((assetData && assetData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
         <%= assetData && assetData.ApplicationStatus ? assetData.ApplicationStatus : 'Not Started' %>
       </span>
     </div>
   </div>
+
 
   <div class="asset-verification-form hidden p-4 border-t">
     <h5 class="text-lg font-bold text-blue-800 mb-4">Upload or Link Your Asset Accounts</h5>
@@ -650,7 +686,7 @@ if (applicationData && !applicationData.EmployerName) {
   </div>
 </li>
 
-
+<!-- Liability Verification Documents Task -->
 <%
   // Check LoanPurpose from applicationData
   let requireMortgageStatement = false;
@@ -659,7 +695,7 @@ if (applicationData && !applicationData.EmployerName) {
   }
 %>
 
-<li class="task-item border rounded-lg transition" 
+<li class="task-item border rounded-lg transition"
     data-task-id="liabilityVerification"
     data-task-status="<%= (liabilityData && liabilityData.ApplicationStatus) ? liabilityData.ApplicationStatus : 'Not Started' %>"
     data-loan-purpose="<%= applicationData && applicationData.LoanPurpose ? applicationData.LoanPurpose : '' %>">
@@ -668,12 +704,20 @@ if (applicationData && !applicationData.EmployerName) {
       <h4 class="font-bold text-gray-800 mb-1">Liability Verification Documents</h4>
       <p class="text-sm text-gray-600">Upload statements for credit cards, auto loans, student loans, and (if refinancing) mortgage.</p>
     </div>
-    <div>
+    <div class="flex items-center space-x-2">
+      <!-- Arrow Icon -->
+      <svg class="task-arrow w-6 h-6 transform transition-transform duration-200 text-gray-800"
+           fill="currentColor" viewBox="0 0 20 20">
+        <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+      </svg>
+
+      <!-- Status Label -->
       <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (liabilityData && liabilityData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((liabilityData && liabilityData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
         <%= liabilityData && liabilityData.ApplicationStatus ? liabilityData.ApplicationStatus : 'Not Started' %>
       </span>
     </div>
   </div>
+
 
   <div class="liability-verification-form hidden p-4 border-t">
     <h5 class="text-lg font-bold text-blue-800 mb-4">Upload Your Liability Verification Documents</h5>
@@ -741,12 +785,20 @@ if (applicationData && !applicationData.EmployerName) {
       <h4 class="font-bold text-gray-800 mb-1">Disclosures & Loan Estimate Review</h4>
       <p class="text-sm text-gray-600">Review and acknowledge disclosures, view preliminary Loan Estimate.</p>
     </div>
-    <div>
+    <div class="flex items-center space-x-2">
+      <!-- Arrow Icon -->
+      <svg class="task-arrow w-6 h-6 transform transition-transform duration-200 text-gray-800"
+           fill="currentColor" viewBox="0 0 20 20">
+        <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+      </svg>
+
+      <!-- Status Label -->
       <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (disclosuresData && disclosuresData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((disclosuresData && disclosuresData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
         <%= disclosuresData && disclosuresData.ApplicationStatus ? disclosuresData.ApplicationStatus : 'Not Started' %>
       </span>
     </div>
   </div>
+
 
   <div class="disclosures-form hidden p-4 border-t">
     <h5 class="text-lg font-bold text-blue-800 mb-4">Review Your Preliminary Loan Estimate & Disclosures</h5>
@@ -816,53 +868,201 @@ if (applicationData && !applicationData.EmployerName) {
             <div class="mt-8">
               <h3 class="font-semibold text-xl text-gray-800 border-b pb-2 mb-4">Optional / Conditional Tasks</h3>
               <ul class="space-y-4">
-                <li class="task-item border p-4 rounded-lg" data-task-id="coBorrowerInfo">
-                  <div class="flex items-center justify-between">
+                <!-- Co-Borrower Information & Documents -->
+                <li class="task-item border rounded-lg transition" data-task-id="coBorrower" data-optional="true" data-task-status="<%= (coBorrowerData && coBorrowerData.ApplicationStatus) ? coBorrowerData.ApplicationStatus : 'Not Started' %>">
+                  <div class="task-header cursor-pointer hover:bg-gray-50 transition flex items-center justify-between p-4 rounded-t-lg">
                     <div>
-                      <h4 class="font-bold text-gray-800 mb-1">Co-Borrower Information & Documents (If Applicable)</h4>
-                      <p class="text-sm text-gray-600">Complete co-borrower’s info if indicated in application.</p>
+                      <h4 class="font-bold text-gray-800 mb-1">Co-Borrower Information & Documents (Optional)</h4>
+                      <p class="text-sm text-gray-600">Provide co-borrower details if applicable. Not required for submission.</p>
                     </div>
-                    <div>
-                      <select class="task-status border-gray-300 rounded" data-task-id="coBorrowerInfo">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
+                    <div class="flex items-center space-x-2">
+                      <!-- Arrow Icon -->
+                      <svg class="task-arrow w-6 h-6 transform transition-transform duration-200 text-gray-800"
+                           fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+                      </svg>
+                
+                      <!-- Dynamic Status Label -->
+                      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (coBorrowerData && coBorrowerData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((coBorrowerData && coBorrowerData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
+                        <%= coBorrowerData && coBorrowerData.ApplicationStatus ? coBorrowerData.ApplicationStatus : 'Not Started' %>
+                      </span>
+                    </div>
+                  </div>
+                
+                
+                  <div class="co-borrower-form hidden p-4 border-t">
+                    <h5 class="text-lg font-bold text-blue-800 mb-4">Co-Borrower Details</h5>
+                    <p class="text-sm text-gray-700 mb-4">
+                      Optional: Provide co-borrower's personal info and documents.
+                    </p>
+                
+                    <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+                      <h6 class="font-semibold text-xl text-gray-800 mb-4">Personal Information (Optional)</h6>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex flex-col">
+                          <label for="coBorrowerFirstName" class="block text-sm font-medium text-gray-700 mb-1">
+                            First Name
+                          </label>
+                          <input 
+                            type="text" 
+                            id="coBorrowerFirstName"
+                            placeholder="Enter co-borrower's first name"
+                            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition">
+                        </div>
+                        <div class="flex flex-col">
+                          <label for="coBorrowerLastName" class="block text-sm font-medium text-gray-700 mb-1">
+                            Last Name
+                          </label>
+                          <input 
+                            type="text" 
+                            id="coBorrowerLastName"
+                            placeholder="Enter co-borrower's last name"
+                            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
+                                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition">
+                        </div>
+                      </div>
+                    </div>
+                
+                    <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+                      <h6 class="font-semibold text-xl text-gray-800 mb-4">Upload Documents (Optional)</h6>
+                      <p class="text-sm text-gray-500 mb-4">Upload co-borrower's ID, pay stubs, W-2s if desired.</p>
+                      <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700" for="coBorrowerDocs">Upload Documents</label>
+                        <input 
+                          class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md p-2 cursor-pointer
+                                focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                          id="coBorrowerDocs"
+                          name="coBorrowerDocs"
+                          type="file"
+                          multiple>
+                      </div>
+                    </div>
+                
+                    <div class="flex space-x-4">
+                      <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition save-co-borrower">
+                        Save
+                      </button>
+                      <a href="#" class="text-blue-600 underline text-sm self-center">Contact Support</a>
                     </div>
                   </div>
                 </li>
-
-                <li class="task-item border p-4 rounded-lg" data-task-id="purchaseAgreement">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h4 class="font-bold text-gray-800 mb-1">Upload Purchase Agreement (Purchase Only)</h4>
-                      <p class="text-sm text-gray-600">Upload the executed purchase contract for the property.</p>
+                
+                <!-- Purchase Agreement -->
+                <% if (applicationData && applicationData.LoanPurpose === 'Purchase') { %>
+                  <li class="task-item border rounded-lg transition"
+                  data-task-id="purchaseAgreement"
+                  data-optional="true"
+                  data-task-status="<%= (purchaseAgreementData && purchaseAgreementData.ApplicationStatus) ? purchaseAgreementData.ApplicationStatus : 'Not Started' %>">
+                <div class="task-header cursor-pointer hover:bg-gray-50 transition flex items-center justify-between p-4 rounded-t-lg">
+                  <div>
+                    <h4 class="font-bold text-gray-800 mb-1">Upload Purchase Agreement (Optional)</h4>
+                    <p class="text-sm text-gray-600">Upload the executed purchase agreement for the property being purchased.</p>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <!-- Arrow Icon -->
+                    <svg class="task-arrow w-6 h-6 transform transition-transform duration-200 text-gray-800"
+                         fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+                    </svg>
+              
+                    <!-- Dynamic Status Label -->
+                    <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (purchaseAgreementData && purchaseAgreementData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((purchaseAgreementData && purchaseAgreementData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
+                      <%= purchaseAgreementData && purchaseAgreementData.ApplicationStatus ? purchaseAgreementData.ApplicationStatus : 'Not Started' %>
+                    </span>
+                  </div>
+                </div>
+              
+                  
+                    <div class="purchase-agreement-form hidden p-4 border-t">
+                      <h5 class="text-lg font-bold text-blue-800 mb-4">Purchase Agreement</h5>
+                      <p class="text-sm text-gray-700 mb-4">
+                        Please upload the signed purchase agreement in PDF format. This is optional and does not affect submission readiness.
+                      </p>
+                  
+                      <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+                        <h6 class="font-semibold text-xl text-gray-800 mb-4">Upload Document (Optional)</h6>
+                        <div>
+                          <label class="block mb-2 text-sm font-medium text-gray-700" for="purchaseAgreement">Upload Agreement</label>
+                          <input
+                            class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md p-2 cursor-pointer 
+                                  focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                            id="purchaseAgreement"
+                            name="purchaseAgreement"
+                            type="file"
+                            accept="application/pdf"
+                          >
+                        </div>
+                      </div>
+                  
+                      <div class="flex space-x-4">
+                        <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition save-purchase-agreement">
+                          Save
+                        </button>
+                        <a href="#" class="text-blue-600 underline text-sm self-center">Contact Support</a>
+                      </div>
                     </div>
+                  </li>
+                <% } %>
+                  
+                <!-- Gift Letter Task-->
+                <li class="task-item border rounded-lg transition" data-task-id="giftLetter" data-optional="true" data-task-status="<%= (giftLetterData && giftLetterData.ApplicationStatus) ? giftLetterData.ApplicationStatus : 'Not Started' %>">
+                  <div class="task-header cursor-pointer hover:bg-gray-50 transition flex items-center justify-between p-4 rounded-t-lg">
                     <div>
-                      <select class="task-status border-gray-300 rounded" data-task-id="purchaseAgreement">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
+                      <h4 class="font-bold text-gray-800 mb-1">Upload Gift Letter (Optional)</h4>
+                      <p class="text-sm text-gray-600">Provide the signed gift letter to document that gift funds are not a loan.</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <!-- Arrow Icon -->
+                      <svg class="task-arrow w-6 h-6 transform transition-transform duration-200 text-gray-800"
+                           fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
+                      </svg>
+                
+                      <!-- Dynamic Status Label -->
+                      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (giftLetterData && giftLetterData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((giftLetterData && giftLetterData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
+                        <%= giftLetterData && giftLetterData.ApplicationStatus ? giftLetterData.ApplicationStatus : 'Not Started' %>
+                      </span>
                     </div>
                   </div>
-                </li>
-
-                <li class="task-item border p-4 rounded-lg" data-task-id="giftLetter">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h4 class="font-bold text-gray-800 mb-1">Upload Gift Letter (If Gift Funds Indicated)</h4>
-                      <p class="text-sm text-gray-600">If receiving gift funds, upload a signed gift letter.</p>
+                
+                  
+                    <div class="gift-letter-form hidden p-4 border-t">
+                      <h5 class="text-lg font-bold text-blue-800 mb-4">Gift Letter</h5>
+                      <p class="text-sm text-gray-700 mb-4">
+                        Please download the gift letter template, have the donor complete and sign it, then upload the signed PDF here.
+                        This step is optional and does not affect your submission readiness.
+                      </p>
+                  
+                      <!-- Download Template Link (example) -->
+                      <div class="mb-4">
+                        <a href="/templates/gift-letter-template.pdf" class="text-blue-600 underline text-sm" target="_blank">Download Gift Letter Template</a>
+                      </div>
+                  
+                      <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
+                        <h6 class="font-semibold text-xl text-gray-800 mb-4">Upload Document (Optional)</h6>
+                        <div>
+                          <label class="block mb-2 text-sm font-medium text-gray-700" for="giftLetter">Upload Signed Gift Letter</label>
+                          <input
+                            class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md p-2 cursor-pointer 
+                                  focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
+                            id="giftLetter"
+                            name="giftLetter"
+                            type="file"
+                            accept="application/pdf"
+                          >
+                        </div>
+                      </div>
+                  
+                      <div class="flex space-x-4">
+                        <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700 transition save-gift-letter">
+                          Save
+                        </button>
+                        <a href="#" class="text-blue-600 underline text-sm self-center">Contact Support</a>
+                      </div>
                     </div>
-                    <div>
-                      <select class="task-status border-gray-300 rounded" data-task-id="giftLetter">
-                        <option value="Not Started">Not Started</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                    </div>
-                  </div>
-                </li>
+                  </li>
+                  
               </ul>
             </div>
           </div>
