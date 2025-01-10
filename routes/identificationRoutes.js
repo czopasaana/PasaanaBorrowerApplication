@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/id_docs/' }); // Adjust storage as needed
+const { BlobServiceClient } = require('@azure/storage-blob');
 const sql = require('mssql');
+
+// Use memory storage so we can get file buffer directly
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/saveIdentificationDocuments', upload.single('idDocs'), async (req, res) => {
   if (!req.session.user) {
@@ -12,14 +15,36 @@ router.post('/saveIdentificationDocuments', upload.single('idDocs'), async (req,
   const userId = req.session.user.userID;
   const pool = req.app.locals.pool;
 
-  // Determine newStatus from front-end or deduce based on whether a file is uploaded
   const newStatus = req.body.newStatus || 'Not Started';
 
-  // If a file was uploaded
   let filePath = null;
   if (req.file) {
-    // Assuming req.file contains { filename, originalname, ... }
-    filePath = `uploads/id_docs/${req.file.filename}`;
+    const storageAccountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
+    const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME_IDENTIFICATION;
+    let sasToken = process.env.AZURE_STORAGE_SAS_TOKEN;
+
+    // Ensure the SAS token URL is properly formatted with a leading '?'
+    const sasPrefix = sasToken.startsWith('?') ? '' : '?';
+    sasToken = sasPrefix + sasToken;
+
+    // Create blob service client with properly formatted SAS URL
+    const blobServiceClient = new BlobServiceClient(
+      `https://${storageAccountName}.blob.core.windows.net${sasToken}`
+    );
+
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+
+    // Generate a unique blob name for the uploaded file
+    const extension = req.file.originalname.split('.').pop();
+    const blobName = `user-${userId}-${Date.now()}.${extension}`;
+
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+    // Upload the file buffer to Blob Storage
+    await blockBlobClient.uploadData(req.file.buffer);
+
+    // Store the blobName in the database, URL will be generated later using SAS
+    filePath = blobName;
   }
 
   try {
@@ -29,9 +54,10 @@ router.post('/saveIdentificationDocuments', upload.single('idDocs'), async (req,
 
     if (existingRecord.recordset.length > 0) {
       // Update existing record
+      const currentPath = existingRecord.recordset[0].IDFilePath;
       await pool.request()
         .input('UserID', sql.Int, userId)
-        .input('IDFilePath', sql.NVarChar(500), filePath || existingRecord.recordset[0].IDFilePath)
+        .input('IDFilePath', sql.NVarChar(500), filePath || currentPath)
         .input('ApplicationStatus', sql.NVarChar(50), newStatus)
         .query(`
           UPDATE IdentificationDocuments
@@ -60,3 +86,4 @@ router.post('/saveIdentificationDocuments', upload.single('idDocs'), async (req,
 });
 
 module.exports = router;
+

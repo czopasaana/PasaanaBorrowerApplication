@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%- title || "My Profile" %></title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/styles.css">
+  <!-- jQuery for AJAX requests -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Pass isPreApproved status to client-side -->
+  <script>
+    // Expose isPreApproved to client JS
+    window.isPreApproved = <%= isPreApproved ? 'true' : 'false' %>;
+  </script>
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
+  <!-- Navigation Bar -->
+  <%- include('../partials/navbar.ejs') %>
+
+  <main class="flex flex-1">
+    <!-- Sidebar (specific to Profile) -->
+    <aside class="w-64 bg-white rounded-lg shadow-lg p-6 h-full sticky top-0">
+      <h2 class="text-xl font-bold text-blue-900 mb-4">Navigation</h2>
+      <ul class="space-y-2">
+        <li>
+          <button 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium" 
+            data-tab="homeTab"
+          >Home</button>
+        </li>
+        <li>
+          <button 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium" 
+            data-tab="mortgageAppTab"
+          >Mortgage Application</button>
+        </li>
+        <li>
+          <button 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium"
+            data-tab="accountSettingsTab"
+          >Account Settings</button>
+        </li>
+        <li>
+          <button 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium"
+            data-tab="messagesTab"
+          >Messages</button>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <section class="flex-1 py-12 px-8 overflow-y-auto w-full">
+      <!-- Where the Profile tabs (homeTab, mortgageAppTab, etc.) get injected -->
+      <%- body %>
+    </section>
+  </main>
+
+  <!-- Chatbot -->
+  <%- include('../partials/chatbot.ejs') %>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white text-center py-4 mt-12">
+    <p>© 2025 Pasaana. All rights reserved.</p>
+  </footer>
+
+  <!-- JS relevant to the Profile page -->
+  <script src="/profile.js"></script>
+  <script src="/js/mortgageApplication.js"></script>
+</body>
+</html>
+
