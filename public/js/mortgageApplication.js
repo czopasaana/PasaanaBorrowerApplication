@@ -28,6 +28,93 @@ $(document).ready(function() {
     }
   }
 
+    
+    // 1) Toggling sub-sections on Section 5
+  function togglePrimaryResidenceExtras() {
+    const val = $('input[name="primaryResidence5a"]:checked').val(); // "true" or "false"
+    if (val === 'true') {
+      $('#ownershipInterestContainer').removeClass('hidden');
+    } else {
+      $('#ownershipInterestContainer').addClass('hidden');
+      // Also hide the next part
+      $('#ownershipDetailsContainer').addClass('hidden');
+      // Clear radio for ownership interest if you want:
+      $('input[name="ownershipInterest5a"]').prop('checked', false);
+    }
+  }
+  function toggleOwnershipDetails() {
+    const val = $('input[name="ownershipInterest5a"]:checked').val();
+    if (val === 'true') {
+      $('#ownershipDetailsContainer').removeClass('hidden');
+    } else {
+      $('#ownershipDetailsContainer').addClass('hidden');
+    }
+  }
+  function toggleBorrowedAmount() {
+    const val = $('input[name="borrowingMoney5a"]:checked').val();
+    if (val === 'true') {
+      $('#borrowedAmountContainer').removeClass('hidden');
+    } else {
+      $('#borrowedAmountContainer').addClass('hidden');
+    }
+  }
+
+  // Run on page load (in case some are pre-checked)
+  togglePrimaryResidenceExtras();
+  toggleOwnershipDetails();
+  toggleBorrowedAmount();
+
+  // Bind event handlers
+  $('input[name="primaryResidence5a"]').on('change', togglePrimaryResidenceExtras);
+  $('input[name="ownershipInterest5a"]').on('change', toggleOwnershipDetails);
+  $('input[name="borrowingMoney5a"]').on('change', toggleBorrowedAmount);
+
+  // Section 5b Toggle
+
+  function toggleBankruptcyTypes() {
+    const val = $('input[name="declaredBankruptcy5b"]:checked').val(); 
+    const $container = $('#bankruptcyTypesContainer');
+
+    if (val === 'true') {
+      $container.removeClass('hidden');
+    } else {
+      $container.addClass('hidden');
+      // Optionally clear all checkboxes if toggling from yes->no
+      $('#bankruptChapter7, #bankruptChapter11, #bankruptChapter12, #bankruptChapter13')
+        .prop('checked', false);
+    }
+  }
+
+  // Run on page load (in case some are pre-checked)
+  toggleBankruptcyTypes();
+
+  // Bind event handlers
+  $('input[name="declaredBankruptcy5b"]').on('change', toggleBankruptcyTypes);
+
+  // Section 7 Military Service Toggle
+  function toggleMilitaryDetails() {
+    const val = $('input[name="hasMilitaryService7"]:checked').val(); // "true" or "false" or undefined
+    const $details = $('#militaryDetails7');
+    if (val === 'true') {
+      $details.removeClass('hidden');
+    } else {
+      $details.addClass('hidden');
+      // Optionally clear sub-checklist if toggling from yes->no
+      $('#isCurrentlyActiveDuty7, #isRetiredDischarged7, #isReserveOrGuard7, #isSurvivingSpouse7')
+        .prop('checked', false);
+      // Also clear the date
+      $('#projectedExpirationDate7').val('');
+    }
+  }
+  
+  // Run on page load (in case it's pre‐checked from the server)
+  toggleMilitaryDetails();
+  
+  // Bind event
+  $('input[name="hasMilitaryService7"]').on('change', toggleMilitaryDetails);
+
+
+
   // Toggle form visibility on header click ONLY
   $('.task-header').on('click', function(e) {
     const $taskItem = $(this).closest('.task-item');
@@ -585,6 +672,202 @@ formData.append('giftAssetType4d2',  $('#giftAssetType4d2').val());
 formData.append('deposited4d2',      $('input[name="deposited4d2"]:checked').val() || '');
 formData.append('giftSource4d2',     $('#giftSource4d2').val());
 formData.append('giftValue4d2',      $('#giftValue4d2').val());
+
+// Section 5: Declarations
+
+// Section 5a: About this Property and Your Money for this Loan
+// Converting the string to boolean
+const primaryVal = $('input[name="primaryResidence5a"]:checked').val(); // "true" or "false" or undefined
+let primaryBool = null;
+if (primaryVal === 'true') primaryBool = true;
+else if (primaryVal === 'false') primaryBool = false;
+formData.append('primaryResidence5a', primaryBool);
+
+// Ownership interest
+const ownVal = $('input[name="ownershipInterest5a"]:checked').val();
+let ownBool = null;
+if (ownVal === 'true') ownBool = true;
+else if (ownVal === 'false') ownBool = false;
+formData.append('ownershipInterest5a', ownBool);
+
+formData.append('propertyType5a', $('#propertyType5a').val());
+formData.append('titleHeld5a', $('#titleHeld5a').val());
+
+// B: familyRelationship5a
+const familyVal = $('input[name="familyRelationship5a"]:checked').val();
+let familyBool = null;
+if (familyVal === 'true') familyBool = true;
+else if (familyVal === 'false') familyBool = false;
+formData.append('familyRelationship5a', familyBool);
+
+// C: borrowingMoney5a
+const borrowVal = $('input[name="borrowingMoney5a"]:checked').val();
+let borrowBool = null;
+if (borrowVal === 'true') borrowBool = true;
+else if (borrowVal === 'false') borrowBool = false;
+formData.append('borrowingMoney5a', borrowBool);
+formData.append('borrowedAmount5a', $('#borrowedAmount5a').val());
+
+// D: anotherMortgage5a, newCredit5a
+const anotherMortVal = $('input[name="anotherMortgage5a"]:checked').val();
+let anotherMortBool = null;
+if (anotherMortVal === 'true') anotherMortBool = true;
+else if (anotherMortVal === 'false') anotherMortBool = false;
+formData.append('anotherMortgage5a', anotherMortBool);
+
+const newCredVal = $('input[name="newCredit5a"]:checked').val();
+let newCredBool = null;
+if (newCredVal === 'true') newCredBool = true;
+else if (newCredVal === 'false') newCredBool = false;
+formData.append('newCredit5a', newCredBool);
+
+// E: priorityLien5a
+const lienVal = $('input[name="priorityLien5a"]:checked').val();
+let lienBool = null;
+if (lienVal === 'true') lienBool = true;
+else if (lienVal === 'false') lienBool = false;
+formData.append('priorityLien5a', lienBool);
+
+// Section 5b: About Your Finances
+// F. Co-signer/Guarantor
+const coSignerVal = $('input[name="coSignerGuarantor5b"]:checked').val(); // "true" or "false"
+let coSignerGuarantor5b = null;
+if (coSignerVal === 'true') {
+  coSignerGuarantor5b = 'true';
+} else if (coSignerVal === 'false') {
+  coSignerGuarantor5b = 'false';
+}
+formData.append('coSignerGuarantor5b', coSignerGuarantor5b);
+
+// G. Outstanding Judgments
+const judgmentsVal = $('input[name="judgments5b"]:checked').val(); // "true" or "false"
+let judgments5b = null;
+if (judgmentsVal === 'true') {
+  judgments5b = 'true';
+} else if (judgmentsVal === 'false') {
+  judgments5b = 'false';
+}
+formData.append('judgments5b', judgments5b);
+
+// H. Delinquent or Default on Federal Debt
+const delinVal = $('input[name="delinquentFederalDebt5b"]:checked').val(); // "true" or "false"
+let delinquentFederalDebt5b = null;
+if (delinVal === 'true') {
+  delinquentFederalDebt5b = 'true';
+} else if (delinVal === 'false') {
+  delinquentFederalDebt5b = 'false';
+}
+formData.append('delinquentFederalDebt5b', delinquentFederalDebt5b);
+
+// I. Party to a Lawsuit (potential personal financial liability)
+const lawsuitVal = $('input[name="lawsuitLiability5b"]:checked').val(); // "true" or "false"
+let lawsuitLiability5b = null;
+if (lawsuitVal === 'true') {
+  lawsuitLiability5b = 'true';
+} else if (lawsuitVal === 'false') {
+  lawsuitLiability5b = 'false';
+}
+formData.append('lawsuitLiability5b', lawsuitLiability5b);
+
+// J. Conveyed Title in Lieu of Foreclosure (past 7 years)
+const conveyVal = $('input[name="conveyTitleInLieu5b"]:checked').val(); // "true" or "false"
+let conveyTitleInLieu5b = null;
+if (conveyVal === 'true') {
+  conveyTitleInLieu5b = 'true';
+} else if (conveyVal === 'false') {
+  conveyTitleInLieu5b = 'false';
+}
+formData.append('conveyTitleInLieu5b', conveyTitleInLieu5b);
+
+// K. Pre-foreclosure / Short Sale in past 7 years
+const preforeVal = $('input[name="preforeclosureSale5b"]:checked').val(); // "true" or "false"
+let preforeclosureSale5b = null;
+if (preforeVal === 'true') {
+  preforeclosureSale5b = 'true';
+} else if (preforeVal === 'false') {
+  preforeclosureSale5b = 'false';
+}
+formData.append('preforeclosureSale5b', preforeclosureSale5b);
+
+// L. Property Foreclosed in the last 7 years
+const foreclosedVal = $('input[name="foreclosedProperty5b"]:checked').val(); // "true" or "false"
+let foreclosedProperty5b = null;
+if (foreclosedVal === 'true') {
+  foreclosedProperty5b = 'true';
+} else if (foreclosedVal === 'false') {
+  foreclosedProperty5b = 'false';
+}
+formData.append('foreclosedProperty5b', foreclosedProperty5b);
+
+// M. Declared Bankruptcy in the past 7 years
+const declaredVal = $('input[name="declaredBankruptcy5b"]:checked').val(); // "true" or "false"
+let declaredBankruptcy5b = null;
+if (declaredVal === 'true') {
+  declaredBankruptcy5b = 'true';
+} else if (declaredVal === 'false') {
+  declaredBankruptcy5b = 'false';
+}
+formData.append('declaredBankruptcy5b', declaredBankruptcy5b);
+
+// M (continued): Bankruptcy Types (if "Yes" => Chapter 7, 11, 12, 13 checkboxes)
+formData.append('bankruptChapter7',  $('#bankruptChapter7').is(':checked')  ? 'true' : 'false');
+formData.append('bankruptChapter11', $('#bankruptChapter11').is(':checked') ? 'true' : 'false');
+formData.append('bankruptChapter12', $('#bankruptChapter12').is(':checked') ? 'true' : 'false');
+formData.append('bankruptChapter13', $('#bankruptChapter13').is(':checked') ? 'true' : 'false');
+
+// Section 7: Military Service
+const hasMilitaryVal = $('input[name="hasMilitaryService7"]:checked').val(); // "true" or "false"
+let hasMilitaryService7 = null;
+if (hasMilitaryVal === 'true') {
+  hasMilitaryService7 = 'true';
+} else if (hasMilitaryVal === 'false') {
+  hasMilitaryService7 = 'false';
+}
+formData.append('hasMilitaryService7', hasMilitaryService7);
+
+// If user said YES to above, gather the checkboxes and date.
+formData.append('isCurrentlyActiveDuty7', $('#isCurrentlyActiveDuty7').is(':checked') ? 'true' : 'false');
+
+// For projectedExpirationDate7 (only relevant if currently on active duty)
+formData.append('projectedExpirationDate7', $('#projectedExpirationDate7').val() || '');
+
+// Are they retired/discharged?
+formData.append('isRetiredDischarged7', $('#isRetiredDischarged7').is(':checked') ? 'true' : 'false');
+
+// Reserve/Guard member in non-activated status?
+formData.append('isReserveOrGuard7', $('#isReserveOrGuard7').is(':checked') ? 'true' : 'false');
+
+// Surviving spouse?
+formData.append('isSurvivingSpouse7', $('#isSurvivingSpouse7').is(':checked') ? 'true' : 'false');
+
+// Section 8: Demographic Information
+// Ethnicity
+formData.append('ethHispanicLatino8',  $('#ethHispanicLatino8').is(':checked') ? 'true' : 'false');
+formData.append('ethMexican8',         $('#ethMexican8').is(':checked') ? 'true' : 'false');
+formData.append('ethPuertoRican8',     $('#ethPuertoRican8').is(':checked') ? 'true' : 'false');
+formData.append('ethCuban8',           $('#ethCuban8').is(':checked') ? 'true' : 'false');
+formData.append('ethOtherHispanic8',   $('#ethOtherHispanic8').is(':checked') ? 'true' : 'false');
+formData.append('ethOtherHispanicOrigin8', $('#ethOtherHispanicOrigin8').val() || '');
+formData.append('ethNotHispanic8',     $('#ethNotHispanic8').is(':checked') ? 'true' : 'false');
+formData.append('ethNoInfo8',          $('#ethNoInfo8').is(':checked') ? 'true' : 'false');
+
+// Sex (Radio)
+const sexVal = $('input[name="sex8"]:checked').val(); // "Female" or "Male" or "NoInfo"
+formData.append('sex8', sexVal || '');
+
+// Race (checkboxes)
+formData.append('raceAmericanIndian8', $('#raceAmericanIndian8').is(':checked') ? 'true' : 'false');
+formData.append('americanIndianTribe8', $('#americanIndianTribe8').val() || '');
+
+formData.append('raceAsian8', $('#raceAsian8').is(':checked') ? 'true' : 'false');
+formData.append('otherAsianPrint8', $('#otherAsianPrint8').val() || '');
+
+formData.append('raceBlack8', $('#raceBlack8').is(':checked') ? 'true' : 'false');
+formData.append('raceHawaiian8', $('#raceHawaiian8').is(':checked') ? 'true' : 'false');
+formData.append('otherPacIslanderPrint8', $('#otherPacIslanderPrint8').val() || '');
+
+formData.append('raceWhite8', $('#raceWhite8').is(':checked') ? 'true' : 'false');
+formData.append('raceNoInfo8', $('#raceNoInfo8').is(':checked') ? 'true' : 'false');
 
 // Assets & Liabilities
 formData.append('checkingAccounts',       $('#checkingAccounts').val());
@@ -1475,6 +1758,15 @@ $('#chkNoGifts4d').on('change', function() {
     $('#gifts4dFields').addClass('hidden');
   } else {
     $('#gifts4dFields').removeClass('hidden');
+  }
+});
+
+// Hide sub-questions until "Yes" is chosen, Section 5a 
+$('input[name="primaryResidence5a"]').on('change', function() {
+  if ($(this).val() === 'Yes') {
+    $('#ownershipInterestSection5a').removeClass('hidden');
+  } else {
+    $('#ownershipInterestSection5a').addClass('hidden');
   }
 });
 

@@ -1,0 +1,587 @@
+/* =========================
+   CORE
+   ========================= */
+
+IF OBJECT_ID(N'dbo.loan_applications', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.loan_applications (
+    id                 BIGINT IDENTITY(1,1) PRIMARY KEY,
+    user_id            BIGINT NOT NULL,
+    type_of_credit     NVARCHAR(20) NOT NULL CHECK (type_of_credit IN ('Individual','Joint')),
+    loan_purpose       NVARCHAR(20) NOT NULL CHECK (loan_purpose IN ('Purchase','Refinance','Other')),
+    loan_term_months   INT  NOT NULL,
+    loan_type          NVARCHAR(100),
+    rate_lock_flag     BIT NOT NULL DEFAULT (0),
+    application_status NVARCHAR(50) NOT NULL,
+    created_at         DATETIME2(0) NOT NULL DEFAULT (SYSUTCDATETIME()),
+    updated_at         DATETIME2(0) NOT NULL DEFAULT (SYSUTCDATETIME())
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.borrowers', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrowers (
+    id                    BIGINT IDENTITY(1,1) PRIMARY KEY,
+    first_name            NVARCHAR(100) NOT NULL,
+    middle_name           NVARCHAR(100),
+    last_name             NVARCHAR(100) NOT NULL,
+    suffix                NVARCHAR(20),
+    ssn_encrypted         VARBINARY(MAX),
+    ssn_last4             NCHAR(4),
+    dob                   DATE,
+    alternate_names       NVARCHAR(255),
+    citizenship_status    NVARCHAR(40) CHECK (citizenship_status IN ('USCitizen','PermanentResidentAlien','NonPermanentResidentAlien')),
+    marital_status        NVARCHAR(20) CHECK (marital_status IN ('Married','Separated','Unmarried','Unknown')),
+    number_of_dependents  INT,
+    email                 NVARCHAR(254),
+    home_phone            NVARCHAR(25),
+    cell_phone            NVARCHAR(25),
+    work_phone            NVARCHAR(25),
+    created_at            DATETIME2(0) NOT NULL DEFAULT (SYSUTCDATETIME()),
+    updated_at            DATETIME2(0) NOT NULL DEFAULT (SYSUTCDATETIME())
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.application_borrowers', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.application_borrowers (
+    id             BIGINT IDENTITY(1,1) PRIMARY KEY,
+    application_id BIGINT NOT NULL,
+    borrower_id    BIGINT NOT NULL,
+    borrower_role  NVARCHAR(20) NOT NULL CHECK (borrower_role IN ('Primary','CoBorrower','Other')),
+    CONSTRAINT FK_app_borrowers_app FOREIGN KEY (application_id) REFERENCES dbo.loan_applications(id) ON DELETE CASCADE,
+    CONSTRAINT FK_app_borrowers_bor FOREIGN KEY (borrower_id)    REFERENCES dbo.borrowers(id)          ON DELETE CASCADE,
+    CONSTRAINT UQ_application_borrower UNIQUE (application_id, borrower_id)
+  );
+END
+GO
+
+/* =========================
+   ADDRESSES (URLA 1a)
+   ========================= */
+
+IF OBJECT_ID(N'dbo.borrower_addresses', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_addresses (
+    id                  BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id         BIGINT NOT NULL,
+    address_type        NVARCHAR(20) NOT NULL CHECK (address_type IN ('Current','Former','Mailing')),
+    street              NVARCHAR(255),
+    unit                NVARCHAR(50),
+    city                NVARCHAR(100),
+    state               NVARCHAR(50),
+    zip                 NVARCHAR(20),
+    country             NVARCHAR(100),
+    years_at_address    INT,
+    months_at_address   INT,
+    housing_type        NVARCHAR(40) CHECK (housing_type IN ('Own','Rent','NoPrimaryHousingExpense')),
+    monthly_rent_amount DECIMAL(19,2),
+    CONSTRAINT FK_addr_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+/* =========================
+   EMPLOYMENT & INCOME (URLA 1b/1c/1d/1e)
+   ========================= */
+
+IF OBJECT_ID(N'dbo.borrower_employments', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_employments (
+    id                               BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id                      BIGINT NOT NULL,
+    employment_category              NVARCHAR(20) NOT NULL CHECK (employment_category IN ('Current','Additional','Previous')),
+    employer_name                    NVARCHAR(255),
+    phone                            NVARCHAR(25),
+    street                           NVARCHAR(255),
+    unit                             NVARCHAR(50),
+    city                             NVARCHAR(100),
+    state                            NVARCHAR(50),
+    zip                              NVARCHAR(20),
+    country                          NVARCHAR(100),
+    position_title                   NVARCHAR(100),
+    start_date                       DATE,
+    end_date                         DATE,
+    business_owner_or_self_employed  BIT,
+    ownership_share_percent          DECIMAL(5,2) CHECK (ownership_share_percent IS NULL OR (ownership_share_percent >= 0 AND ownership_share_percent <= 100)),
+    family_employee_flag             BIT,
+    line_of_work_years               INT,
+    line_of_work_months              INT,
+    CONSTRAINT FK_emp_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.employment_income_breakdown', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.employment_income_breakdown (
+    id              BIGINT IDENTITY(1,1) PRIMARY KEY,
+    employment_id   BIGINT NOT NULL,
+    income_type     NVARCHAR(40) NOT NULL CHECK (income_type IN ('Base','Overtime','Bonus','Commission','MilitaryEntitlements','Other')),
+    monthly_amount  DECIMAL(19,2) NOT NULL,
+    note            NVARCHAR(255),
+    CONSTRAINT FK_income_employment FOREIGN KEY (employment_id) REFERENCES dbo.borrower_employments(id) ON DELETE CASCADE
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.other_income', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.other_income (
+    id               BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id      BIGINT NOT NULL,
+    income_source    NVARCHAR(50) NOT NULL CHECK (income_source IN (
+      'Alimony','AutomobileAllowance','BoarderIncome','CapitalGains','ChildSupport','Disability',
+      'FosterCare','HousingOrParsonage','InterestDividends','MortgageCreditCertificate',
+      'MortgageDifferentialPayments','NotesReceivable','PublicAssistance','Retirement',
+      'RoyaltyPayments','SeparateMaintenance','SocialSecurity','Trust','UnemploymentBenefits',
+      'VACompensation','Other'
+    )),
+    monthly_amount   DECIMAL(19,2) NOT NULL,
+    description      NVARCHAR(255),
+    CONSTRAINT FK_other_income_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+/* =========================
+   ASSETS & CREDITS (URLA 2a/2b)
+   ========================= */
+
+IF OBJECT_ID(N'dbo.asset_accounts', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.asset_accounts (
+    id                            BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id                   BIGINT NOT NULL,
+    account_type                  NVARCHAR(50) NOT NULL CHECK (account_type IN (
+      'Checking','Savings','MoneyMarket','CertificateOfDeposit','MutualFund',
+      'Stocks','StockOptions','Bonds','Retirement','BridgeLoanProceeds',
+      'IndividualDevelopmentAccount','TrustAccount','CashValueLifeInsurance'
+    )),
+    financial_institution         NVARCHAR(255),
+    account_number_masked         NVARCHAR(64),
+    cash_or_market_value_amount   DECIMAL(19,2) NOT NULL,
+    CONSTRAINT FK_assets_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.assets_credits_other', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.assets_credits_other (
+    id             BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id    BIGINT NOT NULL,
+    category       NVARCHAR(10) NOT NULL CHECK (category IN ('Asset','Credit')),
+    type           NVARCHAR(60) NOT NULL CHECK (type IN (
+      'ProceedsFromRealEstateSale','ProceedsFromNonRealEstateAssetSale',
+      'SecuredBorrowedFunds','UnsecuredBorrowedFunds','EarnestMoney','EmployerAssistance',
+      'LotEquity','RelocationFunds','RentCredit','SweatEquity','TradeEquity','Other'
+    )),
+    value_amount   DECIMAL(19,2) NOT NULL,
+    deposited_flag BIT,
+    source         NVARCHAR(40) CHECK (source IN (
+      'CommunityNonprofit','Employer','FederalAgency','LocalAgency','Relative',
+      'ReligiousNonprofit','StateAgency','UnmarriedPartner','Lender','Other'
+    )),
+    CONSTRAINT FK_assets_other_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+/* =========================
+   LIABILITIES & OTHER EXPENSES (URLA 2c/2d)
+   ========================= */
+
+IF OBJECT_ID(N'dbo.liabilities', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.liabilities (
+    id                               BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id                      BIGINT NOT NULL,
+    account_type                     NVARCHAR(20) NOT NULL CHECK (account_type IN ('Revolving','Installment','Open30Day','Lease','Other')),
+    company_name                     NVARCHAR(255),
+    account_number_masked            NVARCHAR(64),
+    unpaid_balance_amount            DECIMAL(19,2) NOT NULL,
+    monthly_payment_amount           DECIMAL(19,2) NOT NULL,
+    payoff_at_or_before_closing_flag BIT,
+    CONSTRAINT FK_liab_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.other_liabilities_expenses', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.other_liabilities_expenses (
+    id                         BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id                BIGINT NOT NULL,
+    type                       NVARCHAR(30) NOT NULL CHECK (type IN ('Alimony','ChildSupport','SeparateMaintenance','JobRelatedExpenses','Other')),
+    monthly_payment_amount     DECIMAL(19,2) NOT NULL,
+    description                NVARCHAR(255),
+    CONSTRAINT FK_other_liab_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+/* =========================
+   REAL ESTATE OWNED (URLA 3a/3b/3c)
+   ========================= */
+
+IF OBJECT_ID(N'dbo.properties_owned', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.properties_owned (
+    id                               BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id                      BIGINT NOT NULL,
+    street                           NVARCHAR(255),
+    unit                             NVARCHAR(50),
+    city                             NVARCHAR(100),
+    state                            NVARCHAR(50),
+    zip                              NVARCHAR(20),
+    country                          NVARCHAR(100),
+    property_value_amount            DECIMAL(19,2),
+    status                           NVARCHAR(20) CHECK (status IN ('Sold','PendingSale','Retained')),
+    intended_occupancy               NVARCHAR(20) CHECK (intended_occupancy IN ('PrimaryResidence','SecondHome','Investment','Other')),
+    monthly_ins_taxes_hoa_amount     DECIMAL(19,2),
+    monthly_rental_income_amount     DECIMAL(19,2),
+    net_monthly_rental_income_amount DECIMAL(19,2),
+    CONSTRAINT FK_props_owned_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.property_mortgages', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.property_mortgages (
+    id                                BIGINT IDENTITY(1,1) PRIMARY KEY,
+    property_id                       BIGINT NOT NULL,
+    creditor_name                     NVARCHAR(255),
+    account_number_masked             NVARCHAR(64),
+    monthly_mortgage_payment_amount   DECIMAL(19,2),
+    unpaid_balance_amount             DECIMAL(19,2),
+    payoff_at_or_before_closing_flag  BIT,
+    mortgage_type                     NVARCHAR(20) CHECK (mortgage_type IN ('FHA','VA','Conventional','USDA_RD','Other')),
+    credit_limit_amount               DECIMAL(19,2),
+    CONSTRAINT FK_prop_mtg_property FOREIGN KEY (property_id) REFERENCES dbo.properties_owned(id) ON DELETE CASCADE
+  );
+END
+GO
+
+/* =========================
+   SUBJECT LOAN & PROPERTY (URLA 4a/4b/4c/4d)
+   ========================= */
+
+IF OBJECT_ID(N'dbo.subject_property', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.subject_property (
+    id                          BIGINT IDENTITY(1,1) PRIMARY KEY,
+    application_id              BIGINT NOT NULL,
+    loan_amount_amount          DECIMAL(19,2) NOT NULL,
+    loan_purpose                NVARCHAR(20) NOT NULL CHECK (loan_purpose IN ('Purchase','Refinance','Other')),
+    street                      NVARCHAR(255),
+    unit                        NVARCHAR(50),
+    city                        NVARCHAR(100),
+    state                       NVARCHAR(50),
+    zip                         NVARCHAR(20),
+    county                      NVARCHAR(100),
+    number_of_units             INT,
+    property_value_amount       DECIMAL(19,2),
+    occupancy_intent            NVARCHAR(20) CHECK (occupancy_intent IN ('PrimaryResidence','SecondHome','Investment','Other')),
+    fha_secondary_residence_flag BIT,
+    mixed_use_flag              BIT,
+    manufactured_home_flag      BIT,
+    CONSTRAINT FK_subject_property_app FOREIGN KEY (application_id) REFERENCES dbo.loan_applications(id) ON DELETE CASCADE,
+    CONSTRAINT UQ_subject_property_app UNIQUE (application_id)
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.subject_new_mortgages', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.subject_new_mortgages (
+    id                                BIGINT IDENTITY(1,1) PRIMARY KEY,
+    subject_property_id               BIGINT NOT NULL,
+    creditor_name                     NVARCHAR(255),
+    lien_type                         NVARCHAR(20) NOT NULL CHECK (lien_type IN ('FirstLien','SubordinateLien')),
+    monthly_payment_amount            DECIMAL(19,2),
+    loan_amount_or_amount_to_be_drawn DECIMAL(19,2),
+    credit_limit_amount               DECIMAL(19,2),
+    CONSTRAINT FK_sub_newmtg_sp FOREIGN KEY (subject_property_id) REFERENCES dbo.subject_property(id) ON DELETE CASCADE
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.subject_property_rental', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.subject_property_rental (
+    id                                        BIGINT IDENTITY(1,1) PRIMARY KEY,
+    subject_property_id                       BIGINT NOT NULL,
+    expected_monthly_rental_income_amount     DECIMAL(19,2),
+    expected_net_monthly_rental_income_amount DECIMAL(19,2),
+    CONSTRAINT FK_sub_rental_sp FOREIGN KEY (subject_property_id) REFERENCES dbo.subject_property(id) ON DELETE CASCADE,
+    CONSTRAINT UQ_sub_rental_sp UNIQUE (subject_property_id)
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.gifts_grants', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.gifts_grants (
+    id             BIGINT IDENTITY(1,1) PRIMARY KEY,
+    application_id BIGINT NOT NULL,
+    asset_type     NVARCHAR(20) NOT NULL CHECK (asset_type IN ('CashGift','GiftOfEquity','Grant')),
+    deposited_flag BIT,
+    source         NVARCHAR(40) CHECK (source IN (
+      'CommunityNonprofit','Employer','FederalAgency','LocalAgency','Relative',
+      'ReligiousNonprofit','StateAgency','UnmarriedPartner','Lender','Other'
+    )),
+    value_amount   DECIMAL(19,2) NOT NULL,
+    CONSTRAINT FK_gifts_app FOREIGN KEY (application_id) REFERENCES dbo.loan_applications(id) ON DELETE CASCADE
+  );
+END
+GO
+
+/* =========================
+   DECLARATIONS (URLA 5)
+   ========================= */
+
+IF OBJECT_ID(N'dbo.borrower_declarations', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_declarations (
+    id                                         BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id                                BIGINT NOT NULL,
+    will_occupy_subject_as_primary             BIT,
+    had_ownership_interest_last_3yrs           BIT,
+    prior_property_type                        NVARCHAR(2)  CHECK (prior_property_type IN ('PR','SR','SH','IP')),
+    prior_title_holding                        NVARCHAR(2)  CHECK (prior_title_holding IN ('S','SP','O')),
+    family_or_business_affiliation_with_seller BIT,
+    undisclosed_borrowed_funds_amount          DECIMAL(19,2),
+    new_mortgage_on_other_property_pending     BIT,
+    new_credit_pending                         BIT,
+    priority_lien_expected                     BIT,
+    cosigner_or_guarantor_on_other_debt        BIT,
+    outstanding_judgments                      BIT,
+    delinquent_or_default_on_federal_debt      BIT,
+    party_to_lawsuit                           BIT,
+    deed_in_lieu_last_7yrs                     BIT,
+    preforeclosure_or_short_sale_last_7yrs     BIT,
+    foreclosure_last_7yrs                      BIT,
+    bankruptcy_last_7yrs                       BIT,
+    bankruptcy_chapters                        NVARCHAR(50),
+    CONSTRAINT FK_decl_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE,
+    CONSTRAINT UQ_decl_borrower UNIQUE (borrower_id)
+  );
+END
+GO
+
+/* =========================
+   MILITARY SERVICE (URLA 7)
+   ========================= */
+
+IF OBJECT_ID(N'dbo.borrower_military_service', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_military_service (
+    id                          BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id                 BIGINT NOT NULL,
+    has_military_service        BIT,
+    currently_active_duty       BIT,
+    projected_expiration_date   DATE,
+    currently_retired_discharged BIT,
+    reserve_or_guard            BIT,
+    surviving_spouse            BIT,
+    CONSTRAINT FK_mil_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE,
+    CONSTRAINT UQ_mil_borrower UNIQUE (borrower_id)
+  );
+END
+GO
+
+/* =========================
+   DEMOGRAPHICS (URLA 8)
+   ========================= */
+
+IF OBJECT_ID(N'dbo.borrower_demographics', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_demographics (
+    id                                               BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id                                      BIGINT NOT NULL,
+    sex                                              NVARCHAR(25) CHECK (sex IN ('Female','Male','PreferNotToProvide')),
+    provided_via                                     NVARCHAR(20) CHECK (provided_via IN ('FaceToFace','Telephone','FaxMail','EmailInternet')),
+    collected_by_visual_observation_or_surname_ethnicity BIT,
+    collected_by_visual_observation_or_surname_sex       BIT,
+    collected_by_visual_observation_or_surname_race      BIT,
+    CONSTRAINT FK_demo_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE,
+    CONSTRAINT UQ_demo_borrower UNIQUE (borrower_id)
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.borrower_ethnicity_selections', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_ethnicity_selections (
+    id                 BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id        BIGINT NOT NULL,
+    ethnicity          NVARCHAR(30) NOT NULL CHECK (ethnicity IN ('HispanicOrLatino','NotHispanicOrLatino','PreferNotToProvide')),
+    other_origin_print NVARCHAR(255),
+    CONSTRAINT FK_eth_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.borrower_race_selections', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_race_selections (
+    id                      BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id             BIGINT NOT NULL,
+    race                    NVARCHAR(40) NOT NULL CHECK (race IN (
+      'AmericanIndianOrAlaskaNative','Asian','BlackOrAfricanAmerican',
+      'NativeHawaiianOrOtherPacificIslander','White','PreferNotToProvide'
+    )),
+    tribe_or_printed_origin NVARCHAR(255),
+    CONSTRAINT FK_race_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+/* =========================
+   ACKNOWLEDGMENTS & ORIGINATOR (URLA 6/9)
+   ========================= */
+
+IF OBJECT_ID(N'dbo.application_acknowledgments', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.application_acknowledgments (
+    id               BIGINT IDENTITY(1,1) PRIMARY KEY,
+    application_id   BIGINT NOT NULL,
+    signed_at        DATETIME2(0),
+    signature_method NVARCHAR(20) CHECK (signature_method IN ('Electronic','WetInk')),
+    econsent_flag    BIT,
+    CONSTRAINT FK_app_ack_app FOREIGN KEY (application_id) REFERENCES dbo.loan_applications(id) ON DELETE CASCADE,
+    CONSTRAINT UQ_app_ack_app UNIQUE (application_id)
+  );
+END
+GO
+
+IF OBJECT_ID(N'dbo.loan_originator', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.loan_originator (
+    id                    BIGINT IDENTITY(1,1) PRIMARY KEY,
+    application_id        BIGINT NOT NULL,
+    organization_name     NVARCHAR(255),
+    organization_nmlsr_id NVARCHAR(50),
+    state_license_id      NVARCHAR(50),
+    originator_name       NVARCHAR(255),
+    originator_nmlsr_id   NVARCHAR(50),
+    email                 NVARCHAR(254),
+    phone                 NVARCHAR(25),
+    signed_at             DATE,
+    CONSTRAINT FK_originator_app FOREIGN KEY (application_id) REFERENCES dbo.loan_applications(id) ON DELETE CASCADE,
+    CONSTRAINT UQ_originator_app UNIQUE (application_id)
+  );
+END
+GO
+
+/* =========================
+   EXTRA TABLES FOR FULL URLA COVERAGE
+   ========================= */
+
+-- Dependents (URLA 1a)
+IF OBJECT_ID(N'dbo.borrower_dependents', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_dependents (
+    id           BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id  BIGINT NOT NULL,
+    age_years    INT NOT NULL CHECK (age_years >= 0 AND age_years <= 120),
+    CONSTRAINT FK_dep_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+-- Subject property details (property type list) (URLA 4a)
+IF OBJECT_ID(N'dbo.subject_property_details', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.subject_property_details (
+    id                     BIGINT IDENTITY(1,1) PRIMARY KEY,
+    subject_property_id    BIGINT NOT NULL,
+    property_type          NVARCHAR(40) NOT NULL CHECK (property_type IN (
+      'SingleFamilyDetached','SingleFamilyAttached','Condominium','Cooperative',
+      'PUD','ManufacturedHome','TwoToFourUnit','Other'
+    )),
+    property_type_other_text NVARCHAR(255),
+    CONSTRAINT FK_sp_details_sp FOREIGN KEY (subject_property_id) REFERENCES dbo.subject_property(id) ON DELETE CASCADE,
+    CONSTRAINT UQ_sp_details_sp UNIQUE (subject_property_id)
+  );
+END
+GO
+
+-- Title holding (URLA 4a/5a context)
+IF OBJECT_ID(N'dbo.subject_title_holding', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.subject_title_holding (
+    id                   BIGINT IDENTITY(1,1) PRIMARY KEY,
+    subject_property_id  BIGINT NOT NULL,
+    title_in_names_text  NVARCHAR(255) NOT NULL,
+    manner_of_title      NVARCHAR(40)  NOT NULL CHECK (manner_of_title IN (
+      'SoleOwnership','JointTenancy','TenancyByTheEntirety','TenancyInCommon','CommunityProperty','Other'
+    )),
+    manner_other_text    NVARCHAR(255),
+    CONSTRAINT FK_title_sp FOREIGN KEY (subject_property_id) REFERENCES dbo.subject_property(id) ON DELETE CASCADE,
+    CONSTRAINT UQ_title_sp UNIQUE (subject_property_id)
+  );
+END
+GO
+
+-- Ethnicity details (URLA 8 sub-selections)
+IF OBJECT_ID(N'dbo.borrower_ethnicity_detail_selections', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_ethnicity_detail_selections (
+    id               BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id      BIGINT NOT NULL,
+    ethnicity_detail NVARCHAR(40) NOT NULL CHECK (ethnicity_detail IN ('Mexican','PuertoRican','Cuban','OtherHispanicOrLatino')),
+    other_origin_print NVARCHAR(255),
+    CONSTRAINT FK_eth_detail_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+-- Race details (URLA 8 sub-selections)
+IF OBJECT_ID(N'dbo.borrower_race_detail_selections', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_race_detail_selections (
+    id          BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id BIGINT NOT NULL,
+    race_detail NVARCHAR(50) NOT NULL CHECK (race_detail IN (
+      'AsianIndian','Chinese','Filipino','Japanese','Korean','Vietnamese','OtherAsian',
+      'NativeHawaiian','GuamanianOrChamorro','Samoan','OtherPacificIslander'
+    )),
+    other_print NVARCHAR(255),
+    CONSTRAINT FK_race_detail_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+-- American Indian or Alaska Native tribes print (separate rows)
+IF OBJECT_ID(N'dbo.borrower_american_indian_tribes', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_american_indian_tribes (
+    id          BIGINT IDENTITY(1,1) PRIMARY KEY,
+    borrower_id BIGINT NOT NULL,
+    tribe_name  NVARCHAR(255) NOT NULL,
+    CONSTRAINT FK_ai_tribe_borrower FOREIGN KEY (borrower_id) REFERENCES dbo.borrowers(id) ON DELETE CASCADE
+  );
+END
+GO
+
+-- Per-borrower acknowledgments/signatures (URLA 6/9)
+IF OBJECT_ID(N'dbo.borrower_acknowledgments', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.borrower_acknowledgments (
+    id               BIGINT IDENTITY(1,1) PRIMARY KEY,
+    application_id   BIGINT NOT NULL,
+    borrower_id      BIGINT NOT NULL,
+    signed_at        DATETIME2(0),
+    signature_method NVARCHAR(20) CHECK (signature_method IN ('Electronic','WetInk')),
+    econsent_flag    BIT,
+    CONSTRAINT FK_bor_ack_app FOREIGN KEY (application_id) REFERENCES dbo.loan_applications(id) ON DELETE CASCADE,
+    CONSTRAINT FK_bor_ack_bor FOREIGN KEY (borrower_id)    REFERENCES dbo.borrowers(id)          ON DELETE CASCADE,
+    CONSTRAINT UQ_bor_ack_app_bor UNIQUE (application_id, borrower_id)
+  );
+END
+GO

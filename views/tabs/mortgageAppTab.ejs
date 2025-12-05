@@ -91,8 +91,26 @@
         type="button" 
         class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
         data-target="#urlaSection5">
-        Loan Preferences
+        Section 5: Declarations
       </button>
+      <button 
+      type="button" 
+      class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
+      data-target="#urlaSection6">
+      Section 6: 
+    </button>
+    <button 
+    type="button" 
+    class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
+    data-target="#urlaSection7">
+    Section 7: Military Service
+  </button>
+  <button 
+  type="button" 
+  class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
+  data-target="#urlaSection8">
+  Section 8: Demographic Information
+</button>
     </div>
 
     <!-- SECTION 1: Borrower Info (Shown by default) -->
@@ -228,16 +246,16 @@
         name="citizenship" 
         class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800">
         <option value="">-- Select --</option>
-        <option value="US Citizen" 
-          <%= (applicationData && applicationData.Citizenship === 'US Citizen') ? 'selected' : '' %>>
+        <option value="USCitizen" 
+          <%= (applicationData && (applicationData.Citizenship === 'USCitizen' || applicationData.Citizenship === 'US Citizen')) ? 'selected' : '' %>>
           U.S. Citizen
         </option>
-        <option value="Permanent Resident Alien"
-          <%= (applicationData && applicationData.Citizenship === 'Permanent Resident Alien') ? 'selected' : '' %>>
+        <option value="PermanentResidentAlien"
+          <%= (applicationData && (applicationData.Citizenship === 'PermanentResidentAlien' || applicationData.Citizenship === 'Permanent Resident Alien')) ? 'selected' : '' %>>
           Permanent Resident Alien
         </option>
-        <option value="Non-Permanent Resident Alien"
-          <%= (applicationData && applicationData.Citizenship === 'Non-Permanent Resident Alien') ? 'selected' : '' %>>
+        <option value="NonPermanentResidentAlien"
+          <%= (applicationData && (applicationData.Citizenship === 'NonPermanentResidentAlien' || applicationData.Citizenship === 'Non-Permanent Resident Alien')) ? 'selected' : '' %>>
           Non-Permanent Resident Alien
         </option>
       </select>
@@ -291,6 +309,7 @@
         <option value="Married" <%= (applicationData && applicationData.MaritalStatus === 'Married') ? 'selected' : '' %>>Married</option>
         <option value="Separated" <%= (applicationData && applicationData.MaritalStatus === 'Separated') ? 'selected' : '' %>>Separated</option>
         <option value="Unmarried" <%= (applicationData && applicationData.MaritalStatus === 'Unmarried') ? 'selected' : '' %>>Unmarried</option>
+        <option value="Unknown" <%= (applicationData && applicationData.MaritalStatus === 'Unknown') ? 'selected' : '' %>>Unknown</option>
       </select>
     </div>
 
@@ -468,7 +487,7 @@
         <option value="">-- Select --</option>
         <option value="Own" <%= (applicationData && applicationData.CurrentAddressHousing === 'Own') ? 'selected' : '' %>>Own</option>
         <option value="Rent" <%= (applicationData && applicationData.CurrentAddressHousing === 'Rent') ? 'selected' : '' %>>Rent</option>
-        <option value="No primary housing expense" <%= (applicationData && applicationData.CurrentAddressHousing === 'No primary housing expense') ? 'selected' : '' %>>No primary housing expense</option>
+        <option value="NoPrimaryHousingExpense" <%= (applicationData && (applicationData.CurrentAddressHousing === 'NoPrimaryHousingExpense' || applicationData.CurrentAddressHousing === 'No primary housing expense')) ? 'selected' : '' %>>No primary housing expense</option>
       </select>
     </div>
     <div class="flex flex-col">
@@ -1574,14 +1593,34 @@
       <label for="incomeSource1" class="text-sm font-medium text-gray-700 mb-1">
         Income Source
       </label>
-      <input
-        type="text"
+      <select
         id="incomeSource1"
         name="incomeSource1"
         class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Child Support"
-        value="<%= applicationData ? applicationData.IncomeSource1 : '' %>"
       >
+        <option value="">-- Select --</option>
+        <option value="Alimony" <%= (applicationData && applicationData.IncomeSource1 === 'Alimony') ? 'selected' : '' %>>Alimony</option>
+        <option value="AutomobileAllowance" <%= (applicationData && applicationData.IncomeSource1 === 'AutomobileAllowance') ? 'selected' : '' %>>Automobile Allowance</option>
+        <option value="BoarderIncome" <%= (applicationData && applicationData.IncomeSource1 === 'BoarderIncome') ? 'selected' : '' %>>Boarder Income</option>
+        <option value="CapitalGains" <%= (applicationData && applicationData.IncomeSource1 === 'CapitalGains') ? 'selected' : '' %>>Capital Gains</option>
+        <option value="ChildSupport" <%= (applicationData && applicationData.IncomeSource1 === 'ChildSupport') ? 'selected' : '' %>>Child Support</option>
+        <option value="Disability" <%= (applicationData && applicationData.IncomeSource1 === 'Disability') ? 'selected' : '' %>>Disability</option>
+        <option value="FosterCare" <%= (applicationData && applicationData.IncomeSource1 === 'FosterCare') ? 'selected' : '' %>>Foster Care</option>
+        <option value="HousingOrParsonage" <%= (applicationData && applicationData.IncomeSource1 === 'HousingOrParsonage') ? 'selected' : '' %>>Housing or Parsonage</option>
+        <option value="InterestDividends" <%= (applicationData && applicationData.IncomeSource1 === 'InterestDividends') ? 'selected' : '' %>>Interest/Dividends</option>
+        <option value="MortgageCreditCertificate" <%= (applicationData && applicationData.IncomeSource1 === 'MortgageCreditCertificate') ? 'selected' : '' %>>Mortgage Credit Certificate</option>
+        <option value="MortgageDifferentialPayments" <%= (applicationData && applicationData.IncomeSource1 === 'MortgageDifferentialPayments') ? 'selected' : '' %>>Mortgage Differential Payments</option>
+        <option value="NotesReceivable" <%= (applicationData && applicationData.IncomeSource1 === 'NotesReceivable') ? 'selected' : '' %>>Notes Receivable</option>
+        <option value="PublicAssistance" <%= (applicationData && applicationData.IncomeSource1 === 'PublicAssistance') ? 'selected' : '' %>>Public Assistance</option>
+        <option value="Retirement" <%= (applicationData && applicationData.IncomeSource1 === 'Retirement') ? 'selected' : '' %>>Retirement/Pension</option>
+        <option value="RoyaltyPayments" <%= (applicationData && applicationData.IncomeSource1 === 'RoyaltyPayments') ? 'selected' : '' %>>Royalty Payments</option>
+        <option value="SeparateMaintenance" <%= (applicationData && applicationData.IncomeSource1 === 'SeparateMaintenance') ? 'selected' : '' %>>Separate Maintenance</option>
+        <option value="SocialSecurity" <%= (applicationData && applicationData.IncomeSource1 === 'SocialSecurity') ? 'selected' : '' %>>Social Security</option>
+        <option value="Trust" <%= (applicationData && applicationData.IncomeSource1 === 'Trust') ? 'selected' : '' %>>Trust</option>
+        <option value="UnemploymentBenefits" <%= (applicationData && applicationData.IncomeSource1 === 'UnemploymentBenefits') ? 'selected' : '' %>>Unemployment Benefits</option>
+        <option value="VACompensation" <%= (applicationData && applicationData.IncomeSource1 === 'VACompensation') ? 'selected' : '' %>>VA Compensation</option>
+        <option value="Other" <%= (applicationData && applicationData.IncomeSource1 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="monthlyIncome1" class="text-sm font-medium text-gray-700 mb-1">
@@ -1605,14 +1644,34 @@
       <label for="incomeSource2" class="text-sm font-medium text-gray-700 mb-1">
         Income Source
       </label>
-      <input
-        type="text"
+      <select
         id="incomeSource2"
         name="incomeSource2"
         class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Pension"
-        value="<%= applicationData ? applicationData.IncomeSource2 : '' %>"
       >
+        <option value="">-- Select --</option>
+        <option value="Alimony" <%= (applicationData && applicationData.IncomeSource2 === 'Alimony') ? 'selected' : '' %>>Alimony</option>
+        <option value="AutomobileAllowance" <%= (applicationData && applicationData.IncomeSource2 === 'AutomobileAllowance') ? 'selected' : '' %>>Automobile Allowance</option>
+        <option value="BoarderIncome" <%= (applicationData && applicationData.IncomeSource2 === 'BoarderIncome') ? 'selected' : '' %>>Boarder Income</option>
+        <option value="CapitalGains" <%= (applicationData && applicationData.IncomeSource2 === 'CapitalGains') ? 'selected' : '' %>>Capital Gains</option>
+        <option value="ChildSupport" <%= (applicationData && applicationData.IncomeSource2 === 'ChildSupport') ? 'selected' : '' %>>Child Support</option>
+        <option value="Disability" <%= (applicationData && applicationData.IncomeSource2 === 'Disability') ? 'selected' : '' %>>Disability</option>
+        <option value="FosterCare" <%= (applicationData && applicationData.IncomeSource2 === 'FosterCare') ? 'selected' : '' %>>Foster Care</option>
+        <option value="HousingOrParsonage" <%= (applicationData && applicationData.IncomeSource2 === 'HousingOrParsonage') ? 'selected' : '' %>>Housing or Parsonage</option>
+        <option value="InterestDividends" <%= (applicationData && applicationData.IncomeSource2 === 'InterestDividends') ? 'selected' : '' %>>Interest/Dividends</option>
+        <option value="MortgageCreditCertificate" <%= (applicationData && applicationData.IncomeSource2 === 'MortgageCreditCertificate') ? 'selected' : '' %>>Mortgage Credit Certificate</option>
+        <option value="MortgageDifferentialPayments" <%= (applicationData && applicationData.IncomeSource2 === 'MortgageDifferentialPayments') ? 'selected' : '' %>>Mortgage Differential Payments</option>
+        <option value="NotesReceivable" <%= (applicationData && applicationData.IncomeSource2 === 'NotesReceivable') ? 'selected' : '' %>>Notes Receivable</option>
+        <option value="PublicAssistance" <%= (applicationData && applicationData.IncomeSource2 === 'PublicAssistance') ? 'selected' : '' %>>Public Assistance</option>
+        <option value="Retirement" <%= (applicationData && applicationData.IncomeSource2 === 'Retirement') ? 'selected' : '' %>>Retirement/Pension</option>
+        <option value="RoyaltyPayments" <%= (applicationData && applicationData.IncomeSource2 === 'RoyaltyPayments') ? 'selected' : '' %>>Royalty Payments</option>
+        <option value="SeparateMaintenance" <%= (applicationData && applicationData.IncomeSource2 === 'SeparateMaintenance') ? 'selected' : '' %>>Separate Maintenance</option>
+        <option value="SocialSecurity" <%= (applicationData && applicationData.IncomeSource2 === 'SocialSecurity') ? 'selected' : '' %>>Social Security</option>
+        <option value="Trust" <%= (applicationData && applicationData.IncomeSource2 === 'Trust') ? 'selected' : '' %>>Trust</option>
+        <option value="UnemploymentBenefits" <%= (applicationData && applicationData.IncomeSource2 === 'UnemploymentBenefits') ? 'selected' : '' %>>Unemployment Benefits</option>
+        <option value="VACompensation" <%= (applicationData && applicationData.IncomeSource2 === 'VACompensation') ? 'selected' : '' %>>VA Compensation</option>
+        <option value="Other" <%= (applicationData && applicationData.IncomeSource2 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="monthlyIncome2" class="text-sm font-medium text-gray-700 mb-1">
@@ -1636,14 +1695,34 @@
       <label for="incomeSource3" class="text-sm font-medium text-gray-700 mb-1">
         Income Source
       </label>
-      <input
-        type="text"
+      <select
         id="incomeSource3"
         name="incomeSource3"
         class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Disability"
-        value="<%= applicationData ? applicationData.IncomeSource3 : '' %>"
       >
+        <option value="">-- Select --</option>
+        <option value="Alimony" <%= (applicationData && applicationData.IncomeSource3 === 'Alimony') ? 'selected' : '' %>>Alimony</option>
+        <option value="AutomobileAllowance" <%= (applicationData && applicationData.IncomeSource3 === 'AutomobileAllowance') ? 'selected' : '' %>>Automobile Allowance</option>
+        <option value="BoarderIncome" <%= (applicationData && applicationData.IncomeSource3 === 'BoarderIncome') ? 'selected' : '' %>>Boarder Income</option>
+        <option value="CapitalGains" <%= (applicationData && applicationData.IncomeSource3 === 'CapitalGains') ? 'selected' : '' %>>Capital Gains</option>
+        <option value="ChildSupport" <%= (applicationData && applicationData.IncomeSource3 === 'ChildSupport') ? 'selected' : '' %>>Child Support</option>
+        <option value="Disability" <%= (applicationData && applicationData.IncomeSource3 === 'Disability') ? 'selected' : '' %>>Disability</option>
+        <option value="FosterCare" <%= (applicationData && applicationData.IncomeSource3 === 'FosterCare') ? 'selected' : '' %>>Foster Care</option>
+        <option value="HousingOrParsonage" <%= (applicationData && applicationData.IncomeSource3 === 'HousingOrParsonage') ? 'selected' : '' %>>Housing or Parsonage</option>
+        <option value="InterestDividends" <%= (applicationData && applicationData.IncomeSource3 === 'InterestDividends') ? 'selected' : '' %>>Interest/Dividends</option>
+        <option value="MortgageCreditCertificate" <%= (applicationData && applicationData.IncomeSource3 === 'MortgageCreditCertificate') ? 'selected' : '' %>>Mortgage Credit Certificate</option>
+        <option value="MortgageDifferentialPayments" <%= (applicationData && applicationData.IncomeSource3 === 'MortgageDifferentialPayments') ? 'selected' : '' %>>Mortgage Differential Payments</option>
+        <option value="NotesReceivable" <%= (applicationData && applicationData.IncomeSource3 === 'NotesReceivable') ? 'selected' : '' %>>Notes Receivable</option>
+        <option value="PublicAssistance" <%= (applicationData && applicationData.IncomeSource3 === 'PublicAssistance') ? 'selected' : '' %>>Public Assistance</option>
+        <option value="Retirement" <%= (applicationData && applicationData.IncomeSource3 === 'Retirement') ? 'selected' : '' %>>Retirement/Pension</option>
+        <option value="RoyaltyPayments" <%= (applicationData && applicationData.IncomeSource3 === 'RoyaltyPayments') ? 'selected' : '' %>>Royalty Payments</option>
+        <option value="SeparateMaintenance" <%= (applicationData && applicationData.IncomeSource3 === 'SeparateMaintenance') ? 'selected' : '' %>>Separate Maintenance</option>
+        <option value="SocialSecurity" <%= (applicationData && applicationData.IncomeSource3 === 'SocialSecurity') ? 'selected' : '' %>>Social Security</option>
+        <option value="Trust" <%= (applicationData && applicationData.IncomeSource3 === 'Trust') ? 'selected' : '' %>>Trust</option>
+        <option value="UnemploymentBenefits" <%= (applicationData && applicationData.IncomeSource3 === 'UnemploymentBenefits') ? 'selected' : '' %>>Unemployment Benefits</option>
+        <option value="VACompensation" <%= (applicationData && applicationData.IncomeSource3 === 'VACompensation') ? 'selected' : '' %>>VA Compensation</option>
+        <option value="Other" <%= (applicationData && applicationData.IncomeSource3 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="monthlyIncome3" class="text-sm font-medium text-gray-700 mb-1">
@@ -1667,14 +1746,34 @@
       <label for="incomeSource4" class="text-sm font-medium text-gray-700 mb-1">
         Income Source
       </label>
-      <input
-        type="text"
+      <select
         id="incomeSource4"
         name="incomeSource4"
         class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Foster Care"
-        value="<%= applicationData ? applicationData.IncomeSource4 : '' %>"
       >
+        <option value="">-- Select --</option>
+        <option value="Alimony" <%= (applicationData && applicationData.IncomeSource4 === 'Alimony') ? 'selected' : '' %>>Alimony</option>
+        <option value="AutomobileAllowance" <%= (applicationData && applicationData.IncomeSource4 === 'AutomobileAllowance') ? 'selected' : '' %>>Automobile Allowance</option>
+        <option value="BoarderIncome" <%= (applicationData && applicationData.IncomeSource4 === 'BoarderIncome') ? 'selected' : '' %>>Boarder Income</option>
+        <option value="CapitalGains" <%= (applicationData && applicationData.IncomeSource4 === 'CapitalGains') ? 'selected' : '' %>>Capital Gains</option>
+        <option value="ChildSupport" <%= (applicationData && applicationData.IncomeSource4 === 'ChildSupport') ? 'selected' : '' %>>Child Support</option>
+        <option value="Disability" <%= (applicationData && applicationData.IncomeSource4 === 'Disability') ? 'selected' : '' %>>Disability</option>
+        <option value="FosterCare" <%= (applicationData && applicationData.IncomeSource4 === 'FosterCare') ? 'selected' : '' %>>Foster Care</option>
+        <option value="HousingOrParsonage" <%= (applicationData && applicationData.IncomeSource4 === 'HousingOrParsonage') ? 'selected' : '' %>>Housing or Parsonage</option>
+        <option value="InterestDividends" <%= (applicationData && applicationData.IncomeSource4 === 'InterestDividends') ? 'selected' : '' %>>Interest/Dividends</option>
+        <option value="MortgageCreditCertificate" <%= (applicationData && applicationData.IncomeSource4 === 'MortgageCreditCertificate') ? 'selected' : '' %>>Mortgage Credit Certificate</option>
+        <option value="MortgageDifferentialPayments" <%= (applicationData && applicationData.IncomeSource4 === 'MortgageDifferentialPayments') ? 'selected' : '' %>>Mortgage Differential Payments</option>
+        <option value="NotesReceivable" <%= (applicationData && applicationData.IncomeSource4 === 'NotesReceivable') ? 'selected' : '' %>>Notes Receivable</option>
+        <option value="PublicAssistance" <%= (applicationData && applicationData.IncomeSource4 === 'PublicAssistance') ? 'selected' : '' %>>Public Assistance</option>
+        <option value="Retirement" <%= (applicationData && applicationData.IncomeSource4 === 'Retirement') ? 'selected' : '' %>>Retirement/Pension</option>
+        <option value="RoyaltyPayments" <%= (applicationData && applicationData.IncomeSource4 === 'RoyaltyPayments') ? 'selected' : '' %>>Royalty Payments</option>
+        <option value="SeparateMaintenance" <%= (applicationData && applicationData.IncomeSource4 === 'SeparateMaintenance') ? 'selected' : '' %>>Separate Maintenance</option>
+        <option value="SocialSecurity" <%= (applicationData && applicationData.IncomeSource4 === 'SocialSecurity') ? 'selected' : '' %>>Social Security</option>
+        <option value="Trust" <%= (applicationData && applicationData.IncomeSource4 === 'Trust') ? 'selected' : '' %>>Trust</option>
+        <option value="UnemploymentBenefits" <%= (applicationData && applicationData.IncomeSource4 === 'UnemploymentBenefits') ? 'selected' : '' %>>Unemployment Benefits</option>
+        <option value="VACompensation" <%= (applicationData && applicationData.IncomeSource4 === 'VACompensation') ? 'selected' : '' %>>VA Compensation</option>
+        <option value="Other" <%= (applicationData && applicationData.IncomeSource4 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="monthlyIncome4" class="text-sm font-medium text-gray-700 mb-1">
@@ -1716,14 +1815,27 @@
     <label for="accountType1" class="text-sm font-medium text-gray-700 mb-1">
       Account Type
     </label>
-    <input
-      type="text"
+    <select
       id="accountType1"
       name="accountType1"
       class="border border-gray-300 rounded-md p-2"
-      placeholder="e.g. Checking"
-      value="<%= applicationData ? applicationData.AccountType1 : '' %>"
     >
+      <option value="">-- Select --</option>
+      <option value="Checking" <%= (applicationData && applicationData.AccountType1 === 'Checking') ? 'selected' : '' %>>Checking</option>
+      <option value="Savings" <%= (applicationData && applicationData.AccountType1 === 'Savings') ? 'selected' : '' %>>Savings</option>
+      <option value="MoneyMarket" <%= (applicationData && applicationData.AccountType1 === 'MoneyMarket') ? 'selected' : '' %>>Money Market</option>
+      <option value="CertificateOfDeposit" <%= (applicationData && applicationData.AccountType1 === 'CertificateOfDeposit') ? 'selected' : '' %>>Certificate of Deposit (CD)</option>
+      <option value="MutualFund" <%= (applicationData && applicationData.AccountType1 === 'MutualFund') ? 'selected' : '' %>>Mutual Fund</option>
+      <option value="Stocks" <%= (applicationData && applicationData.AccountType1 === 'Stocks') ? 'selected' : '' %>>Stocks</option>
+      <option value="StockOptions" <%= (applicationData && applicationData.AccountType1 === 'StockOptions') ? 'selected' : '' %>>Stock Options</option>
+      <option value="Bonds" <%= (applicationData && applicationData.AccountType1 === 'Bonds') ? 'selected' : '' %>>Bonds</option>
+      <option value="Retirement" <%= (applicationData && applicationData.AccountType1 === 'Retirement') ? 'selected' : '' %>>Retirement (401k/IRA)
+      </option>
+      <option value="BridgeLoanProceeds" <%= (applicationData && applicationData.AccountType1 === 'BridgeLoanProceeds') ? 'selected' : '' %>>Bridge Loan Proceeds</option>
+      <option value="IndividualDevelopmentAccount" <%= (applicationData && applicationData.AccountType1 === 'IndividualDevelopmentAccount') ? 'selected' : '' %>>Individual Development Account</option>
+      <option value="TrustAccount" <%= (applicationData && applicationData.AccountType1 === 'TrustAccount') ? 'selected' : '' %>>Trust Account</option>
+      <option value="CashValueLifeInsurance" <%= (applicationData && applicationData.AccountType1 === 'CashValueLifeInsurance') ? 'selected' : '' %>>Cash Value Life Insurance</option>
+    </select>
   </div>
   <div class="flex flex-col">
     <label for="financialInstitution1" class="text-sm font-medium text-gray-700 mb-1">
@@ -1773,14 +1885,26 @@
     <label for="accountType2" class="text-sm font-medium text-gray-700 mb-1">
       Account Type
     </label>
-    <input
-      type="text"
+    <select
       id="accountType2"
       name="accountType2"
       class="border border-gray-300 rounded-md p-2"
-      placeholder="e.g. Savings"
-      value="<%= applicationData ? applicationData.AccountType2 : '' %>"
     >
+      <option value="">-- Select --</option>
+      <option value="Checking" <%= (applicationData && applicationData.AccountType2 === 'Checking') ? 'selected' : '' %>>Checking</option>
+      <option value="Savings" <%= (applicationData && applicationData.AccountType2 === 'Savings') ? 'selected' : '' %>>Savings</option>
+      <option value="MoneyMarket" <%= (applicationData && applicationData.AccountType2 === 'MoneyMarket') ? 'selected' : '' %>>Money Market</option>
+      <option value="CertificateOfDeposit" <%= (applicationData && applicationData.AccountType2 === 'CertificateOfDeposit') ? 'selected' : '' %>>Certificate of Deposit (CD)</option>
+      <option value="MutualFund" <%= (applicationData && applicationData.AccountType2 === 'MutualFund') ? 'selected' : '' %>>Mutual Fund</option>
+      <option value="Stocks" <%= (applicationData && applicationData.AccountType2 === 'Stocks') ? 'selected' : '' %>>Stocks</option>
+      <option value="StockOptions" <%= (applicationData && applicationData.AccountType2 === 'StockOptions') ? 'selected' : '' %>>Stock Options</option>
+      <option value="Bonds" <%= (applicationData && applicationData.AccountType2 === 'Bonds') ? 'selected' : '' %>>Bonds</option>
+      <option value="Retirement" <%= (applicationData && applicationData.AccountType2 === 'Retirement') ? 'selected' : '' %>>Retirement (401k/IRA)</option>
+      <option value="BridgeLoanProceeds" <%= (applicationData && applicationData.AccountType2 === 'BridgeLoanProceeds') ? 'selected' : '' %>>Bridge Loan Proceeds</option>
+      <option value="IndividualDevelopmentAccount" <%= (applicationData && applicationData.AccountType2 === 'IndividualDevelopmentAccount') ? 'selected' : '' %>>Individual Development Account</option>
+      <option value="TrustAccount" <%= (applicationData && applicationData.AccountType2 === 'TrustAccount') ? 'selected' : '' %>>Trust Account</option>
+      <option value="CashValueLifeInsurance" <%= (applicationData && applicationData.AccountType2 === 'CashValueLifeInsurance') ? 'selected' : '' %>>Cash Value Life Insurance</option>
+    </select>
   </div>
   <div class="flex flex-col">
     <label for="financialInstitution2" class="text-sm font-medium text-gray-700 mb-1">
@@ -1831,14 +1955,26 @@
     <label for="accountType3" class="text-sm font-medium text-gray-700 mb-1">
       Account Type
     </label>
-    <input
-      type="text"
+    <select
       id="accountType3"
       name="accountType3"
       class="border border-gray-300 rounded-md p-2"
-      placeholder="e.g. 401k"
-      value="<%= applicationData ? applicationData.AccountType3 : '' %>"
     >
+      <option value="">-- Select --</option>
+      <option value="Checking" <%= (applicationData && applicationData.AccountType3 === 'Checking') ? 'selected' : '' %>>Checking</option>
+      <option value="Savings" <%= (applicationData && applicationData.AccountType3 === 'Savings') ? 'selected' : '' %>>Savings</option>
+      <option value="MoneyMarket" <%= (applicationData && applicationData.AccountType3 === 'MoneyMarket') ? 'selected' : '' %>>Money Market</option>
+      <option value="CertificateOfDeposit" <%= (applicationData && applicationData.AccountType3 === 'CertificateOfDeposit') ? 'selected' : '' %>>Certificate of Deposit (CD)</option>
+      <option value="MutualFund" <%= (applicationData && applicationData.AccountType3 === 'MutualFund') ? 'selected' : '' %>>Mutual Fund</option>
+      <option value="Stocks" <%= (applicationData && applicationData.AccountType3 === 'Stocks') ? 'selected' : '' %>>Stocks</option>
+      <option value="StockOptions" <%= (applicationData && applicationData.AccountType3 === 'StockOptions') ? 'selected' : '' %>>Stock Options</option>
+      <option value="Bonds" <%= (applicationData && applicationData.AccountType3 === 'Bonds') ? 'selected' : '' %>>Bonds</option>
+      <option value="Retirement" <%= (applicationData && applicationData.AccountType3 === 'Retirement') ? 'selected' : '' %>>Retirement (401k/IRA)</option>
+      <option value="BridgeLoanProceeds" <%= (applicationData && applicationData.AccountType3 === 'BridgeLoanProceeds') ? 'selected' : '' %>>Bridge Loan Proceeds</option>
+      <option value="IndividualDevelopmentAccount" <%= (applicationData && applicationData.AccountType3 === 'IndividualDevelopmentAccount') ? 'selected' : '' %>>Individual Development Account</option>
+      <option value="TrustAccount" <%= (applicationData && applicationData.AccountType3 === 'TrustAccount') ? 'selected' : '' %>>Trust Account</option>
+      <option value="CashValueLifeInsurance" <%= (applicationData && applicationData.AccountType3 === 'CashValueLifeInsurance') ? 'selected' : '' %>>Cash Value Life Insurance</option>
+    </select>
   </div>
   <div class="flex flex-col">
     <label for="financialInstitution3" class="text-sm font-medium text-gray-700 mb-1">
@@ -1887,13 +2023,26 @@
     <label for="accountType4" class="text-sm font-medium text-gray-700 mb-1">
       Account Type
     </label>
-    <input
-      type="text"
+    <select
       id="accountType4"
       name="accountType4"
       class="border border-gray-300 rounded-md p-2"
-      value="<%= applicationData ? applicationData.AccountType4 : '' %>"
     >
+      <option value="">-- Select --</option>
+      <option value="Checking" <%= (applicationData && applicationData.AccountType4 === 'Checking') ? 'selected' : '' %>>Checking</option>
+      <option value="Savings" <%= (applicationData && applicationData.AccountType4 === 'Savings') ? 'selected' : '' %>>Savings</option>
+      <option value="MoneyMarket" <%= (applicationData && applicationData.AccountType4 === 'MoneyMarket') ? 'selected' : '' %>>Money Market</option>
+      <option value="CertificateOfDeposit" <%= (applicationData && applicationData.AccountType4 === 'CertificateOfDeposit') ? 'selected' : '' %>>Certificate of Deposit (CD)</option>
+      <option value="MutualFund" <%= (applicationData && applicationData.AccountType4 === 'MutualFund') ? 'selected' : '' %>>Mutual Fund</option>
+      <option value="Stocks" <%= (applicationData && applicationData.AccountType4 === 'Stocks') ? 'selected' : '' %>>Stocks</option>
+      <option value="StockOptions" <%= (applicationData && applicationData.AccountType4 === 'StockOptions') ? 'selected' : '' %>>Stock Options</option>
+      <option value="Bonds" <%= (applicationData && applicationData.AccountType4 === 'Bonds') ? 'selected' : '' %>>Bonds</option>
+      <option value="Retirement" <%= (applicationData && applicationData.AccountType4 === 'Retirement') ? 'selected' : '' %>>Retirement (401k/IRA)</option>
+      <option value="BridgeLoanProceeds" <%= (applicationData && applicationData.AccountType4 === 'BridgeLoanProceeds') ? 'selected' : '' %>>Bridge Loan Proceeds</option>
+      <option value="IndividualDevelopmentAccount" <%= (applicationData && applicationData.AccountType4 === 'IndividualDevelopmentAccount') ? 'selected' : '' %>>Individual Development Account</option>
+      <option value="TrustAccount" <%= (applicationData && applicationData.AccountType4 === 'TrustAccount') ? 'selected' : '' %>>Trust Account</option>
+      <option value="CashValueLifeInsurance" <%= (applicationData && applicationData.AccountType4 === 'CashValueLifeInsurance') ? 'selected' : '' %>>Cash Value Life Insurance</option>
+    </select>
   </div>
   <div class="flex flex-col">
     <label for="financialInstitution4" class="text-sm font-medium text-gray-700 mb-1">
@@ -1940,13 +2089,26 @@
     <label for="accountType5" class="text-sm font-medium text-gray-700 mb-1">
       Account Type
     </label>
-    <input
-      type="text"
+    <select
       id="accountType5"
       name="accountType5"
       class="border border-gray-300 rounded-md p-2"
-      value="<%= applicationData ? applicationData.AccountType5 : '' %>"
     >
+      <option value="">-- Select --</option>
+      <option value="Checking" <%= (applicationData && applicationData.AccountType5 === 'Checking') ? 'selected' : '' %>>Checking</option>
+      <option value="Savings" <%= (applicationData && applicationData.AccountType5 === 'Savings') ? 'selected' : '' %>>Savings</option>
+      <option value="MoneyMarket" <%= (applicationData && applicationData.AccountType5 === 'MoneyMarket') ? 'selected' : '' %>>Money Market</option>
+      <option value="CertificateOfDeposit" <%= (applicationData && applicationData.AccountType5 === 'CertificateOfDeposit') ? 'selected' : '' %>>Certificate of Deposit (CD)</option>
+      <option value="MutualFund" <%= (applicationData && applicationData.AccountType5 === 'MutualFund') ? 'selected' : '' %>>Mutual Fund</option>
+      <option value="Stocks" <%= (applicationData && applicationData.AccountType5 === 'Stocks') ? 'selected' : '' %>>Stocks</option>
+      <option value="StockOptions" <%= (applicationData && applicationData.AccountType5 === 'StockOptions') ? 'selected' : '' %>>Stock Options</option>
+      <option value="Bonds" <%= (applicationData && applicationData.AccountType5 === 'Bonds') ? 'selected' : '' %>>Bonds</option>
+      <option value="Retirement" <%= (applicationData && applicationData.AccountType5 === 'Retirement') ? 'selected' : '' %>>Retirement (401k/IRA)</option>
+      <option value="BridgeLoanProceeds" <%= (applicationData && applicationData.AccountType5 === 'BridgeLoanProceeds') ? 'selected' : '' %>>Bridge Loan Proceeds</option>
+      <option value="IndividualDevelopmentAccount" <%= (applicationData && applicationData.AccountType5 === 'IndividualDevelopmentAccount') ? 'selected' : '' %>>Individual Development Account</option>
+      <option value="TrustAccount" <%= (applicationData && applicationData.AccountType5 === 'TrustAccount') ? 'selected' : '' %>>Trust Account</option>
+      <option value="CashValueLifeInsurance" <%= (applicationData && applicationData.AccountType5 === 'CashValueLifeInsurance') ? 'selected' : '' %>>Cash Value Life Insurance</option>
+    </select>
   </div>
   <div class="flex flex-col">
     <label for="financialInstitution5" class="text-sm font-medium text-gray-700 mb-1">
@@ -2191,14 +2353,14 @@
       <label for="accountType2c1" class="text-sm font-medium text-gray-700 mb-1">
         Account Type
       </label>
-      <input 
-        type="text"
-        id="accountType2c1"
-        name="accountType2c1"
-        class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Credit Card"
-        value="<%= applicationData ? applicationData.AccountType2c1 : '' %>"
-      >
+      <select id="accountType2c1" name="accountType2c1" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Revolving" <%= (applicationData && applicationData.AccountType2c1 === 'Revolving') ? 'selected' : '' %>>Revolving</option>
+        <option value="Installment" <%= (applicationData && applicationData.AccountType2c1 === 'Installment') ? 'selected' : '' %>>Installment</option>
+        <option value="Open30Day" <%= (applicationData && applicationData.AccountType2c1 === 'Open30Day') ? 'selected' : '' %>>Open 30-Day</option>
+        <option value="Lease" <%= (applicationData && applicationData.AccountType2c1 === 'Lease') ? 'selected' : '' %>>Lease</option>
+        <option value="Other" <%= (applicationData && applicationData.AccountType2c1 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <!-- Company Name -->
     <div class="flex flex-col">
@@ -2279,14 +2441,14 @@
       <label for="accountType2c2" class="text-sm font-medium text-gray-700 mb-1">
         Account Type
       </label>
-      <input 
-        type="text"
-        id="accountType2c2"
-        name="accountType2c2"
-        class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Car Loan"
-        value="<%= applicationData ? applicationData.AccountType2c2 : '' %>"
-      >
+      <select id="accountType2c2" name="accountType2c2" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Revolving" <%= (applicationData && applicationData.AccountType2c2 === 'Revolving') ? 'selected' : '' %>>Revolving</option>
+        <option value="Installment" <%= (applicationData && applicationData.AccountType2c2 === 'Installment') ? 'selected' : '' %>>Installment</option>
+        <option value="Open30Day" <%= (applicationData && applicationData.AccountType2c2 === 'Open30Day') ? 'selected' : '' %>>Open 30-Day</option>
+        <option value="Lease" <%= (applicationData && applicationData.AccountType2c2 === 'Lease') ? 'selected' : '' %>>Lease</option>
+        <option value="Other" <%= (applicationData && applicationData.AccountType2c2 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="companyName2c2" class="text-sm font-medium text-gray-700 mb-1">
@@ -2358,13 +2520,14 @@
       <label for="accountType2c3" class="text-sm font-medium text-gray-700 mb-1">
         Account Type
       </label>
-      <input 
-        type="text"
-        id="accountType2c3"
-        name="accountType2c3"
-        class="border border-gray-300 rounded-md p-2"
-        value="<%= applicationData ? applicationData.AccountType2c3 : '' %>"
-      >
+      <select id="accountType2c3" name="accountType2c3" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Revolving" <%= (applicationData && applicationData.AccountType2c3 === 'Revolving') ? 'selected' : '' %>>Revolving</option>
+        <option value="Installment" <%= (applicationData && applicationData.AccountType2c3 === 'Installment') ? 'selected' : '' %>>Installment</option>
+        <option value="Open30Day" <%= (applicationData && applicationData.AccountType2c3 === 'Open30Day') ? 'selected' : '' %>>Open 30-Day</option>
+        <option value="Lease" <%= (applicationData && applicationData.AccountType2c3 === 'Lease') ? 'selected' : '' %>>Lease</option>
+        <option value="Other" <%= (applicationData && applicationData.AccountType2c3 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="companyName2c3" class="text-sm font-medium text-gray-700 mb-1">
@@ -2436,13 +2599,14 @@
       <label for="accountType2c4" class="text-sm font-medium text-gray-700 mb-1">
         Account Type
       </label>
-      <input 
-        type="text"
-        id="accountType2c4"
-        name="accountType2c4"
-        class="border border-gray-300 rounded-md p-2"
-        value="<%= applicationData ? applicationData.AccountType2c4 : '' %>"
-      >
+      <select id="accountType2c4" name="accountType2c4" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Revolving" <%= (applicationData && applicationData.AccountType2c4 === 'Revolving') ? 'selected' : '' %>>Revolving</option>
+        <option value="Installment" <%= (applicationData && applicationData.AccountType2c4 === 'Installment') ? 'selected' : '' %>>Installment</option>
+        <option value="Open30Day" <%= (applicationData && applicationData.AccountType2c4 === 'Open30Day') ? 'selected' : '' %>>Open 30-Day</option>
+        <option value="Lease" <%= (applicationData && applicationData.AccountType2c4 === 'Lease') ? 'selected' : '' %>>Lease</option>
+        <option value="Other" <%= (applicationData && applicationData.AccountType2c4 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="companyName2c4" class="text-sm font-medium text-gray-700 mb-1">
@@ -2514,13 +2678,14 @@
       <label for="accountType2c5" class="text-sm font-medium text-gray-700 mb-1">
         Account Type
       </label>
-      <input 
-        type="text"
-        id="accountType2c5"
-        name="accountType2c5"
-        class="border border-gray-300 rounded-md p-2"
-        value="<%= applicationData ? applicationData.AccountType2c5 : '' %>"
-      >
+      <select id="accountType2c5" name="accountType2c5" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Revolving" <%= (applicationData && applicationData.AccountType2c5 === 'Revolving') ? 'selected' : '' %>>Revolving</option>
+        <option value="Installment" <%= (applicationData && applicationData.AccountType2c5 === 'Installment') ? 'selected' : '' %>>Installment</option>
+        <option value="Open30Day" <%= (applicationData && applicationData.AccountType2c5 === 'Open30Day') ? 'selected' : '' %>>Open 30-Day</option>
+        <option value="Lease" <%= (applicationData && applicationData.AccountType2c5 === 'Lease') ? 'selected' : '' %>>Lease</option>
+        <option value="Other" <%= (applicationData && applicationData.AccountType2c5 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="companyName2c5" class="text-sm font-medium text-gray-700 mb-1">
@@ -2631,14 +2796,14 @@
       <label for="liabilityType2d1" class="text-sm font-medium text-gray-700 mb-1">
         Liability/Expense Type
       </label>
-      <input
-        type="text"
-        id="liabilityType2d1"
-        name="liabilityType2d1"
-        class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Alimony"
-        value="<%= applicationData ? applicationData.LiabilityType2d1 : '' %>"
-      >
+      <select id="liabilityType2d1" name="liabilityType2d1" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Alimony" <%= (applicationData && applicationData.LiabilityType2d1 === 'Alimony') ? 'selected' : '' %>>Alimony</option>
+        <option value="ChildSupport" <%= (applicationData && applicationData.LiabilityType2d1 === 'ChildSupport') ? 'selected' : '' %>>Child Support</option>
+        <option value="SeparateMaintenance" <%= (applicationData && applicationData.LiabilityType2d1 === 'SeparateMaintenance') ? 'selected' : '' %>>Separate Maintenance</option>
+        <option value="JobRelatedExpenses" <%= (applicationData && applicationData.LiabilityType2d1 === 'JobRelatedExpenses') ? 'selected' : '' %>>Job-Related Expenses</option>
+        <option value="Other" <%= (applicationData && applicationData.LiabilityType2d1 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="monthlyPayment2d1" class="text-sm font-medium text-gray-700 mb-1">
@@ -2662,14 +2827,14 @@
       <label for="liabilityType2d2" class="text-sm font-medium text-gray-700 mb-1">
         Liability/Expense Type
       </label>
-      <input
-        type="text"
-        id="liabilityType2d2"
-        name="liabilityType2d2"
-        class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Child Support"
-        value="<%= applicationData ? applicationData.LiabilityType2d2 : '' %>"
-      >
+      <select id="liabilityType2d2" name="liabilityType2d2" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Alimony" <%= (applicationData && applicationData.LiabilityType2d2 === 'Alimony') ? 'selected' : '' %>>Alimony</option>
+        <option value="ChildSupport" <%= (applicationData && applicationData.LiabilityType2d2 === 'ChildSupport') ? 'selected' : '' %>>Child Support</option>
+        <option value="SeparateMaintenance" <%= (applicationData && applicationData.LiabilityType2d2 === 'SeparateMaintenance') ? 'selected' : '' %>>Separate Maintenance</option>
+        <option value="JobRelatedExpenses" <%= (applicationData && applicationData.LiabilityType2d2 === 'JobRelatedExpenses') ? 'selected' : '' %>>Job-Related Expenses</option>
+        <option value="Other" <%= (applicationData && applicationData.LiabilityType2d2 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="monthlyPayment2d2" class="text-sm font-medium text-gray-700 mb-1">
@@ -2692,13 +2857,14 @@
       <label for="liabilityType2d3" class="text-sm font-medium text-gray-700 mb-1">
         Liability/Expense Type
       </label>
-      <input
-        type="text"
-        id="liabilityType2d3"
-        name="liabilityType2d3"
-        class="border border-gray-300 rounded-md p-2"
-        value="<%= applicationData ? applicationData.LiabilityType2d3 : '' %>"
-      >
+      <select id="liabilityType2d3" name="liabilityType2d3" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Alimony" <%= (applicationData && applicationData.LiabilityType2d3 === 'Alimony') ? 'selected' : '' %>>Alimony</option>
+        <option value="ChildSupport" <%= (applicationData && applicationData.LiabilityType2d3 === 'ChildSupport') ? 'selected' : '' %>>Child Support</option>
+        <option value="SeparateMaintenance" <%= (applicationData && applicationData.LiabilityType2d3 === 'SeparateMaintenance') ? 'selected' : '' %>>Separate Maintenance</option>
+        <option value="JobRelatedExpenses" <%= (applicationData && applicationData.LiabilityType2d3 === 'JobRelatedExpenses') ? 'selected' : '' %>>Job-Related Expenses</option>
+        <option value="Other" <%= (applicationData && applicationData.LiabilityType2d3 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="monthlyPayment2d3" class="text-sm font-medium text-gray-700 mb-1">
@@ -2721,13 +2887,14 @@
       <label for="liabilityType2d4" class="text-sm font-medium text-gray-700 mb-1">
         Liability/Expense Type
       </label>
-      <input
-        type="text"
-        id="liabilityType2d4"
-        name="liabilityType2d4"
-        class="border border-gray-300 rounded-md p-2"
-        value="<%= applicationData ? applicationData.LiabilityType2d4 : '' %>"
-      >
+      <select id="liabilityType2d4" name="liabilityType2d4" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Alimony" <%= (applicationData && applicationData.LiabilityType2d4 === 'Alimony') ? 'selected' : '' %>>Alimony</option>
+        <option value="ChildSupport" <%= (applicationData && applicationData.LiabilityType2d4 === 'ChildSupport') ? 'selected' : '' %>>Child Support</option>
+        <option value="SeparateMaintenance" <%= (applicationData && applicationData.LiabilityType2d4 === 'SeparateMaintenance') ? 'selected' : '' %>>Separate Maintenance</option>
+        <option value="JobRelatedExpenses" <%= (applicationData && applicationData.LiabilityType2d4 === 'JobRelatedExpenses') ? 'selected' : '' %>>Job-Related Expenses</option>
+        <option value="Other" <%= (applicationData && applicationData.LiabilityType2d4 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="monthlyPayment2d4" class="text-sm font-medium text-gray-700 mb-1">
@@ -2866,13 +3033,12 @@
           <label for="propertyStatus1" class="text-sm font-medium text-gray-700 mb-1">
             Status (Sold, Pending, etc.)
           </label>
-          <input
-            type="text"
-            id="propertyStatus1"
-            name="propertyStatus1"
-            class="border border-gray-300 rounded-md p-2"
-            value="<%= applicationData ? applicationData.PropertyStatus1 : '' %>"
-          >
+          <select id="propertyStatus1" name="propertyStatus1" class="border border-gray-300 rounded-md p-2">
+            <option value="">-- Select --</option>
+            <option value="Sold" <%= (applicationData && applicationData.PropertyStatus1 === 'Sold') ? 'selected' : '' %>>Sold</option>
+            <option value="PendingSale" <%= (applicationData && (applicationData.PropertyStatus1 === 'PendingSale' || applicationData.PropertyStatus1 === 'Pending')) ? 'selected' : '' %>>Pending Sale</option>
+            <option value="Retained" <%= (applicationData && applicationData.PropertyStatus1 === 'Retained') ? 'selected' : '' %>>Retained</option>
+          </select>
         </div>
         <div class="flex flex-col">
           <label for="intendedOccupancy1" class="text-sm font-medium text-gray-700 mb-1">
@@ -2884,8 +3050,8 @@
             class="border border-gray-300 rounded-md p-2"
           >
             <option value="">-- Select --</option>
-            <option value="Primary" <%= (applicationData && applicationData.IntendedOccupancy1 === 'Primary') ? 'selected' : '' %>>Primary Residence</option>
-            <option value="Second Home" <%= (applicationData && applicationData.IntendedOccupancy1 === 'Second Home') ? 'selected' : '' %>>Second Home</option>
+            <option value="PrimaryResidence" <%= (applicationData && (applicationData.IntendedOccupancy1 === 'PrimaryResidence' || applicationData.IntendedOccupancy1 === 'Primary')) ? 'selected' : '' %>>Primary Residence</option>
+            <option value="SecondHome" <%= (applicationData && (applicationData.IntendedOccupancy1 === 'SecondHome' || applicationData.IntendedOccupancy1 === 'Second Home')) ? 'selected' : '' %>>Second Home</option>
             <option value="Investment" <%= (applicationData && applicationData.IntendedOccupancy1 === 'Investment') ? 'selected' : '' %>>Investment</option>
             <option value="Other" <%= (applicationData && applicationData.IntendedOccupancy1 === 'Other') ? 'selected' : '' %>>Other</option>
           </select>
@@ -3133,13 +3299,12 @@
       <label for="propertyStatus2" class="text-sm font-medium text-gray-700 mb-1">
         Status (Sold, Pending, etc.)
       </label>
-      <input
-        type="text"
-        id="propertyStatus2"
-        name="propertyStatus2"
-        class="border border-gray-300 rounded-md p-2"
-        value="<%= applicationData ? applicationData.PropertyStatus2 : '' %>"
-      >
+      <select id="propertyStatus2" name="propertyStatus2" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Sold" <%= (applicationData && applicationData.PropertyStatus2 === 'Sold') ? 'selected' : '' %>>Sold</option>
+        <option value="PendingSale" <%= (applicationData && (applicationData.PropertyStatus2 === 'PendingSale' || applicationData.PropertyStatus2 === 'Pending')) ? 'selected' : '' %>>Pending Sale</option>
+        <option value="Retained" <%= (applicationData && applicationData.PropertyStatus2 === 'Retained') ? 'selected' : '' %>>Retained</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="intendedOccupancy2" class="text-sm font-medium text-gray-700 mb-1">
@@ -3151,8 +3316,8 @@
         class="border border-gray-300 rounded-md p-2"
       >
         <option value="">-- Select --</option>
-        <option value="Primary" <%= (applicationData && applicationData.IntendedOccupancy2 === 'Primary') ? 'selected' : '' %>>Primary Residence</option>
-        <option value="Second Home" <%= (applicationData && applicationData.IntendedOccupancy2 === 'Second Home') ? 'selected' : '' %>>Second Home</option>
+        <option value="PrimaryResidence" <%= (applicationData && (applicationData.IntendedOccupancy2 === 'PrimaryResidence' || applicationData.IntendedOccupancy2 === 'Primary')) ? 'selected' : '' %>>Primary Residence</option>
+        <option value="SecondHome" <%= (applicationData && (applicationData.IntendedOccupancy2 === 'SecondHome' || applicationData.IntendedOccupancy2 === 'Second Home')) ? 'selected' : '' %>>Second Home</option>
         <option value="Investment" <%= (applicationData && applicationData.IntendedOccupancy2 === 'Investment') ? 'selected' : '' %>>Investment</option>
         <option value="Other" <%= (applicationData && applicationData.IntendedOccupancy2 === 'Other') ? 'selected' : '' %>>Other</option>
       </select>
@@ -3400,13 +3565,12 @@
       <label for="propertyStatus3" class="text-sm font-medium text-gray-700 mb-1">
         Status (Sold, Pending, etc.)
       </label>
-      <input
-        type="text"
-        id="propertyStatus3"
-        name="propertyStatus3"
-        class="border border-gray-300 rounded-md p-2"
-        value="<%= applicationData ? applicationData.PropertyStatus3 : '' %>"
-      >
+      <select id="propertyStatus3" name="propertyStatus3" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Sold" <%= (applicationData && applicationData.PropertyStatus3 === 'Sold') ? 'selected' : '' %>>Sold</option>
+        <option value="PendingSale" <%= (applicationData && (applicationData.PropertyStatus3 === 'PendingSale' || applicationData.PropertyStatus3 === 'Pending')) ? 'selected' : '' %>>Pending Sale</option>
+        <option value="Retained" <%= (applicationData && applicationData.PropertyStatus3 === 'Retained') ? 'selected' : '' %>>Retained</option>
+      </select>
     </div>
     <div class="flex flex-col">
       <label for="intendedOccupancy3" class="text-sm font-medium text-gray-700 mb-1">
@@ -3418,8 +3582,8 @@
         class="border border-gray-300 rounded-md p-2"
       >
         <option value="">-- Select --</option>
-        <option value="Primary" <%= (applicationData && applicationData.IntendedOccupancy3 === 'Primary') ? 'selected' : '' %>>Primary Residence</option>
-        <option value="Second Home" <%= (applicationData && applicationData.IntendedOccupancy3 === 'Second Home') ? 'selected' : '' %>>Second Home</option>
+        <option value="PrimaryResidence" <%= (applicationData && (applicationData.IntendedOccupancy3 === 'PrimaryResidence' || applicationData.IntendedOccupancy3 === 'Primary')) ? 'selected' : '' %>>Primary Residence</option>
+        <option value="SecondHome" <%= (applicationData && (applicationData.IntendedOccupancy3 === 'SecondHome' || applicationData.IntendedOccupancy3 === 'Second Home')) ? 'selected' : '' %>>Second Home</option>
         <option value="Investment" <%= (applicationData && applicationData.IntendedOccupancy3 === 'Investment') ? 'selected' : '' %>>Investment</option>
         <option value="Other" <%= (applicationData && applicationData.IntendedOccupancy3 === 'Other') ? 'selected' : '' %>>Other</option>
       </select>
@@ -3609,38 +3773,12 @@
       <span class="text-sm font-medium text-gray-700 mb-1 block">
         Loan Purpose
       </span>
-      <div class="flex items-center space-x-4">
-        <label class="flex items-center text-sm text-gray-700">
-          <input 
-            type="radio" 
-            name="loanPurpose4" 
-            value="Purchase" 
-            class="mr-1"
-            <%= (applicationData && applicationData.LoanPurpose4 === 'Purchase') ? 'checked' : '' %>
-          >
-          Purchase
-        </label>
-        <label class="flex items-center text-sm text-gray-700">
-          <input 
-            type="radio" 
-            name="loanPurpose4" 
-            value="Refinance" 
-            class="mr-1"
-            <%= (applicationData && applicationData.LoanPurpose4 === 'Refinance') ? 'checked' : '' %>
-          >
-          Refinance
-        </label>
-        <label class="flex items-center text-sm text-gray-700">
-          <input 
-            type="radio" 
-            name="loanPurpose4" 
-            value="Other" 
-            class="mr-1"
-            <%= (applicationData && applicationData.LoanPurpose4 === 'Other') ? 'checked' : '' %>
-          >
-          Other (specify)
-        </label>
-      </div>
+      <select id="loanPurpose4" name="loanPurpose4" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="Purchase" <%= (applicationData && applicationData.LoanPurpose4 === 'Purchase') ? 'selected' : '' %>>Purchase</option>
+        <option value="Refinance" <%= (applicationData && applicationData.LoanPurpose4 === 'Refinance') ? 'selected' : '' %>>Refinance</option>
+        <option value="Other" <%= (applicationData && applicationData.LoanPurpose4 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
       <!-- If "Other," show an input for more detail -->
       <div class="mt-2 ml-6">
         <input
@@ -3765,38 +3903,12 @@
       <span class="text-sm font-medium text-gray-700 mb-1 block">
         Occupancy
       </span>
-      <div class="flex items-center space-x-4">
-        <label class="flex items-center text-sm text-gray-700">
-          <input 
-            type="radio" 
-            name="occupancy4" 
-            value="Primary" 
-            class="mr-1"
-            <%= (applicationData && applicationData.Occupancy4 === 'Primary') ? 'checked' : '' %>
-          >
-          Primary Residence
-        </label>
-        <label class="flex items-center text-sm text-gray-700">
-          <input 
-            type="radio" 
-            name="occupancy4" 
-            value="SecondHome" 
-            class="mr-1"
-            <%= (applicationData && applicationData.Occupancy4 === 'SecondHome') ? 'checked' : '' %>
-          >
-          Second Home
-        </label>
-        <label class="flex items-center text-sm text-gray-700">
-          <input 
-            type="radio" 
-            name="occupancy4" 
-            value="Investment" 
-            class="mr-1"
-            <%= (applicationData && applicationData.Occupancy4 === 'Investment') ? 'checked' : '' %>
-          >
-          Investment Property
-        </label>
-      </div>
+      <select id="occupancy4" name="occupancy4" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="PrimaryResidence" <%= (applicationData && (applicationData.Occupancy4 === 'PrimaryResidence' || applicationData.Occupancy4 === 'Primary')) ? 'selected' : '' %>>Primary Residence</option>
+        <option value="SecondHome" <%= (applicationData && applicationData.Occupancy4 === 'SecondHome') ? 'selected' : '' %>>Second Home</option>
+        <option value="Investment" <%= (applicationData && applicationData.Occupancy4 === 'Investment') ? 'selected' : '' %>>Investment Property</option>
+      </select>
       <div class="mt-2 flex items-center">
         <input
           type="checkbox"
@@ -3924,28 +4036,11 @@
       <label class="text-sm font-medium text-gray-700 mb-1">
         Lien Type
       </label>
-      <div class="flex items-center space-x-4">
-        <label class="flex items-center text-sm text-gray-700">
-          <input 
-            type="radio" 
-            name="lienType4b1" 
-            value="First Lien" 
-            class="mr-1"
-            <%= (applicationData && applicationData.LienType4b1 === 'First Lien') ? 'checked' : '' %>
-          >
-          First Lien
-        </label>
-        <label class="flex items-center text-sm text-gray-700">
-          <input 
-            type="radio" 
-            name="lienType4b1" 
-            value="Subordinate Lien" 
-            class="mr-1"
-            <%= (applicationData && applicationData.LienType4b1 === 'Subordinate Lien') ? 'checked' : '' %>
-          >
-          Subordinate Lien
-        </label>
-      </div>
+      <select id="lienType4b1" name="lienType4b1" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="FirstLien" <%= (applicationData && (applicationData.LienType4b1 === 'FirstLien' || applicationData.LienType4b1 === 'First Lien')) ? 'selected' : '' %>>First Lien</option>
+        <option value="SubordinateLien" <%= (applicationData && (applicationData.LienType4b1 === 'SubordinateLien' || applicationData.LienType4b1 === 'Subordinate Lien')) ? 'selected' : '' %>>Subordinate Lien</option>
+      </select>
     </div>
     <!-- Monthly Payment -->
     <div class="flex flex-col">
@@ -4011,28 +4106,11 @@
       <label class="text-sm font-medium text-gray-700 mb-1">
         Lien Type
       </label>
-      <div class="flex items-center space-x-4">
-        <label class="flex items-center text-sm text-gray-700">
-          <input 
-            type="radio" 
-            name="lienType4b2" 
-            value="First Lien" 
-            class="mr-1"
-            <%= (applicationData && applicationData.LienType4b2 === 'First Lien') ? 'checked' : '' %>
-          >
-          First Lien
-        </label>
-        <label class="flex items-center text-sm text-gray-700">
-          <input 
-            type="radio" 
-            name="lienType4b2" 
-            value="Subordinate Lien" 
-            class="mr-1"
-            <%= (applicationData && applicationData.LienType4b2 === 'Subordinate Lien') ? 'checked' : '' %>
-          >
-          Subordinate Lien
-        </label>
-      </div>
+      <select id="lienType4b2" name="lienType4b2" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="FirstLien" <%= (applicationData && (applicationData.LienType4b2 === 'FirstLien' || applicationData.LienType4b2 === 'First Lien')) ? 'selected' : '' %>>First Lien</option>
+        <option value="SubordinateLien" <%= (applicationData && (applicationData.LienType4b2 === 'SubordinateLien' || applicationData.LienType4b2 === 'Subordinate Lien')) ? 'selected' : '' %>>Subordinate Lien</option>
+      </select>
     </div>
     <!-- Monthly Payment -->
     <div class="flex flex-col">
@@ -4180,14 +4258,12 @@
         Asset Type
         <span class="text-xs text-gray-500 block">(e.g. Cash Gift, Gift of Equity, Grant)</span>
       </label>
-      <input
-        type="text"
-        id="giftAssetType4d1"
-        name="giftAssetType4d1"
-        class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Cash Gift"
-        value="<%= applicationData ? applicationData.GiftAssetType4d1 : '' %>"
-      >
+      <select id="giftAssetType4d1" name="giftAssetType4d1" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="CashGift" <%= (applicationData && applicationData.GiftAssetType4d1 === 'CashGift') ? 'selected' : '' %>>Cash Gift</option>
+        <option value="GiftOfEquity" <%= (applicationData && applicationData.GiftAssetType4d1 === 'GiftOfEquity') ? 'selected' : '' %>>Gift of Equity</option>
+        <option value="Grant" <%= (applicationData && applicationData.GiftAssetType4d1 === 'Grant') ? 'selected' : '' %>>Grant</option>
+      </select>
     </div>
 
     <!-- Deposited / Not Deposited (radio) -->
@@ -4225,14 +4301,19 @@
         Source
         <span class="text-xs text-gray-500 block">(use list above)</span>
       </label>
-      <input
-        type="text"
-        id="giftSource4d1"
-        name="giftSource4d1"
-        class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Relative, Community Nonprofit, etc."
-        value="<%= applicationData ? applicationData.GiftSource4d1 : '' %>"
-      >
+      <select id="giftSource4d1" name="giftSource4d1" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="CommunityNonprofit" <%= (applicationData && applicationData.GiftSource4d1 === 'CommunityNonprofit') ? 'selected' : '' %>>Community Nonprofit</option>
+        <option value="Employer" <%= (applicationData && applicationData.GiftSource4d1 === 'Employer') ? 'selected' : '' %>>Employer</option>
+        <option value="FederalAgency" <%= (applicationData && applicationData.GiftSource4d1 === 'FederalAgency') ? 'selected' : '' %>>Federal Agency</option>
+        <option value="LocalAgency" <%= (applicationData && applicationData.GiftSource4d1 === 'LocalAgency') ? 'selected' : '' %>>Local Agency</option>
+        <option value="Relative" <%= (applicationData && applicationData.GiftSource4d1 === 'Relative') ? 'selected' : '' %>>Relative</option>
+        <option value="ReligiousNonprofit" <%= (applicationData && applicationData.GiftSource4d1 === 'ReligiousNonprofit') ? 'selected' : '' %>>Religious Nonprofit</option>
+        <option value="StateAgency" <%= (applicationData && applicationData.GiftSource4d1 === 'StateAgency') ? 'selected' : '' %>>State Agency</option>
+        <option value="UnmarriedPartner" <%= (applicationData && applicationData.GiftSource4d1 === 'UnmarriedPartner') ? 'selected' : '' %>>Unmarried Partner</option>
+        <option value="Lender" <%= (applicationData && applicationData.GiftSource4d1 === 'Lender') ? 'selected' : '' %>>Lender</option>
+        <option value="Other" <%= (applicationData && applicationData.GiftSource4d1 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
 
     <!-- Cash or Market Value -->
@@ -4260,14 +4341,12 @@
         Asset Type
         <span class="text-xs text-gray-500 block">(e.g. Cash Gift, Gift of Equity, Grant)</span>
       </label>
-      <input
-        type="text"
-        id="giftAssetType4d2"
-        name="giftAssetType4d2"
-        class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Grant"
-        value="<%= applicationData ? applicationData.GiftAssetType4d2 : '' %>"
-      >
+      <select id="giftAssetType4d2" name="giftAssetType4d2" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="CashGift" <%= (applicationData && applicationData.GiftAssetType4d2 === 'CashGift') ? 'selected' : '' %>>Cash Gift</option>
+        <option value="GiftOfEquity" <%= (applicationData && applicationData.GiftAssetType4d2 === 'GiftOfEquity') ? 'selected' : '' %>>Gift of Equity</option>
+        <option value="Grant" <%= (applicationData && applicationData.GiftAssetType4d2 === 'Grant') ? 'selected' : '' %>>Grant</option>
+      </select>
     </div>
 
     <!-- Deposited / Not Deposited (radio) -->
@@ -4305,14 +4384,19 @@
         Source
         <span class="text-xs text-gray-500 block">(use list above)</span>
       </label>
-      <input
-        type="text"
-        id="giftSource4d2"
-        name="giftSource4d2"
-        class="border border-gray-300 rounded-md p-2"
-        placeholder="e.g. Employer, Federal Agency, etc."
-        value="<%= applicationData ? applicationData.GiftSource4d2 : '' %>"
-      >
+      <select id="giftSource4d2" name="giftSource4d2" class="border border-gray-300 rounded-md p-2">
+        <option value="">-- Select --</option>
+        <option value="CommunityNonprofit" <%= (applicationData && applicationData.GiftSource4d2 === 'CommunityNonprofit') ? 'selected' : '' %>>Community Nonprofit</option>
+        <option value="Employer" <%= (applicationData && applicationData.GiftSource4d2 === 'Employer') ? 'selected' : '' %>>Employer</option>
+        <option value="FederalAgency" <%= (applicationData && applicationData.GiftSource4d2 === 'FederalAgency') ? 'selected' : '' %>>Federal Agency</option>
+        <option value="LocalAgency" <%= (applicationData && applicationData.GiftSource4d2 === 'LocalAgency') ? 'selected' : '' %>>Local Agency</option>
+        <option value="Relative" <%= (applicationData && applicationData.GiftSource4d2 === 'Relative') ? 'selected' : '' %>>Relative</option>
+        <option value="ReligiousNonprofit" <%= (applicationData && applicationData.GiftSource4d2 === 'ReligiousNonprofit') ? 'selected' : '' %>>Religious Nonprofit</option>
+        <option value="StateAgency" <%= (applicationData && applicationData.GiftSource4d2 === 'StateAgency') ? 'selected' : '' %>>State Agency</option>
+        <option value="UnmarriedPartner" <%= (applicationData && applicationData.GiftSource4d2 === 'UnmarriedPartner') ? 'selected' : '' %>>Unmarried Partner</option>
+        <option value="Lender" <%= (applicationData && applicationData.GiftSource4d2 === 'Lender') ? 'selected' : '' %>>Lender</option>
+        <option value="Other" <%= (applicationData && applicationData.GiftSource4d2 === 'Other') ? 'selected' : '' %>>Other</option>
+      </select>
     </div>
 
     <!-- Cash or Market Value -->
@@ -4335,73 +4419,895 @@
 </div><!-- /urlaSection4 -->
 
 
-    <!-- SECTION 5: Loan Preferences -->
-    <div id="urlaSection5" class="urla-section hidden">
-      <h6 class="font-semibold text-xl text-gray-800 mb-4">Loan Purpose &amp; Preferences</h6>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-        <div class="flex flex-col">
-          <label for="loanPurpose" class="block text-sm font-medium text-gray-700 mb-1">
-            Loan Purpose <span class="text-red-500">*</span>
+    <!-- SECTION 5: Declarations -->
+<div id="urlaSection5" class="urla-section hidden">
+  <h6 class="font-semibold text-xl text-gray-800 mb-4">
+    Section 5: Declarations
+  </h6>
+  <p class="text-sm text-gray-500 mb-4">
+    This section asks you specific questions about the property, your funding, 
+    and your past financial history.
+  </p>
+
+  <!-- 5a. About This Property and Your Money for This Loan -->
+  <h6 class="font-semibold text-lg text-gray-800 mb-2">
+    5a. About This Property and Your Money for This Loan
+  </h6>
+  <div class="border border-gray-300 rounded-md p-4 mb-6">
+
+    <!-- A. Primary Residence? -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        A. Will you occupy the property as your primary residence?
+      </label>
+      <div class="flex items-center space-x-4">
+        <!-- NO => false -->
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="primaryResidence5a" 
+            value="false"
+            <%= (applicationData && applicationData.PrimaryResidence5a === false) ? 'checked' : '' %>
+          >
+          <span class="ml-1">NO</span>
+        </label>
+        <!-- YES => true -->
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="primaryResidence5a" 
+            value="true"
+            <%= (applicationData && applicationData.PrimaryResidence5a === true) ? 'checked' : '' %>
+          >
+          <span class="ml-1">YES</span>
+        </label>
+      </div>
+
+      <!-- If user picks YES => show ownership interest question -->
+      <!-- We'll hide this by default, then show if PrimaryResidence5a===true via JS -->
+      <div id="ownershipInterestContainer" class="hidden mt-3 ml-6">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Have you had an ownership interest in another property in the last three years?
+        </label>
+        <div class="flex items-center space-x-4">
+          <label class="flex items-center text-sm text-gray-700">
+            <input 
+              type="radio" 
+              name="ownershipInterest5a" 
+              value="false"
+              <%= (applicationData && applicationData.OwnershipInterest5a === false) ? 'checked' : '' %>
+            >
+            <span class="ml-1">NO</span>
           </label>
-          <select 
-            id="loanPurpose" 
-            name="loanPurpose" 
-            required
-            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 bg-white
-                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition">
-            <option value="">Select Purpose</option>
-            <option value="Purchase" <%= (applicationData && applicationData.LoanPurpose === 'Purchase') ? 'selected' : '' %>>Purchase</option>
-            <option value="Refinance" <%= (applicationData && applicationData.LoanPurpose === 'Refinance') ? 'selected' : '' %>>Refinance</option>
-            <option value="Other" <%= (applicationData && applicationData.LoanPurpose === 'Other') ? 'selected' : '' %>>Other</option>
-          </select>
+          <label class="flex items-center text-sm text-gray-700">
+            <input 
+              type="radio" 
+              name="ownershipInterest5a" 
+              value="true"
+              <%= (applicationData && applicationData.OwnershipInterest5a === true) ? 'checked' : '' %>
+            >
+            <span class="ml-1">YES</span>
+          </label>
         </div>
-        <div class="flex flex-col">
-          <label for="loanTerm" class="block text-sm font-medium text-gray-700 mb-1">
-            Desired Loan Term <span class="text-red-500">*</span>
-          </label>
-          <select 
-            id="loanTerm" 
-            name="loanTerm" 
-            required
-            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 bg-white
-                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition">
-            <option value="">Select Term</option>
-            <option value="15" <%= (applicationData && applicationData.LoanTerm == 15) ? 'selected' : '' %>>15 Years</option>
-            <option value="20" <%= (applicationData && applicationData.LoanTerm == 20) ? 'selected' : '' %>>20 Years</option>
-            <option value="30" <%= (applicationData && applicationData.LoanTerm == 30) ? 'selected' : '' %>>30 Years</option>
-          </select>
-        </div>
-        <div class="flex flex-col">
-          <label for="loanType" class="block text-sm font-medium text-gray-700 mb-1">
-            Loan Type <span class="text-red-500">*</span>
-          </label>
-          <select 
-            id="loanType" 
-            name="loanType" 
-            required
-            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 bg-white
-                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition">
-            <option value="">Select Type</option>
-            <option value="Fixed" <%= (applicationData && applicationData.LoanType === 'Fixed') ? 'selected' : '' %>>Fixed</option>
-            <option value="Adjustable" <%= (applicationData && applicationData.LoanType === 'Adjustable') ? 'selected' : '' %>>Adjustable</option>
-            <option value="Danish" <%= (applicationData && applicationData.LoanType === 'Danish') ? 'selected' : '' %>>Danish</option>
-          </select>
-        </div>
-        <div class="flex flex-col">
-          <label for="rateLock" class="block text-sm font-medium text-gray-700 mb-1">
-            Rate Lock Preference
-          </label>
-          <select 
-            id="rateLock" 
-            name="rateLock" 
-            class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 bg-white
-                   focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition">
-            <option value="Lock Now" <%= (applicationData && applicationData.RateLock === 'Lock Now') ? 'selected' : '' %>>Lock Now</option>
-            <option value="Lock Later" <%= (applicationData && applicationData.RateLock === 'Lock Later') ? 'selected' : '' %>>Lock Later</option>
-          </select>
+
+        <!-- Follow-up fields if user picks YES -->
+        <div id="ownershipDetailsContainer" class="hidden mt-3 ml-6">
+          <p class="text-sm font-medium text-gray-700 mb-1">
+            (1) What type of property did you own? 
+            <span class="block text-xs text-gray-500">
+              e.g. PR (primary), SR (FHA secondary), SH (second home), IP (investment)
+            </span>
+          </p>
+          <input 
+            type="text" 
+            id="propertyType5a" 
+            name="propertyType5a" 
+            class="border border-gray-300 rounded-md p-2 w-full md:w-1/2"
+            placeholder="e.g. PR / SR / SH / IP"
+            value="<%= applicationData ? applicationData.PropertyType5a : '' %>"
+          >
+
+          <p class="text-sm font-medium text-gray-700 mt-3 mb-1">
+            (2) How did you hold title to the property? 
+            <span class="block text-xs text-gray-500">
+              e.g. by yourself (S), with spouse (SP), or with another person (O)
+            </span>
+          </p>
+          <input 
+            type="text"
+            id="titleHeld5a"
+            name="titleHeld5a"
+            class="border border-gray-300 rounded-md p-2 w-full md:w-1/2"
+            placeholder="e.g. S / SP / O"
+            value="<%= applicationData ? applicationData.TitleHeld5a : '' %>"
+          >
         </div>
       </div>
-    </div> <!-- End of Section 5 -->
+    </div><!-- /A -->
+
+    <!-- B. Family Relationship? -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        B. If this is a Purchase Transaction: Do you have a family relationship or 
+        business affiliation with the seller of the property?
+      </label>
+      <div class="flex items-center space-x-4">
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="familyRelationship5a" 
+            value="false"
+            <%= (applicationData && applicationData.FamilyRelationship5a === false) ? 'checked' : '' %>
+          >
+          <span class="ml-1">NO</span>
+        </label>
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="familyRelationship5a" 
+            value="true"
+            <%= (applicationData && applicationData.FamilyRelationship5a === true) ? 'checked' : '' %>
+          >
+          <span class="ml-1">YES</span>
+        </label>
+      </div>
+    </div><!-- /B -->
+
+    <!-- C. Borrowing Money? -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        C. Are you borrowing any money for this real estate transaction that you have not disclosed?
+      </label>
+      <div class="flex items-center space-x-4">
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="borrowingMoney5a" 
+            value="false"
+            <%= (applicationData && applicationData.BorrowingMoney5a === false) ? 'checked' : '' %>
+          >
+          <span class="ml-1">NO</span>
+        </label>
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="borrowingMoney5a" 
+            value="true"
+            <%= (applicationData && applicationData.BorrowingMoney5a === true) ? 'checked' : '' %>
+          >
+          <span class="ml-1">YES</span>
+        </label>
+      </div>
+
+      <!-- Show if yes -->
+      <div id="borrowedAmountContainer" class="hidden mt-3 ml-6">
+        <label for="borrowedAmount5a" class="block text-sm font-medium text-gray-700 mb-1">
+          If YES, what is the amount of this money?
+        </label>
+        <input
+          type="number"
+          step="0.01"
+          id="borrowedAmount5a"
+          name="borrowedAmount5a"
+          class="border border-gray-300 rounded-md p-2 w-full md:w-1/2"
+          placeholder="e.g. 5000"
+          value="<%= applicationData ? applicationData.BorrowedAmount5a : '' %>"
+        >
+      </div>
+    </div><!-- /C -->
+
+    <!-- D. Another Mortgage / New Credit? -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        D.1) Have you or will you be applying for a mortgage loan on another property 
+        on or before closing this transaction that is not disclosed on this application?
+      </label>
+      <div class="flex items-center space-x-4">
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="anotherMortgage5a" 
+            value="false"
+            <%= (applicationData && applicationData.AnotherMortgage5a === false) ? 'checked' : '' %>
+          >
+          <span class="ml-1">NO</span>
+        </label>
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="anotherMortgage5a" 
+            value="true"
+            <%= (applicationData && applicationData.AnotherMortgage5a === true) ? 'checked' : '' %>
+          >
+          <span class="ml-1">YES</span>
+        </label>
+      </div>
+
+      <label class="block text-sm font-medium text-gray-700 mt-3 mb-1">
+        D.2) Have you or will you be applying for any new credit 
+        (installment loan, credit card, etc.) on or before closing this loan 
+        that is not disclosed on this application?
+      </label>
+      <div class="flex items-center space-x-4">
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="newCredit5a" 
+            value="false"
+            <%= (applicationData && applicationData.NewCredit5a === false) ? 'checked' : '' %>
+          >
+          <span class="ml-1">NO</span>
+        </label>
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="newCredit5a" 
+            value="true"
+            <%= (applicationData && applicationData.NewCredit5a === true) ? 'checked' : '' %>
+          >
+          <span class="ml-1">YES</span>
+        </label>
+      </div>
+    </div><!-- /D -->
+
+    <!-- E. Priority Lien? -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        E. Will this property be subject to a lien that could take priority over 
+        the first mortgage lien (e.g. a clean energy lien paid through property taxes)?
+      </label>
+      <div class="flex items-center space-x-4">
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="priorityLien5a" 
+            value="false"
+            <%= (applicationData && applicationData.PriorityLien5a === false) ? 'checked' : '' %>
+          >
+          <span class="ml-1">NO</span>
+        </label>
+        <label class="flex items-center text-sm text-gray-700">
+          <input 
+            type="radio" 
+            name="priorityLien5a" 
+            value="true"
+            <%= (applicationData && applicationData.PriorityLien5a === true) ? 'checked' : '' %>
+          >
+          <span class="ml-1">YES</span>
+        </label>
+      </div>
+    </div><!-- /E -->
+
+  </div><!-- /border container for 5a -->
+  <!-- 5b. About Your Finances -->
+<h6 class="font-semibold text-lg text-gray-800 mt-6 mb-2">
+  5b. About Your Finances
+</h6>
+
+<!-- F. Are you a co-signer or guarantor on any debt not disclosed? -->
+<div class="border border-gray-300 rounded-md p-4 mb-6">
+<div class="mb-4">
+  <label class="text-sm text-gray-700 block mb-1">
+    F. Are you a co-signer or guarantor on any debt or loan not disclosed on this application?
+  </label>
+  <div class="flex space-x-4">
+    <label class="flex items-center">
+      <input type="radio" name="coSignerGuarantor5b" value="true" class="mr-1"
+        <%= (applicationData && applicationData.CoSignerGuarantor5b === true) ? 'checked' : '' %> />
+      Yes
+    </label>
+    <label class="flex items-center">
+      <input type="radio" name="coSignerGuarantor5b" value="false" class="mr-1"
+        <%= (applicationData && applicationData.CoSignerGuarantor5b === false) ? 'checked' : '' %> />
+      No
+    </label>
+  </div>
+</div>
+
+<!-- G. Any outstanding judgments? -->
+<div class="mb-4">
+  <label class="text-sm text-gray-700 block mb-1">
+    G. Are there any outstanding judgments against you?
+  </label>
+  <div class="flex space-x-4">
+    <label class="flex items-center">
+      <input type="radio" name="judgments5b" value="true" class="mr-1"
+        <%= (applicationData && applicationData.Judgments5b === true) ? 'checked' : '' %> />
+      Yes
+    </label>
+    <label class="flex items-center">
+      <input type="radio" name="judgments5b" value="false" class="mr-1"
+        <%= (applicationData && applicationData.Judgments5b === false) ? 'checked' : '' %> />
+      No
+    </label>
+  </div>
+</div>
+
+<!-- H. Delinquent on Federal debt? -->
+<div class="mb-4">
+  <label class="text-sm text-gray-700 block mb-1">
+    H. Are you currently delinquent or in default on a Federal debt?
+  </label>
+  <div class="flex space-x-4">
+    <label class="flex items-center">
+      <input type="radio" name="delinquentFederalDebt5b" value="true" class="mr-1"
+        <%= (applicationData && applicationData.DelinquentFederalDebt5b === true) ? 'checked' : '' %> />
+      Yes
+    </label>
+    <label class="flex items-center">
+      <input type="radio" name="delinquentFederalDebt5b" value="false" class="mr-1"
+        <%= (applicationData && applicationData.DelinquentFederalDebt5b === false) ? 'checked' : '' %> />
+      No
+    </label>
+  </div>
+</div>
+
+<!-- I. Party to a lawsuit? -->
+<div class="mb-4">
+  <label class="text-sm text-gray-700 block mb-1">
+    I. Are you a party to a lawsuit which may cause personal financial liability?
+  </label>
+  <div class="flex space-x-4">
+    <label class="flex items-center">
+      <input type="radio" name="lawsuitLiability5b" value="true" class="mr-1"
+        <%= (applicationData && applicationData.LawsuitLiability5b === true) ? 'checked' : '' %> />
+      Yes
+    </label>
+    <label class="flex items-center">
+      <input type="radio" name="lawsuitLiability5b" value="false" class="mr-1"
+        <%= (applicationData && applicationData.LawsuitLiability5b === false) ? 'checked' : '' %> />
+      No
+    </label>
+  </div>
+</div>
+
+<!-- J. Conveyed title in lieu of foreclosure? -->
+<div class="mb-4">
+  <label class="text-sm text-gray-700 block mb-1">
+    J. Have you conveyed title to any property in lieu of foreclosure in the past 7 years?
+  </label>
+  <div class="flex space-x-4">
+    <label class="flex items-center">
+      <input type="radio" name="conveyTitleInLieu5b" value="true" class="mr-1"
+        <%= (applicationData && applicationData.ConveyTitleInLieu5b === true) ? 'checked' : '' %> />
+      Yes
+    </label>
+    <label class="flex items-center">
+      <input type="radio" name="conveyTitleInLieu5b" value="false" class="mr-1"
+        <%= (applicationData && applicationData.ConveyTitleInLieu5b === false) ? 'checked' : '' %> />
+      No
+    </label>
+  </div>
+</div>
+
+<!-- K. Pre-foreclosure or short sale? -->
+<div class="mb-4">
+  <label class="text-sm text-gray-700 block mb-1">
+    K. Within the past 7 years, have you completed a pre-foreclosure sale or short sale?
+  </label>
+  <div class="flex space-x-4">
+    <label class="flex items-center">
+      <input type="radio" name="preforeclosureSale5b" value="true" class="mr-1"
+        <%= (applicationData && applicationData.PreforeclosureSale5b === true) ? 'checked' : '' %> />
+      Yes
+    </label>
+    <label class="flex items-center">
+      <input type="radio" name="preforeclosureSale5b" value="false" class="mr-1"
+        <%= (applicationData && applicationData.PreforeclosureSale5b === false) ? 'checked' : '' %> />
+      No
+    </label>
+  </div>
+</div>
+
+<!-- L. Property foreclosed? -->
+<div class="mb-4">
+  <label class="text-sm text-gray-700 block mb-1">
+    L. Have you had property foreclosed upon in the last 7 years?
+  </label>
+  <div class="flex space-x-4">
+    <label class="flex items-center">
+      <input type="radio" name="foreclosedProperty5b" value="true" class="mr-1"
+        <%= (applicationData && applicationData.ForeclosedProperty5b === true) ? 'checked' : '' %> />
+      Yes
+    </label>
+    <label class="flex items-center">
+      <input type="radio" name="foreclosedProperty5b" value="false" class="mr-1"
+        <%= (applicationData && applicationData.ForeclosedProperty5b === false) ? 'checked' : '' %> />
+      No
+    </label>
+  </div>
+</div>
+
+<!-- M. Declared bankruptcy? If yes, show checkboxes for Chapter 7, 11, 12, 13 -->
+<div class="mb-4">
+  <label class="text-sm text-gray-700 block mb-1">
+    M. Have you declared bankruptcy within the past 7 years?
+  </label>
+  <div class="flex space-x-4">
+    <label class="flex items-center">
+      <input 
+        type="radio" 
+        name="declaredBankruptcy5b" 
+        value="true" 
+        class="mr-1"
+        <%= (applicationData && applicationData.DeclaredBankruptcy5b === true) ? 'checked' : '' %> 
+      />
+      Yes
+    </label>
+    <label class="flex items-center">
+      <input 
+        type="radio" 
+        name="declaredBankruptcy5b" 
+        value="false" 
+        class="mr-1"
+        <%= (applicationData && applicationData.DeclaredBankruptcy5b === false) ? 'checked' : '' %> 
+      />
+      No
+    </label>
+  </div>
+</div>
+
+<!-- Show bankruptcy type checkboxes only if 'declaredBankruptcy5b' is true -->
+<div 
+  id="bankruptcyTypesContainer" 
+  class="<%= (applicationData && applicationData.DeclaredBankruptcy5b === true) ? '' : 'hidden' %> border p-3 mb-4"
+>
+  <p class="text-sm text-gray-700 font-semibold mb-2">If YES, identify the type(s):</p>
+  <div class="flex items-center mb-2">
+    <input 
+      type="checkbox" 
+      id="bankruptChapter7" 
+      name="bankruptChapter7" 
+      value="true" 
+      class="mr-2"
+      <%= (applicationData && applicationData.BankruptChapter7) ? 'checked' : '' %> 
+    />
+    <label for="bankruptChapter7" class="text-sm text-gray-700">Chapter 7</label>
+  </div>
+  <div class="flex items-center mb-2">
+    <input 
+      type="checkbox" 
+      id="bankruptChapter11" 
+      name="bankruptChapter11" 
+      value="true" 
+      class="mr-2"
+      <%= (applicationData && applicationData.BankruptChapter11) ? 'checked' : '' %> 
+    />
+    <label for="bankruptChapter11" class="text-sm text-gray-700">Chapter 11</label>
+  </div>
+  <div class="flex items-center mb-2">
+    <input 
+      type="checkbox" 
+      id="bankruptChapter12" 
+      name="bankruptChapter12" 
+      value="true" 
+      class="mr-2"
+      <%= (applicationData && applicationData.BankruptChapter12) ? 'checked' : '' %> 
+    />
+    <label for="bankruptChapter12" class="text-sm text-gray-700">Chapter 12</label>
+  </div>
+  <div class="flex items-center">
+    <input 
+      type="checkbox" 
+      id="bankruptChapter13" 
+      name="bankruptChapter13" 
+      value="true" 
+      class="mr-2"
+      <%= (applicationData && applicationData.BankruptChapter13) ? 'checked' : '' %> 
+    />
+    <label for="bankruptChapter13" class="text-sm text-gray-700">Chapter 13</label>
+  </div>
+</div>
+</div>
+
+</div> <!-- End Section 5-->
+
+<!-- SECTION 7: Military Service -->
+<div id="urlaSection7" class="urla-section hidden">
+  <h6 class="font-semibold text-xl text-gray-800 mb-4">
+    Section 7: Military Service
+  </h6>
+  <p class="text-sm text-gray-500 mb-4">
+    This section asks about your (or your deceased spouse's) military service.
+  </p>
+
+  <div class="border border-gray-300 rounded-md p-4 mb-6">
+    <label class="text-sm text-gray-700 block mb-2 font-medium">
+      Military Service – Did you (or your deceased spouse) ever serve, or are you currently serving, 
+      in the United States Armed Forces?
+    </label>
+    <!-- YES / NO radio -->
+    <div class="flex items-center space-x-6 mb-4">
+      <label class="flex items-center">
+        <input 
+          type="radio"
+          name="hasMilitaryService7"
+          value="false"
+          class="mr-1"
+          <%= (applicationData && applicationData.HasMilitaryService7 === false) ? "checked" : "" %>
+        >
+        No
+      </label>
+      <label class="flex items-center">
+        <input 
+          type="radio"
+          name="hasMilitaryService7"
+          value="true"
+          class="mr-1"
+          <%= (applicationData && applicationData.HasMilitaryService7 === true) ? "checked" : "" %>
+        >
+        Yes
+      </label>
+    </div>
+
+    <!-- 
+      If 'Yes' => show the sub-options. We'll store each sub-option as a boolean 
+      or date for the "Projected Expiration Date" 
+    -->
+    <div 
+      id="militaryDetails7" 
+      class="<%= (applicationData && applicationData.HasMilitaryService7 === true) ? "" : "hidden" %> p-3 border rounded"
+    >
+      <p class="text-sm text-gray-700 mb-2">
+        If YES, check all that apply:
+      </p>
+
+      <!-- 1) Currently serving on active duty with projected expiration date -->
+      <div class="mb-2 flex items-center">
+        <input 
+          type="checkbox" 
+          id="isCurrentlyActiveDuty7" 
+          name="isCurrentlyActiveDuty7"
+          value="true"
+          class="mr-2"
+          <%= (applicationData && applicationData.IsCurrentlyActiveDuty7) ? "checked" : "" %>
+        >
+        <label for="isCurrentlyActiveDuty7" class="text-sm text-gray-700">
+          Currently serving on active duty
+        </label>
+      </div>
+
+      <!-- Projected Expiration Date of service/tour -->
+      <div class="ml-6 flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-2 mb-3">
+        <label for="projectedExpirationDate7" class="text-sm text-gray-700">
+          Projected Expiration Date of Service/Tour
+        </label>
+        <input 
+          type="date"
+          id="projectedExpirationDate7"
+          name="projectedExpirationDate7"
+          class="border border-gray-300 rounded p-2 text-sm"
+          value="<%= applicationData && applicationData.ProjectedExpirationDate7 
+                    ? applicationData.ProjectedExpirationDate7.toISOString().split('T')[0] 
+                    : "" %>"
+        >
+      </div>
+
+      <!-- 2) Retired/Discharged/Separated -->
+      <div class="mb-2 flex items-center">
+        <input 
+          type="checkbox" 
+          id="isRetiredDischarged7" 
+          name="isRetiredDischarged7"
+          value="true"
+          class="mr-2"
+          <%= (applicationData && applicationData.IsRetiredDischarged7) ? "checked" : "" %>
+        >
+        <label for="isRetiredDischarged7" class="text-sm text-gray-700">
+          Currently retired, discharged, or separated from service
+        </label>
+      </div>
+
+      <!-- 3) Reserve or Nat'l Guard (non-activated) -->
+      <div class="mb-2 flex items-center">
+        <input 
+          type="checkbox" 
+          id="isReserveOrGuard7" 
+          name="isReserveOrGuard7"
+          value="true"
+          class="mr-2"
+          <%= (applicationData && applicationData.IsReserveOrGuard7) ? "checked" : "" %>
+        >
+        <label for="isReserveOrGuard7" class="text-sm text-gray-700">
+          Only period of service was as a non-activated member of the Reserve or National Guard
+        </label>
+      </div>
+
+      <!-- 4) Surviving Spouse -->
+      <div class="mb-2 flex items-center">
+        <input 
+          type="checkbox" 
+          id="isSurvivingSpouse7" 
+          name="isSurvivingSpouse7"
+          value="true"
+          class="mr-2"
+          <%= (applicationData && applicationData.IsSurvivingSpouse7) ? "checked" : "" %>
+        >
+        <label for="isSurvivingSpouse7" class="text-sm text-gray-700">
+          Surviving spouse
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 8: Demographic Information -->
+<div id="urlaSection8" class="urla-section hidden">
+  <h6 class="font-semibold text-xl text-gray-800 mb-4">
+    Section 8: Demographic Information
+  </h6>
+
+  <p class="text-sm text-gray-600 mb-4">
+    The purpose of collecting this information is to help ensure that all applicants are treated fairly...
+    <!-- The relevant disclosure text, truncated here for brevity -->
+  </p>
+
+  <!-- Ethnicity Section -->
+  <div class="mb-4 border p-4">
+    <label class="font-semibold text-gray-800 block mb-2">
+      Ethnicity (Check one or more):
+    </label>
+    
+    <div class="flex items-center mb-2">
+      <input 
+        type="checkbox" 
+        id="ethHispanicLatino8" 
+        name="ethHispanicLatino8" 
+        value="true" 
+        class="mr-2"
+        <%= (applicationData && applicationData.EthHispanicLatino8) ? 'checked' : '' %> 
+      >
+      <label for="ethHispanicLatino8" class="text-sm text-gray-700">
+        Hispanic or Latino
+      </label>
+    </div>
+
+    <!-- Sub-options if user picks Hispanic/Latino -->
+    <div class="ml-6">
+      <div class="flex items-center mb-2">
+        <input 
+          type="checkbox" 
+          id="ethMexican8" 
+          name="ethMexican8" 
+          value="true"
+          class="mr-2"
+          <%= (applicationData && applicationData.EthMexican8) ? 'checked' : '' %>
+        >
+        <label for="ethMexican8" class="text-sm text-gray-700">Mexican</label>
+      </div>
+      <div class="flex items-center mb-2">
+        <input 
+          type="checkbox" 
+          id="ethPuertoRican8" 
+          name="ethPuertoRican8" 
+          value="true"
+          class="mr-2"
+          <%= (applicationData && applicationData.EthPuertoRican8) ? 'checked' : '' %>
+        >
+        <label for="ethPuertoRican8" class="text-sm text-gray-700">Puerto Rican</label>
+      </div>
+      <div class="flex items-center mb-2">
+        <input 
+          type="checkbox" 
+          id="ethCuban8" 
+          name="ethCuban8" 
+          value="true"
+          class="mr-2"
+          <%= (applicationData && applicationData.EthCuban8) ? 'checked' : '' %>
+        >
+        <label for="ethCuban8" class="text-sm text-gray-700">Cuban</label>
+      </div>
+      <div class="flex items-center mb-2">
+        <input 
+          type="checkbox" 
+          id="ethOtherHispanic8" 
+          name="ethOtherHispanic8" 
+          value="true"
+          class="mr-2"
+          <%= (applicationData && applicationData.EthOtherHispanic8) ? 'checked' : '' %>
+        >
+        <label for="ethOtherHispanic8" class="text-sm text-gray-700">
+          Other Hispanic or Latino - Print origin:
+        </label>
+      </div>
+      <input
+        type="text"
+        id="ethOtherHispanicOrigin8"
+        name="ethOtherHispanicOrigin8"
+        class="border rounded p-1 text-sm w-1/2 ml-6"
+        placeholder="e.g. Argentinian, Colombian, etc."
+        value="<%= applicationData ? applicationData.EthOtherHispanicOrigin8 : '' %>"
+      >
+    </div>
+    
+    <div class="flex items-center mb-2 mt-3">
+      <input 
+        type="checkbox" 
+        id="ethNotHispanic8" 
+        name="ethNotHispanic8" 
+        value="true" 
+        class="mr-2"
+        <%= (applicationData && applicationData.EthNotHispanic8) ? 'checked' : '' %> 
+      >
+      <label for="ethNotHispanic8" class="text-sm text-gray-700">
+        Not Hispanic or Latino
+      </label>
+    </div>
+    <div class="flex items-center mb-2">
+      <input 
+        type="checkbox" 
+        id="ethNoInfo8" 
+        name="ethNoInfo8" 
+        value="true" 
+        class="mr-2"
+        <%= (applicationData && applicationData.EthNoInfo8) ? 'checked' : '' %> 
+      >
+      <label for="ethNoInfo8" class="text-sm text-gray-700">
+        I do not wish to provide this information
+      </label>
+    </div>
+  </div> <!-- /Ethnicity -->
+
+  <!-- Sex Section -->
+  <div class="mb-4 border p-4">
+    <label class="font-semibold text-gray-800 block mb-2">
+      Sex:
+    </label>
+    <div class="flex items-center mb-2">
+      <input 
+        type="radio" 
+        name="sex8" 
+        id="sexFemale8" 
+        value="Female" 
+        class="mr-2"
+        <%= (applicationData && applicationData.Sex8 === 'Female') ? 'checked' : '' %> 
+      >
+      <label for="sexFemale8" class="text-sm text-gray-700">Female</label>
+    </div>
+    <div class="flex items-center mb-2">
+      <input 
+        type="radio" 
+        name="sex8" 
+        id="sexMale8" 
+        value="Male" 
+        class="mr-2"
+        <%= (applicationData && applicationData.Sex8 === 'Male') ? 'checked' : '' %> 
+      >
+      <label for="sexMale8" class="text-sm text-gray-700">Male</label>
+    </div>
+    <div class="flex items-center mb-2">
+      <input 
+        type="radio" 
+        name="sex8" 
+        id="sexNoInfo8" 
+        value="PreferNotToProvide" 
+        class="mr-2"
+        <%= (applicationData && (applicationData.Sex8 === 'NoInfo' || applicationData.Sex8 === 'PreferNotToProvide')) ? 'checked' : '' %>
+      >
+      <label for="sexNoInfo8" class="text-sm text-gray-700">
+        I do not wish to provide this information
+      </label>
+    </div>
+  </div>
+
+  <!-- Race Section -->
+  <div class="mb-4 border p-4">
+    <label class="font-semibold text-gray-800 block mb-2">
+      Race (Check one or more):
+    </label>
+    
+    <!-- Example for a few races -->
+    <div class="flex items-center mb-2">
+      <input 
+        type="checkbox" 
+        id="raceAmericanIndian8" 
+        name="raceAmericanIndian8" 
+        value="true" 
+        class="mr-2"
+        <%= (applicationData && applicationData.RaceAmericanIndian8) ? 'checked' : '' %> 
+      >
+      <label for="raceAmericanIndian8" class="text-sm text-gray-700">
+        American Indian or Alaska Native
+      </label>
+      <!-- optional print tribe -->
+      <input
+        type="text"
+        id="americanIndianTribe8"
+        name="americanIndianTribe8"
+        class="border rounded p-1 text-sm ml-2"
+        placeholder="Tribe name"
+        value="<%= applicationData ? applicationData.AmericanIndianTribe8 : '' %>"
+      >
+    </div>
+    <div class="flex items-center mb-2">
+      <input 
+        type="checkbox" 
+        id="raceAsian8" 
+        name="raceAsian8" 
+        value="true" 
+        class="mr-2"
+        <%= (applicationData && applicationData.RaceAsian8) ? 'checked' : '' %> 
+      >
+      <label for="raceAsian8" class="text-sm text-gray-700">
+        Asian
+      </label>
+      <!-- optional text for "Print race" if "Other Asian" -->
+      <input
+        type="text"
+        id="otherAsianPrint8"
+        name="otherAsianPrint8"
+        class="border rounded p-1 text-sm ml-2"
+        placeholder="e.g. Hmong, Pakistani..."
+        value="<%= applicationData ? applicationData.OtherAsianPrint8 : '' %>"
+      >
+    </div>
+    <div class="flex items-center mb-2">
+      <input 
+        type="checkbox" 
+        id="raceBlack8" 
+        name="raceBlack8" 
+        value="true" 
+        class="mr-2"
+        <%= (applicationData && applicationData.RaceBlack8) ? 'checked' : '' %> 
+      >
+      <label for="raceBlack8" class="text-sm text-gray-700">
+        Black or African American
+      </label>
+    </div>
+    <div class="flex items-center mb-2">
+      <input 
+        type="checkbox" 
+        id="raceHawaiian8" 
+        name="raceHawaiian8" 
+        value="true" 
+        class="mr-2"
+        <%= (applicationData && applicationData.RaceHawaiian8) ? 'checked' : '' %> 
+      >
+      <label for="raceHawaiian8" class="text-sm text-gray-700">
+        Native Hawaiian or Other Pacific Islander
+      </label>
+      <input
+        type="text"
+        id="otherPacIslanderPrint8"
+        name="otherPacIslanderPrint8"
+        class="border rounded p-1 text-sm ml-2"
+        placeholder="e.g. Fijian, Tongan..."
+        value="<%= applicationData ? applicationData.OtherPacIslanderPrint8 : '' %>"
+      >
+    </div>
+    <div class="flex items-center mb-2">
+      <input 
+        type="checkbox" 
+        id="raceWhite8" 
+        name="raceWhite8" 
+        value="true" 
+        class="mr-2"
+        <%= (applicationData && applicationData.RaceWhite8) ? 'checked' : '' %> 
+      >
+      <label for="raceWhite8" class="text-sm text-gray-700">
+        White
+      </label>
+    </div>
+    <div class="flex items-center mb-2">
+      <input 
+        type="checkbox" 
+        id="raceNoInfo8" 
+        name="raceNoInfo8" 
+        value="true" 
+        class="mr-2"
+        <%= (applicationData && applicationData.RaceNoInfo8) ? 'checked' : '' %> 
+      >
+      <label for="raceNoInfo8" class="text-sm text-gray-700">
+        I do not wish to provide this information
+      </label>
+    </div>
+
+  </div><!-- /Race -->
+
+</div><!-- /Section 8 -->
+
+
+
 
     <!-- Document Upload Section -->
     <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
