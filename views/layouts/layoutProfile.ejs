@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title><%- title || "My Profile" %></title>
+  <title><%- title || "Mortgage Application" %> - <%= typeof branding !== 'undefined' ? branding.partnerName : 'Bank ABC' %></title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -13,7 +13,6 @@
 
   <!-- Pass isPreApproved status to client-side -->
   <script>
-    // Expose isPreApproved to client JS
     window.isPreApproved = <%= isPreApproved ? 'true' : 'false' %>;
   </script>
 </head>
@@ -23,55 +22,201 @@
   <%- include('../partials/navbar.ejs') %>
 
   <main class="flex flex-1">
-    <!-- Sidebar (specific to Profile) -->
+    <!-- Sidebar -->
     <aside class="w-64 bg-white rounded-lg shadow-lg p-6 h-full sticky top-0">
-      <h2 class="text-xl font-bold text-blue-900 mb-4">Navigation</h2>
+      <!-- Branding in Sidebar -->
+      <div class="mb-6 pb-4 border-b border-gray-200">
+        <h1 class="text-xl font-bold text-blue-900"><%= typeof branding !== 'undefined' ? branding.partnerName : 'Bank ABC' %></h1>
+        <p class="text-xs text-gray-500">Powered by <%= typeof branding !== 'undefined' ? branding.poweredBy : 'Pasaana' %></p>
+      </div>
+      
+      <!-- User Info -->
+      <div class="mb-6 pb-4 border-b border-gray-200">
+        <div class="flex items-center">
+          <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+            <span class="text-blue-600 font-bold text-sm"><%= user.email ? user.email.charAt(0).toUpperCase() : 'U' %></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-800 truncate"><%= user.email %></p>
+            <% if (isPreApproved) { %>
+              <span class="text-xs text-green-600 font-medium">Pre-Approved</span>
+            <% } else { %>
+              <span class="text-xs text-yellow-600 font-medium">Not Pre-Approved</span>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      
+      <h2 class="text-lg font-semibold text-gray-700 mb-4">Navigation</h2>
       <ul class="space-y-2">
         <li>
           <button 
-            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium" 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-900 transition font-medium flex items-center" 
             data-tab="homeTab"
-          >Home</button>
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Home
+          </button>
         </li>
         <li>
           <button 
-            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium" 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-900 transition font-medium flex items-center" 
             data-tab="mortgageAppTab"
-          >Mortgage Application</button>
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Mortgage Application
+          </button>
         </li>
         <li>
           <button 
-            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium"
-            data-tab="accountSettingsTab"
-          >Account Settings</button>
-        </li>
-        <li>
-          <button 
-            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100 transition font-medium"
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-900 transition font-medium flex items-center relative"
             data-tab="messagesTab"
-          >Messages</button>
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+            </svg>
+            Messages
+            <% if (typeof unreadMessageCount !== 'undefined' && unreadMessageCount > 0) { %>
+              <span class="ml-auto bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold"><%= unreadMessageCount %></span>
+            <% } %>
+          </button>
+        </li>
+        <li>
+          <button 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-900 transition font-medium flex items-center"
+            data-tab="accountSettingsTab"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Account Settings
+          </button>
         </li>
       </ul>
+      
+      <!-- Tools Section -->
+      <h2 class="text-lg font-semibold text-gray-700 mb-4 mt-6">Tools</h2>
+      <ul class="space-y-2">
+        <li>
+          <button 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-900 transition font-medium flex items-center"
+            data-tab="calculatorTab"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            Calculator
+          </button>
+        </li>
+        <li>
+          <button 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-900 transition font-medium flex items-center"
+            data-tab="propertySearchTab"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            Property Search
+          </button>
+        </li>
+        <li>
+          <button 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-900 transition font-medium flex items-center"
+            data-tab="videoCallTab"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            Schedule Video Call
+          </button>
+        </li>
+        <li>
+          <button 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-900 transition font-medium flex items-center"
+            data-tab="faqTab"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Help Center
+          </button>
+        </li>
+        <li>
+          <button 
+            class="tab-link w-full text-left text-gray-700 px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-900 transition font-medium flex items-center"
+            data-tab="badgesTab"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+            Achievements
+          </button>
+        </li>
+      </ul>
+      
+      <!-- Notifications Panel in Sidebar -->
+      <% if (typeof notifications !== 'undefined' && notifications && notifications.length > 0) { %>
+        <div class="mt-6 pt-4 border-t border-gray-200">
+          <h3 class="text-sm font-semibold text-gray-600 mb-3 flex items-center">
+            <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            Notifications
+            <% if (unreadNotificationCount > 0) { %>
+              <span class="ml-auto bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full"><%= unreadNotificationCount %> new</span>
+            <% } %>
+          </h3>
+          <div class="space-y-2 max-h-48 overflow-y-auto">
+            <% notifications.slice(0, 5).forEach(function(notif) { 
+              const priorityColors = {
+                'Urgent': 'border-l-red-500',
+                'High': 'border-l-orange-500',
+                'Normal': 'border-l-blue-500',
+                'Low': 'border-l-gray-400'
+              };
+            %>
+              <div class="notification-item border-l-2 <%= priorityColors[notif.Priority] || 'border-l-blue-500' %> bg-gray-50 p-2 rounded-r text-xs <%= !notif.IsRead ? 'bg-blue-50' : '' %>" data-id="<%= notif.NotificationID %>">
+                <p class="font-medium text-gray-800 truncate"><%= notif.Title %></p>
+                <p class="text-gray-500 truncate"><%= notif.Message %></p>
+                <% if (notif.ActionURL) { %>
+                  <a href="<%= notif.ActionURL %>" class="text-blue-600 hover:underline">View →</a>
+                <% } %>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      <% } %>
+      
+      <!-- Sign Out -->
+      <div class="mt-6 pt-4 border-t border-gray-200">
+        <a href="/logout" class="flex items-center text-red-600 hover:text-red-800 font-medium transition text-sm">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+          Sign Out
+        </a>
+      </div>
     </aside>
 
     <!-- Main Content Area -->
     <section class="flex-1 py-12 px-8 overflow-y-auto w-full">
-      <!-- Where the Profile tabs (homeTab, mortgageAppTab, etc.) get injected -->
       <%- body %>
     </section>
   </main>
 
-  <!-- Chatbot -->
-  <%- include('../partials/chatbot.ejs') %>
-
   <!-- Footer -->
   <footer class="bg-blue-900 text-white text-center py-4 mt-12">
-    <p>© 2025 Pasaana. All rights reserved.</p>
+    <p class="text-sm"><%= typeof branding !== 'undefined' ? branding.copyright : '© 2025 Bank ABC. All rights reserved.' %></p>
+    <p class="text-xs text-blue-300 mt-1">Powered by <%= typeof branding !== 'undefined' ? branding.poweredBy : 'Pasaana' %></p>
   </footer>
 
-  <!-- JS relevant to the Profile page -->
+  <!-- JS for the Profile page -->
   <script src="/profile.js"></script>
   <script src="/js/mortgageApplication.js"></script>
 </body>
 </html>
-

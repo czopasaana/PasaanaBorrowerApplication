@@ -2,57 +2,189 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pasaana - Sign In</title>
-  <meta name="description" content="Sign in to your Pasaana account to access your dashboard and manage your preferences.">
+  <title><%= typeof branding !== 'undefined' ? branding.partnerName : 'Bank ABC' %> - Sign In</title>
+  <meta name="description" content="Sign in to your mortgage application portal.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Include Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Link to Custom CSS -->
   <link rel="stylesheet" href="/styles.css">
-   <!-- Include jQuery for AJAX requests -->
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gradient-to-br from-blue-50 to-gray-100 min-h-screen flex flex-col">
   <!-- Navigation Bar -->
   <%- include('partials/navbar.ejs') %>
 
+  <!-- Hero Section with Quick Calculator -->
+  <section class="bg-blue-900 text-white py-12">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-8 items-center">
+        <!-- Left: Value Proposition -->
+        <div>
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">Get Pre-Approved in Minutes</h1>
+          <p class="text-xl text-blue-200 mb-6">Know your budget before you shop for your dream home.</p>
+          <ul class="space-y-3 text-lg">
+            <li class="flex items-center">
+              <svg class="w-6 h-6 mr-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              No impact on your credit score
+            </li>
+            <li class="flex items-center">
+              <svg class="w-6 h-6 mr-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Get your pre-approval letter instantly
+            </li>
+            <li class="flex items-center">
+              <svg class="w-6 h-6 mr-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Shop with confidence
+            </li>
+          </ul>
+        </div>
+
+        <!-- Right: Quick Calculator -->
+        <div class="bg-white rounded-xl p-6 shadow-2xl text-gray-800">
+          <h3 class="text-xl font-bold text-blue-900 mb-4">Quick Affordability Estimate</h3>
+          <p class="text-sm text-gray-600 mb-4">See what you might afford - no account required!</p>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Annual Income</label>
+              <div class="relative">
+                <span class="absolute left-3 top-3 text-gray-500">$</span>
+                <input type="number" id="quickIncome" placeholder="80,000" 
+                       class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Monthly Debts</label>
+              <div class="relative">
+                <span class="absolute left-3 top-3 text-gray-500">$</span>
+                <input type="number" id="quickDebt" placeholder="500" 
+                       class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Down Payment</label>
+              <div class="relative">
+                <span class="absolute left-3 top-3 text-gray-500">$</span>
+                <input type="number" id="quickDown" placeholder="50,000" 
+                       class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+            </div>
+            <button onclick="calculateAffordability()" 
+                    class="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition">
+              Calculate My Budget
+            </button>
+          </div>
+
+          <!-- Result -->
+          <div id="quickResult" class="hidden mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+            <p class="text-sm text-gray-600">You may be able to afford a home up to:</p>
+            <p class="text-3xl font-bold text-green-600" id="affordableAmount">$0</p>
+            <a href="/signup" class="inline-block mt-3 text-blue-600 font-semibold hover:underline">
+              Sign up to get officially pre-approved →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Sign In Form -->
-  <main class="flex items-center justify-center py-12">
-    <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
-      <h2 class="text-3xl font-bold text-blue-900 mb-6 text-center">Sign In to Your Account</h2>
+  <main class="flex-1 flex items-center justify-center py-12 px-4">
+    <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full">
+      <!-- Branding Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-blue-900"><%= typeof branding !== 'undefined' ? branding.partnerName : 'Bank ABC' %></h1>
+        <p class="text-sm text-gray-500 mt-1">Powered by <%= typeof branding !== 'undefined' ? branding.poweredBy : 'Pasaana' %></p>
+      </div>
+
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Sign In to Your Account</h2>
 
       <% if (showMessage) { %>
-        <p class="text-center text-gray-700 mb-4">You need to sign in to start the pre-approval process.</p>
+        <div class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg mb-6">
+          <p class="text-center text-sm">Please sign in to access your mortgage application.</p>
+        </div>
       <% } %>
 
       <form action="/login" method="POST" class="space-y-6">
         <div>
-          <label for="email" class="block text-gray-700 font-semibold">Email Address</label>
-          <input type="email" name="email" id="email" required class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label for="email" class="block text-gray-700 font-semibold mb-2">Email Address</label>
+          <input type="email" name="email" id="email" required 
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                 placeholder="you@example.com">
         </div>
         <div>
-          <label for="password" class="block text-gray-700 font-semibold">Password</label>
-          <input type="password" name="password" id="password" required class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
+          <input type="password" name="password" id="password" required 
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                 placeholder="••••••••">
         </div>
-        <button type="submit" class="w-full bg-blue-900 text-white px-4 py-2 rounded-md font-semibold text-lg hover:bg-blue-800 transition duration-300">Sign In</button>
+        <button type="submit" 
+                class="w-full bg-blue-900 text-white px-4 py-3 rounded-lg font-semibold text-lg hover:bg-blue-800 transition duration-300 shadow-md hover:shadow-lg">
+          Sign In
+        </button>
       </form>
-      <!-- Forgot Password Link -->
-      <p class="text-center text-gray-700 mt-4">
-        <a href="/forgot-password" class="text-blue-600 hover:underline">Forgot your password?</a>
-      </p>
+
+      <!-- Divider -->
+      <div class="my-6 flex items-center">
+        <div class="flex-1 border-t border-gray-300"></div>
+        <span class="px-4 text-gray-500 text-sm">or</span>
+        <div class="flex-1 border-t border-gray-300"></div>
+      </div>
+
       <!-- Sign Up Link -->
-      <p class="text-center text-gray-700 mt-6">
-        Don't have an account? <a href="/signup?from=navbar" class="text-blue-600 hover:underline">Sign up here</a>
+      <p class="text-center text-gray-700">
+        Don't have an account? 
+        <a href="/signup" class="text-blue-600 font-semibold hover:underline">Create one here</a>
       </p>
     </div>
   </main>
 
-  <!-- Chatbot -->
-  <%- include('partials/chatbot.ejs') %>
-
   <!-- Footer -->
-  <footer class="bg-blue-900 text-white text-center py-4 mt-12">
-    <p>© 2024 Pasaana. All rights reserved.</p>
+  <footer class="bg-blue-900 text-white text-center py-4">
+    <p class="text-sm"><%= typeof branding !== 'undefined' ? branding.copyright : '© 2025 Bank ABC. All rights reserved.' %></p>
+    <p class="text-xs text-blue-300 mt-1">Powered by <%= typeof branding !== 'undefined' ? branding.poweredBy : 'Pasaana' %></p>
   </footer>
+
+  <script>
+    function calculateAffordability() {
+      const income = parseFloat(document.getElementById('quickIncome').value) || 0;
+      const debt = parseFloat(document.getElementById('quickDebt').value) || 0;
+      const downPayment = parseFloat(document.getElementById('quickDown').value) || 0;
+
+      if (income <= 0) {
+        alert('Please enter your annual income');
+        return;
+      }
+
+      // Simple affordability calculation
+      const monthlyIncome = income / 12;
+      const maxHousingExpense = monthlyIncome * 0.28;
+      const maxDebtExpense = (monthlyIncome * 0.36) - debt;
+      const maxMortgagePayment = Math.min(maxHousingExpense, maxDebtExpense);
+
+      if (maxMortgagePayment <= 0) {
+        document.getElementById('affordableAmount').textContent = '$0';
+        document.getElementById('quickResult').classList.remove('hidden');
+        return;
+      }
+
+      // Estimate loan amount using 4.75% total rate (4% bond + 0.75% bidrag), 30yr term
+      const bondRate = 0.04;
+      const bidragRate = 0.0075;
+      const totalRate = bondRate + bidragRate; // 4.75%
+      const monthlyRate = totalRate / 12;
+      const termMonths = 360;
+      const loanAmount = maxMortgagePayment * (1 - Math.pow(1 + monthlyRate, -termMonths)) / monthlyRate;
+      
+      const totalAffordable = Math.round(loanAmount + downPayment);
+
+      document.getElementById('affordableAmount').textContent = '$' + totalAffordable.toLocaleString();
+      document.getElementById('quickResult').classList.remove('hidden');
+    }
+  </script>
 </body>
 </html>

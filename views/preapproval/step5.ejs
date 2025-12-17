@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pre-Approval - Step 5</title>
+  <title>Pre-Approval | <%= typeof branding !== 'undefined' ? branding.partnerName : 'Bank ABC' %> - - Step 5</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -115,7 +115,7 @@
 
   <!-- Footer -->
   <footer class="bg-blue-900 text-white text-center py-6">
-    <p>© 2024 Pasaana. All rights reserved.</p>
+    <p><%= typeof branding !== 'undefined' ? branding.copyright : '© 2025 Bank ABC. All rights reserved.' %></p>
   </footer>
 
   <!-- JavaScript for Validation and Interactivity -->

@@ -1,8 +1,80 @@
 <!-- views/tabs/mortgageAppTab.ejs -->
 
-<% if (isPreApproved) { %>
-    <section id="mortgageAppTab" class="tab-content hidden">
-      <div class="w-full bg-white p-8 rounded-lg shadow-lg">
+<%
+// Helper function to get status display and class
+function getStatusInfo(status) {
+  // Normalize status
+  let displayStatus = status || 'Not Started';
+  if (displayStatus === 'InReview') displayStatus = 'In Review';
+  
+  // Get appropriate class
+  let statusClass = 'bg-gray-200 text-gray-800';
+  if (displayStatus === 'Completed') {
+    statusClass = 'bg-green-200 text-green-800';
+  } else if (displayStatus === 'In Progress') {
+    statusClass = 'bg-yellow-200 text-yellow-800';
+  } else if (displayStatus === 'In Review') {
+    statusClass = 'bg-blue-200 text-blue-800';
+  } else if (displayStatus === 'Not Started') {
+    statusClass = 'bg-gray-200 text-gray-800';
+  }
+  
+  return { display: displayStatus, class: statusClass };
+}
+%>
+
+<section id="mortgageAppTab" class="tab-content hidden">
+
+<% if (!isPreApproved) { %>
+  <!-- Not Pre-Approved - Show Get Pre-Approved Message -->
+  <div class="w-full">
+    <div class="bg-white rounded-xl shadow-lg p-10 text-center">
+      <div class="max-w-lg mx-auto">
+        <div class="text-6xl mb-6">🔒</div>
+        <h2 class="text-3xl font-bold text-blue-900 mb-4">Pre-Approval Required</h2>
+        <p class="text-lg text-gray-600 mb-8">
+          Before you can start your full mortgage application, you'll need to get pre-approved first. 
+          This helps us determine how much home you can afford and gives you a pre-approval letter to shop with confidence.
+        </p>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+          <h3 class="font-semibold text-blue-900 mb-3">Why get pre-approved?</h3>
+          <ul class="text-left text-gray-700 space-y-2">
+            <li class="flex items-center">
+              <svg class="w-5 h-5 mr-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Know exactly how much you can borrow
+            </li>
+            <li class="flex items-center">
+              <svg class="w-5 h-5 mr-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Sellers take you more seriously
+            </li>
+            <li class="flex items-center">
+              <svg class="w-5 h-5 mr-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Speed up the final mortgage process
+            </li>
+            <li class="flex items-center">
+              <svg class="w-5 h-5 mr-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Only takes 5-10 minutes
+            </li>
+          </ul>
+        </div>
+        <a href="/preapproval" 
+           class="inline-block bg-orange-500 text-white px-10 py-4 rounded-full text-lg font-bold shadow-lg hover:bg-orange-600 transition transform hover:scale-105">
+          Get Pre-Approved Now →
+        </a>
+      </div>
+    </div>
+  </div>
+<% } else { %>
+  <!-- Pre-Approved - Show Full Mortgage Application -->
+  <div class="w-full bg-white p-8 rounded-lg shadow-lg">
         <h2 class="text-2xl font-bold text-blue-900 mb-4">Your Mortgage Application Tasks</h2>
         <p class="mb-6 text-gray-700">Complete the required tasks below to submit your mortgage application package.</p>
     
@@ -10,6 +82,121 @@
         <div class="w-full bg-gray-200 rounded-full h-4 mb-6">
           <div id="progressBar" class="bg-blue-600 h-4 rounded-full" style="width: 0%;"></div>
         </div>
+
+        <!-- Document Upload Center -->
+        <% if (typeof documents !== 'undefined' && documents && documents.length > 0) { %>
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8 border border-blue-100">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-gray-800 flex items-center">
+              <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+              </svg>
+              Document Upload Center
+            </h3>
+            <div class="flex items-center space-x-4 text-sm">
+              <span class="text-green-600 font-medium"><%= approvedDocs || 0 %> Approved</span>
+              <span class="text-yellow-600 font-medium"><%= documents.filter(d => d.Status === 'Uploaded').length %> Pending Review</span>
+              <span class="text-red-600 font-medium"><%= pendingDocs || 0 %> Needed</span>
+            </div>
+          </div>
+          
+          <p class="text-gray-600 mb-6">Upload your required documents here. We accept PDF, JPG, and PNG files up to 10MB each.</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% 
+              const docsByCategory = {};
+              documents.forEach(doc => {
+                if (!docsByCategory[doc.DocumentCategory]) {
+                  docsByCategory[doc.DocumentCategory] = [];
+                }
+                docsByCategory[doc.DocumentCategory].push(doc);
+              });
+              
+              const categoryIcons = {
+                'Income': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+                'Assets': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>',
+                'Identity': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>',
+                'Property': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>',
+                'Other': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>'
+              };
+            %>
+            
+            <% Object.keys(docsByCategory).forEach(function(category) { 
+              const categoryDocs = docsByCategory[category];
+              const requiredDocs = categoryDocs.filter(d => d.IsRequired);
+              const completedDocs = categoryDocs.filter(d => d.Status === 'Approved' || d.Status === 'Uploaded');
+            %>
+              <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="font-semibold text-gray-800 flex items-center">
+                    <span class="text-blue-600 mr-2"><%- categoryIcons[category] || categoryIcons['Other'] %></span>
+                    <%= category %>
+                  </h4>
+                  <span class="text-xs font-medium px-2 py-1 rounded-full <%= completedDocs.length === requiredDocs.length ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' %>">
+                    <%= completedDocs.length %>/<%= requiredDocs.length %>
+                  </span>
+                </div>
+                
+                <div class="space-y-2">
+                  <% categoryDocs.forEach(function(doc) { 
+                    let statusColor = 'text-gray-500';
+                    let statusIcon = '';
+                    if (doc.Status === 'Approved') {
+                      statusColor = 'text-green-600';
+                      statusIcon = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>';
+                    } else if (doc.Status === 'Uploaded' || doc.Status === 'Under Review') {
+                      statusColor = 'text-yellow-600';
+                      statusIcon = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>';
+                    } else if (doc.Status === 'Rejected') {
+                      statusColor = 'text-red-600';
+                      statusIcon = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>';
+                    } else {
+                      statusIcon = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>';
+                    }
+                  %>
+                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded text-sm doc-upload-item" data-doc-id="<%= doc.DocumentID %>">
+                      <div class="flex items-center flex-1 min-w-0">
+                        <span class="<%= statusColor %> mr-2 flex-shrink-0"><%- statusIcon %></span>
+                        <span class="truncate <%= doc.IsRequired ? 'font-medium' : 'text-gray-600' %>">
+                          <%= doc.DocumentType %>
+                          <% if (!doc.IsRequired) { %><span class="text-xs text-gray-400">(Optional)</span><% } %>
+                        </span>
+                      </div>
+                      <% if (doc.Status === 'Pending') { %>
+                        <label class="cursor-pointer bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700 transition flex-shrink-0 ml-2">
+                          Upload
+                          <input type="file" class="hidden doc-file-input" data-doc-id="<%= doc.DocumentID %>" accept=".pdf,.jpg,.jpeg,.png">
+                        </label>
+                      <% } else if (doc.Status === 'Rejected') { %>
+                        <label class="cursor-pointer bg-red-600 text-white text-xs px-3 py-1 rounded hover:bg-red-700 transition flex-shrink-0 ml-2">
+                          Re-upload
+                          <input type="file" class="hidden doc-file-input" data-doc-id="<%= doc.DocumentID %>" accept=".pdf,.jpg,.jpeg,.png">
+                        </label>
+                      <% } else { %>
+                        <span class="text-xs <%= statusColor %> flex-shrink-0 ml-2"><%= doc.Status %></span>
+                      <% } %>
+                    </div>
+                    <% if (doc.Status === 'Rejected' && doc.RejectionReason) { %>
+                      <p class="text-xs text-red-600 ml-6"><%= doc.RejectionReason %></p>
+                    <% } %>
+                  <% }); %>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+          
+          <!-- Upload Progress Indicator -->
+          <div id="uploadProgress" class="hidden mt-4 p-4 bg-white rounded-lg border border-blue-200">
+            <div class="flex items-center">
+              <svg class="animate-spin h-5 w-5 text-blue-600 mr-3" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span class="text-gray-700">Uploading document...</span>
+            </div>
+          </div>
+        </div>
+        <% } %>
     
         <!-- Task List -->
         <div class="space-y-4">
@@ -39,16 +226,24 @@
         <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
       </svg>
       <!-- Status Label -->
-      <span 
-        class="task-status-label text-sm font-semibold px-3 py-1 rounded-full 
-        <%= (applicationData && applicationData.ApplicationStatus === 'Completed') 
-              ? 'bg-green-200 text-green-800' 
-              : ((applicationData && applicationData.ApplicationStatus === 'In Progress') 
-                ? 'bg-yellow-200 text-yellow-800' 
-                : 'bg-gray-200 text-gray-800') %>">
-        <%= (applicationData && applicationData.ApplicationStatus) 
-              ? applicationData.ApplicationStatus 
-              : (applicationData ? 'In Progress' : 'Not Started') %>
+      <%
+        let loanAppStatus = (applicationData && applicationData.ApplicationStatus) 
+          ? applicationData.ApplicationStatus 
+          : (applicationData ? 'In Progress' : 'Not Started');
+        // Normalize "InReview" to "In Review"
+        if (loanAppStatus === 'InReview') loanAppStatus = 'In Review';
+        
+        let loanAppStatusClass = 'bg-gray-200 text-gray-800';
+        if (loanAppStatus === 'Completed') {
+          loanAppStatusClass = 'bg-green-200 text-green-800';
+        } else if (loanAppStatus === 'In Progress') {
+          loanAppStatusClass = 'bg-yellow-200 text-yellow-800';
+        } else if (loanAppStatus === 'In Review') {
+          loanAppStatusClass = 'bg-blue-200 text-blue-800';
+        }
+      %>
+      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= loanAppStatusClass %>">
+        <%= loanAppStatus %>
       </span>
     </div>
   </div>
@@ -97,7 +292,7 @@
       type="button" 
       class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
       data-target="#urlaSection6">
-      Section 6: 
+      Section 6: Acknowledgments
     </button>
     <button 
     type="button" 
@@ -132,7 +327,7 @@
         placeholder="Enter your first name" 
         class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
                focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
-        value="<%= applicationData ? applicationData.BorrowerFirstName : '' %>"
+        value="<%= applicationData ? applicationData.BorrowerFirstName : (preApprovalData && preApprovalData.step1 ? preApprovalData.step1.firstName : '') %>"
       >
     </div>
 
@@ -165,7 +360,7 @@
         placeholder="Enter your last name"
         class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
                focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
-        value="<%= applicationData ? applicationData.BorrowerLastName : '' %>"
+        value="<%= applicationData ? applicationData.BorrowerLastName : (preApprovalData && preApprovalData.step1 ? preApprovalData.step1.lastName : '') %>"
       >
     </div>
 
@@ -214,7 +409,7 @@
         placeholder="XXX-XX-XXXX"
         class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800 placeholder-gray-400
                focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
-        value="<%= applicationData ? applicationData.BorrowerSSN : '' %>"
+        value="<%= applicationData ? applicationData.BorrowerSSN : (preApprovalData && preApprovalData.step4 ? preApprovalData.step4.ssn : '') %>"
       >
     </div>
 
@@ -232,7 +427,7 @@
                focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
         value="<%= applicationData && applicationData.BorrowerDOB 
                   ? applicationData.BorrowerDOB.toISOString().split('T')[0] 
-                  : '' %>"
+                  : (preApprovalData && preApprovalData.step1 ? preApprovalData.step1.dateOfBirth : '') %>"
       >
     </div>
 
@@ -413,7 +608,7 @@
         id="currentAddressStreet" 
         name="currentAddressStreet" 
         class="mt-1 block w-full border border-gray-300 rounded-md p-2"
-        value="<%= applicationData ? applicationData.CurrentAddressStreet : '' %>"
+        value="<%= applicationData ? applicationData.CurrentAddressStreet : (preApprovalData && preApprovalData.step3 ? preApprovalData.step3.streetAddress : '') %>"
       >
     </div>
     <div class="flex flex-col">
@@ -425,7 +620,7 @@
         id="currentAddressCity" 
         name="currentAddressCity"
         class="mt-1 block w-full border border-gray-300 rounded-md p-2"
-        value="<%= applicationData ? applicationData.CurrentAddressCity : '' %>"
+        value="<%= applicationData ? applicationData.CurrentAddressCity : (preApprovalData && preApprovalData.step3 ? preApprovalData.step3.city : '') %>"
       >
     </div>
     <div class="flex flex-col">
@@ -437,7 +632,7 @@
         id="currentAddressState" 
         name="currentAddressState" 
         class="mt-1 block w-full border border-gray-300 rounded-md p-2"
-        value="<%= applicationData ? applicationData.CurrentAddressState : '' %>"
+        value="<%= applicationData ? applicationData.CurrentAddressState : (preApprovalData && preApprovalData.step3 ? preApprovalData.step3.state : '') %>"
       >
     </div>
     <div class="flex flex-col">
@@ -449,7 +644,7 @@
         id="currentAddressZip" 
         name="currentAddressZip" 
         class="mt-1 block w-full border border-gray-300 rounded-md p-2"
-        value="<%= applicationData ? applicationData.CurrentAddressZip : '' %>"
+        value="<%= applicationData ? applicationData.CurrentAddressZip : (preApprovalData && preApprovalData.step3 ? preApprovalData.step3.zipCode : '') %>"
       >
     </div>
     <div class="flex flex-col">
@@ -4902,6 +5097,78 @@
 
 </div> <!-- End Section 5-->
 
+<!-- SECTION 6: Acknowledgments and Agreements -->
+<div id="urlaSection6" class="urla-section hidden">
+  <h6 class="font-semibold text-xl text-gray-800 mb-4">
+    Section 6: Acknowledgments and Agreements
+  </h6>
+  <p class="text-sm text-gray-500 mb-4">
+    Please read and acknowledge the following statements regarding your loan application.
+  </p>
+
+  <div class="border border-gray-300 rounded-md p-4 mb-6">
+    <div class="mb-4">
+      <div class="flex items-start">
+        <input 
+          type="checkbox" 
+          id="certifyInfoTrue" 
+          name="certifyInfoTrue" 
+          class="mt-1 mr-3"
+          <%= (applicationData && applicationData.CertifyInfoTrue) ? 'checked' : '' %>
+        />
+        <label for="certifyInfoTrue" class="text-sm text-gray-700">
+          I certify that all information provided in this application is true, complete, and correct to the best of my knowledge. I understand that making false or fraudulent statements may result in criminal penalties and civil liability.
+        </label>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <div class="flex items-start">
+        <input 
+          type="checkbox" 
+          id="authorizeVerification" 
+          name="authorizeVerification" 
+          class="mt-1 mr-3"
+          <%= (applicationData && applicationData.AuthorizeVerification) ? 'checked' : '' %>
+        />
+        <label for="authorizeVerification" class="text-sm text-gray-700">
+          I authorize the lender to verify the information provided in this application, including employment, income, assets, and credit history.
+        </label>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <div class="flex items-start">
+        <input 
+          type="checkbox" 
+          id="consentCreditCheck" 
+          name="consentCreditCheck" 
+          class="mt-1 mr-3"
+          <%= (applicationData && applicationData.ConsentCreditCheck) ? 'checked' : '' %>
+        />
+        <label for="consentCreditCheck" class="text-sm text-gray-700">
+          I consent to the lender obtaining a credit report and using my credit information in connection with this application and any updates, renewals, or extensions of credit.
+        </label>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <div class="flex items-start">
+        <input 
+          type="checkbox" 
+          id="acknowledgeOccupancy" 
+          name="acknowledgeOccupancy" 
+          class="mt-1 mr-3"
+          <%= (applicationData && applicationData.AcknowledgeOccupancy) ? 'checked' : '' %>
+        />
+        <label for="acknowledgeOccupancy" class="text-sm text-gray-700">
+          I acknowledge that if I indicated that I will occupy the property as my primary residence, I will do so within 60 days of closing and will continue to occupy it for at least one year.
+        </label>
+      </div>
+    </div>
+  </div>
+</div> <!-- End Section 6 -->
+
 <!-- SECTION 7: Military Service -->
 <div id="urlaSection7" class="urla-section hidden">
   <h6 class="font-semibold text-xl text-gray-800 mb-4">
@@ -5353,8 +5620,9 @@
                     </svg>
               
                     <!-- Status Label -->
-                    <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (authorizationsData && authorizationsData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((authorizationsData && authorizationsData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
-                      <%= authorizationsData && authorizationsData.ApplicationStatus ? authorizationsData.ApplicationStatus : 'Not Started' %>
+                    <% const authStatus = getStatusInfo(authorizationsData ? authorizationsData.ApplicationStatus : null); %>
+                    <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= authStatus.class %>">
+                      <%= authStatus.display %>
                     </span>
                   </div>
                 </div>
@@ -5432,8 +5700,9 @@
                     </svg>
               
                     <!-- Status Label -->
-                    <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (identificationData && identificationData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((identificationData && identificationData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
-                      <%= identificationData && identificationData.ApplicationStatus ? identificationData.ApplicationStatus : 'Not Started' %>
+                    <% const idStatus = getStatusInfo(identificationData ? identificationData.ApplicationStatus : null); %>
+                    <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= idStatus.class %>">
+                      <%= idStatus.display %>
                     </span>
                   </div>
                 </div>
@@ -5509,8 +5778,9 @@ if (applicationData && !applicationData.EmployerName) {
            fill="currentColor" viewBox="0 0 20 20">
         <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
       </svg>
-      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (incomeData && incomeData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((incomeData && incomeData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
-        <%= incomeData && incomeData.ApplicationStatus ? incomeData.ApplicationStatus : 'Not Started' %>
+      <% const incomeStatus = getStatusInfo(incomeData ? incomeData.ApplicationStatus : null); %>
+      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= incomeStatus.class %>">
+        <%= incomeStatus.display %>
       </span>
     </div>
   </div>
@@ -5641,8 +5911,9 @@ if (applicationData && !applicationData.EmployerName) {
       </svg>
 
       <!-- Status Label -->
-      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (assetData && assetData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((assetData && assetData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
-        <%= assetData && assetData.ApplicationStatus ? assetData.ApplicationStatus : 'Not Started' %>
+      <% const assetStatus = getStatusInfo(assetData ? assetData.ApplicationStatus : null); %>
+      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= assetStatus.class %>">
+        <%= assetStatus.display %>
       </span>
     </div>
   </div>
@@ -5745,8 +6016,9 @@ if (applicationData && !applicationData.EmployerName) {
            fill="currentColor" viewBox="0 0 20 20">
         <path d="M5.23 7.21a.75.75 0 011.06-.02L10 10.8l3.71-3.61a.75.75 0 011.04 1.08l-4.24 4.12a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
       </svg>
-      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (liabilityData && liabilityData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((liabilityData && liabilityData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
-        <%= liabilityData && liabilityData.ApplicationStatus ? liabilityData.ApplicationStatus : 'Not Started' %>
+      <% const liabilityStatus = getStatusInfo(liabilityData ? liabilityData.ApplicationStatus : null); %>
+      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= liabilityStatus.class %>">
+        <%= liabilityStatus.display %>
       </span>
     </div>
   </div>
@@ -5850,8 +6122,9 @@ if (applicationData && !applicationData.EmployerName) {
       </svg>
 
       <!-- Status Label -->
-      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (disclosuresData && disclosuresData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((disclosuresData && disclosuresData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
-        <%= disclosuresData && disclosuresData.ApplicationStatus ? disclosuresData.ApplicationStatus : 'Not Started' %>
+      <% const disclosuresStatus = getStatusInfo(disclosuresData ? disclosuresData.ApplicationStatus : null); %>
+      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= disclosuresStatus.class %>">
+        <%= disclosuresStatus.display %>
       </span>
     </div>
   </div>
@@ -5943,8 +6216,9 @@ if (applicationData && !applicationData.EmployerName) {
                     </svg>
               
                     <!-- Dynamic Status Label -->
-                    <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (coBorrowerData && coBorrowerData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((coBorrowerData && coBorrowerData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
-                      <%= coBorrowerData && coBorrowerData.ApplicationStatus ? coBorrowerData.ApplicationStatus : 'Not Started' %>
+                    <% const coBorrowerStatus = getStatusInfo(coBorrowerData ? coBorrowerData.ApplicationStatus : null); %>
+                    <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= coBorrowerStatus.class %>">
+                      <%= coBorrowerStatus.display %>
                     </span>
                   </div>
                 </div>
@@ -6026,8 +6300,9 @@ if (applicationData && !applicationData.EmployerName) {
       </svg>
 
       <!-- Dynamic Status Label -->
-      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (purchaseAgreementData && purchaseAgreementData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((purchaseAgreementData && purchaseAgreementData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
-        <%= purchaseAgreementData && purchaseAgreementData.ApplicationStatus ? purchaseAgreementData.ApplicationStatus : 'Not Started' %>
+      <% const purchaseAgreementStatus = getStatusInfo(purchaseAgreementData ? purchaseAgreementData.ApplicationStatus : null); %>
+      <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= purchaseAgreementStatus.class %>">
+        <%= purchaseAgreementStatus.display %>
       </span>
     </div>
   </div>
@@ -6086,8 +6361,9 @@ if (applicationData && !applicationData.EmployerName) {
                     </svg>
               
                     <!-- Dynamic Status Label -->
-                    <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= (giftLetterData && giftLetterData.ApplicationStatus === 'Completed') ? 'bg-green-200 text-green-800' : ((giftLetterData && giftLetterData.ApplicationStatus === 'In Progress') ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-800') %>">
-                      <%= giftLetterData && giftLetterData.ApplicationStatus ? giftLetterData.ApplicationStatus : 'Not Started' %>
+                    <% const giftLetterStatus = getStatusInfo(giftLetterData ? giftLetterData.ApplicationStatus : null); %>
+                    <span class="task-status-label text-sm font-semibold px-3 py-1 rounded-full <%= giftLetterStatus.class %>">
+                      <%= giftLetterStatus.display %>
                     </span>
                   </div>
                 </div>
@@ -6150,6 +6426,6 @@ if (applicationData && !applicationData.EmployerName) {
           </button>
         </div>
       </div>
+<% } %>
     </section>
-    <% } %>
     

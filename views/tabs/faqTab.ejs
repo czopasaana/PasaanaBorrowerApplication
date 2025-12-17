@@ -1,0 +1,305 @@
+<section id="faqTab" class="tab-content hidden">
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-8 py-6">
+        <h2 class="text-2xl font-bold text-white">Help Center</h2>
+        <p class="text-teal-100 mt-1">Find answers to common questions about your mortgage journey</p>
+      </div>
+      
+      <div class="p-8">
+        <!-- Search -->
+        <div class="relative mb-8">
+          <svg class="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" id="faq-search" placeholder="Search for answers..." 
+            class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-lg">
+        </div>
+        
+        <!-- Quick Links -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <button type="button" class="faq-category-btn p-4 bg-gray-50 rounded-lg hover:bg-teal-50 hover:border-teal-200 border border-transparent transition text-center" data-category="getting-started">
+            <svg class="w-8 h-8 mx-auto mb-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="text-sm font-medium text-gray-700">Getting Started</span>
+          </button>
+          <button type="button" class="faq-category-btn p-4 bg-gray-50 rounded-lg hover:bg-teal-50 hover:border-teal-200 border border-transparent transition text-center" data-category="pre-approval">
+            <svg class="w-8 h-8 mx-auto mb-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="text-sm font-medium text-gray-700">Pre-Approval</span>
+          </button>
+          <button type="button" class="faq-category-btn p-4 bg-gray-50 rounded-lg hover:bg-teal-50 hover:border-teal-200 border border-transparent transition text-center" data-category="documents">
+            <svg class="w-8 h-8 mx-auto mb-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span class="text-sm font-medium text-gray-700">Documents</span>
+          </button>
+          <button type="button" class="faq-category-btn p-4 bg-gray-50 rounded-lg hover:bg-teal-50 hover:border-teal-200 border border-transparent transition text-center" data-category="rates-costs">
+            <svg class="w-8 h-8 mx-auto mb-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="text-sm font-medium text-gray-700">Rates & Costs</span>
+          </button>
+        </div>
+        
+        <!-- FAQ Accordion -->
+        <div id="faq-accordion" class="space-y-4">
+          <!-- Getting Started -->
+          <div class="faq-section" data-section="getting-started">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+              </svg>
+              Getting Started
+            </h3>
+            
+            <div class="faq-item border border-gray-200 rounded-lg overflow-hidden mb-2">
+              <button class="faq-toggle w-full px-4 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                <span class="font-medium text-gray-800">How do I get started with my mortgage application?</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-4 pb-4">
+                <p class="text-gray-600">Getting started is easy! First, create an account and complete our quick pre-approval process. This takes about 5-10 minutes and gives you an instant estimate of how much home you can afford. Once pre-approved, you can begin your full mortgage application.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item border border-gray-200 rounded-lg overflow-hidden mb-2">
+              <button class="faq-toggle w-full px-4 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                <span class="font-medium text-gray-800">What information do I need to apply?</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-4 pb-4">
+                <p class="text-gray-600">To complete your application, you'll need: Social Security Number, employment information (employer name, income, time at job), bank account information for assets, and details about any debts. Having recent pay stubs, W-2s, and bank statements handy will speed up the process.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item border border-gray-200 rounded-lg overflow-hidden mb-2">
+              <button class="faq-toggle w-full px-4 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                <span class="font-medium text-gray-800">How long does the mortgage process take?</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-4 pb-4">
+                <p class="text-gray-600">The typical mortgage process takes 30-45 days from application to closing. However, this can vary based on your situation, property type, and how quickly documents are provided. Our team works to close loans as efficiently as possible.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pre-Approval -->
+          <div class="faq-section" data-section="pre-approval">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Pre-Approval
+            </h3>
+            
+            <div class="faq-item border border-gray-200 rounded-lg overflow-hidden mb-2">
+              <button class="faq-toggle w-full px-4 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                <span class="font-medium text-gray-800">What is pre-approval and why is it important?</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-4 pb-4">
+                <p class="text-gray-600">Pre-approval is a preliminary assessment of your creditworthiness based on your income, assets, and credit. It's important because: 1) You'll know your budget before house hunting, 2) Sellers take your offers more seriously, 3) It speeds up the final mortgage process.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item border border-gray-200 rounded-lg overflow-hidden mb-2">
+              <button class="faq-toggle w-full px-4 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                <span class="font-medium text-gray-800">Does pre-approval affect my credit score?</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-4 pb-4">
+                <p class="text-gray-600">Our initial pre-approval uses a "soft" credit check that does NOT affect your credit score. When you proceed with a full application, a "hard" credit inquiry will be performed, which may have a small, temporary impact on your score.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item border border-gray-200 rounded-lg overflow-hidden mb-2">
+              <button class="faq-toggle w-full px-4 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                <span class="font-medium text-gray-800">How long is my pre-approval valid?</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-4 pb-4">
+                <p class="text-gray-600">Pre-approval letters are typically valid for 60-90 days. If your pre-approval expires before you find a home, we can easily refresh it with updated information.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Documents -->
+          <div class="faq-section" data-section="documents">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              Documents
+            </h3>
+            
+            <div class="faq-item border border-gray-200 rounded-lg overflow-hidden mb-2">
+              <button class="faq-toggle w-full px-4 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                <span class="font-medium text-gray-800">What documents do I need to provide?</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-4 pb-4">
+                <p class="text-gray-600">Common documents include: Government-issued ID, Recent pay stubs (last 30 days), W-2 forms (last 2 years), Tax returns (last 2 years), Bank statements (last 2 months), and Investment/retirement account statements. Self-employed borrowers may need additional documentation.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item border border-gray-200 rounded-lg overflow-hidden mb-2">
+              <button class="faq-toggle w-full px-4 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                <span class="font-medium text-gray-800">How do I upload documents?</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-4 pb-4">
+                <p class="text-gray-600">You can upload documents directly through your profile dashboard. Go to the Mortgage Application tab and find the document upload section. We accept PDF, JPG, and PNG files up to 10MB each. You can also take photos of documents with your phone.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Rates & Costs -->
+          <div class="faq-section" data-section="rates-costs">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Rates & Costs
+            </h3>
+            
+            <div class="faq-item border border-gray-200 rounded-lg overflow-hidden mb-2">
+              <button class="faq-toggle w-full px-4 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                <span class="font-medium text-gray-800">How are mortgage rates determined?</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-4 pb-4">
+                <p class="text-gray-600">Mortgage rates are influenced by: the Federal Reserve policies, bond market conditions, your credit score, loan type, down payment amount, property type, and loan term. Rates can change daily based on market conditions.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item border border-gray-200 rounded-lg overflow-hidden mb-2">
+              <button class="faq-toggle w-full px-4 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                <span class="font-medium text-gray-800">What are closing costs?</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-4 pb-4">
+                <p class="text-gray-600">Closing costs typically range from 2-5% of the loan amount and include: origination fees, appraisal fee, title insurance, attorney fees, prepaid taxes and insurance, and recording fees. We provide a detailed Loan Estimate showing all expected costs.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item border border-gray-200 rounded-lg overflow-hidden mb-2">
+              <button class="faq-toggle w-full px-4 py-4 text-left flex justify-between items-center hover:bg-gray-50">
+                <span class="font-medium text-gray-800">What does "Clear to Close" mean?</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-4 pb-4">
+                <p class="text-gray-600">Clear to Close (CTC) means your loan has been fully approved and all conditions have been satisfied. This is the final step before closing! You'll receive your final Closing Disclosure and schedule your closing date.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Still Need Help -->
+        <div class="mt-8 bg-teal-50 rounded-xl p-6 text-center">
+          <h4 class="text-lg font-semibold text-teal-900 mb-2">Still have questions?</h4>
+          <p class="text-teal-700 mb-4">Our loan officers are here to help you every step of the way.</p>
+          <div class="flex justify-center gap-4">
+            <button type="button" onclick="document.querySelector('[data-tab=\'messagesTab\']').click()" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg font-medium transition">
+              Send a Message
+            </button>
+            <button type="button" onclick="document.querySelector('[data-tab=\'videoCallTab\']').click()" class="bg-white hover:bg-gray-50 text-teal-700 border border-teal-200 px-6 py-2 rounded-lg font-medium transition">
+              Schedule a Call
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // FAQ accordion toggles
+  document.querySelectorAll('.faq-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function() {
+      const answer = this.nextElementSibling;
+      const chevron = this.querySelector('.faq-chevron');
+      
+      // Close other open items
+      document.querySelectorAll('.faq-answer').forEach(a => {
+        if (a !== answer) a.classList.add('hidden');
+      });
+      document.querySelectorAll('.faq-chevron').forEach(c => {
+        if (c !== chevron) c.classList.remove('rotate-180');
+      });
+      
+      answer.classList.toggle('hidden');
+      chevron.classList.toggle('rotate-180');
+    });
+  });
+  
+  // Category buttons
+  document.querySelectorAll('.faq-category-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const category = this.dataset.category;
+      const section = document.querySelector(`.faq-section[data-section="${category}"]`);
+      
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Open first item in section
+        const firstToggle = section.querySelector('.faq-toggle');
+        if (firstToggle) {
+          firstToggle.click();
+        }
+      }
+    });
+  });
+  
+  // Search functionality
+  const searchInput = document.getElementById('faq-search');
+  searchInput.addEventListener('input', function() {
+    const query = this.value.toLowerCase().trim();
+    
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const question = item.querySelector('.faq-toggle span').textContent.toLowerCase();
+      const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+      
+      if (query === '' || question.includes(query) || answer.includes(query)) {
+        item.style.display = 'block';
+        
+        // Highlight if searching
+        if (query !== '' && (question.includes(query) || answer.includes(query))) {
+          item.querySelector('.faq-answer').classList.remove('hidden');
+          item.querySelector('.faq-chevron').classList.add('rotate-180');
+        }
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+});
+</script>
+

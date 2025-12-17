@@ -2,41 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Thank You</title>
+  <title>Pre-Approval Result - <%= typeof branding !== 'undefined' ? branding.partnerName : 'Bank ABC' %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script> 
-  <!-- Custom Styles -->
   <link rel="stylesheet" href="/styles.css">
-  <!-- Include jQuery for AJAX requests -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-indigo-50 min-h-screen flex flex-col">
+<body class="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen flex flex-col">
   <!-- Navigation Bar -->
   <%- include('../partials/navbar.ejs') %>
 
   <!-- Main Content -->
-  <main class="flex-grow flex items-center justify-center">
-    <div class="text-center px-4 py-16">
+  <main class="flex-grow flex items-center justify-center py-12">
+    <div class="text-center px-4 max-w-2xl">
+      <!-- Branding -->
+      <div class="mb-8">
+        <h1 class="text-2xl font-bold text-blue-900"><%= typeof branding !== 'undefined' ? branding.partnerName : 'Bank ABC' %></h1>
+        <p class="text-sm text-gray-500">Powered by <%= typeof branding !== 'undefined' ? branding.poweredBy : 'Pasaana' %></p>
+      </div>
+
       <% if (isPreApproved) { %>
-        <h2 class="text-4xl font-bold text-blue-900 mb-6">You're Pre-Approved!</h2>
-        <p class="text-xl text-gray-700 mb-8">
-          Congratulations! You have been pre-approved for a mortgage up to: <strong>$<%= maximumLoanAmount.toLocaleString() %></strong>.
-          You can now proceed to view available properties.
-        </p>
+        <!-- Success State -->
+        <div class="bg-white rounded-2xl shadow-2xl p-10 mb-8">
+          <div class="text-6xl mb-4">🎉</div>
+          <h2 class="text-4xl font-bold text-green-600 mb-4">Congratulations!</h2>
+          <p class="text-xl text-gray-700 mb-6">You've been pre-approved for a mortgage up to:</p>
+          <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6 mb-6">
+            <p class="text-5xl font-bold text-green-600">$<%= maximumLoanAmount.toLocaleString() %></p>
+          </div>
+          <p class="text-gray-600 mb-4">
+            This pre-approval is valid for 90 days. You're now ready to shop for your dream home!
+          </p>
+          <div class="border-t border-gray-200 pt-6 mt-6">
+            <p class="text-sm text-gray-500 mb-4">Next Steps:</p>
+            <ol class="text-left text-gray-600 space-y-2 max-w-md mx-auto">
+              <li class="flex items-start">
+                <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 text-sm font-bold">1</span>
+                <span>Browse homes within your budget</span>
+              </li>
+              <li class="flex items-start">
+                <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 text-sm font-bold">2</span>
+                <span>Make an offer on your dream home</span>
+              </li>
+              <li class="flex items-start">
+                <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 text-sm font-bold">3</span>
+                <span>Complete your full mortgage application</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/profile" class="inline-block bg-blue-900 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-blue-800 transition duration-300">
+            Continue to Full Application
+          </a>
+        </div>
       <% } else { %>
-        <h2 class="text-4xl font-bold text-blue-900 mb-6">Application Submitted!</h2>
-        <p class="text-xl text-gray-700 mb-8">
-          Thank you for your application. We will review your information and get back to you shortly.
-        </p>
+        <!-- Submitted State -->
+        <div class="bg-white rounded-2xl shadow-2xl p-10 mb-8">
+          <div class="text-6xl mb-4">📋</div>
+          <h2 class="text-4xl font-bold text-blue-900 mb-4">Application Submitted!</h2>
+          <p class="text-xl text-gray-700 mb-6">
+            Thank you for your application. We will review your information and get back to you shortly.
+          </p>
+          <p class="text-gray-600">
+            You'll receive an email with your pre-approval decision within 24-48 hours.
+          </p>
+        </div>
+        
+        <a href="/profile" class="inline-block bg-orange-500 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-orange-600 transition duration-300">
+          Go to My Profile
+        </a>
       <% } %>
-      <a href="/" class="inline-block bg-orange-500 text-white px-12 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-orange-600 transition duration-300">Back to Home</a>
     </div>
   </main>
 
   <!-- Footer -->
-  <footer class="bg-blue-900 text-white text-center py-6">
-    <p>© 2024 Pasaana. All rights reserved.</p>
+  <footer class="bg-blue-900 text-white text-center py-4">
+    <p class="text-sm"><%= typeof branding !== 'undefined' ? branding.copyright : '© 2025 Bank ABC. All rights reserved.' %></p>
+    <p class="text-xs text-blue-300 mt-1">Powered by <%= typeof branding !== 'undefined' ? branding.poweredBy : 'Pasaana' %></p>
   </footer>
 </body>
 </html>

@@ -1,82 +1,101 @@
-<!-- Navigation Bar -->
+<!-- Navigation Bar - White Label -->
 <header>
   <nav class="bg-blue-900 relative z-50">
     <div class="container mx-auto px-4 flex items-center justify-between h-16">
-      <!-- Logo -->
-      <div class="text-white text-2xl font-bold">
-        <a href="/">Pasaana</a>
+      <!-- Logo / Branding -->
+      <div class="flex flex-col items-start">
+        <a href="/" class="text-white text-2xl font-bold leading-tight"><%= typeof branding !== 'undefined' ? branding.partnerName : 'Bank ABC' %></a>
+        <span class="text-blue-300 text-xs">Powered by <%= typeof branding !== 'undefined' ? branding.poweredBy : 'Pasaana' %></span>
       </div>
+      
       <!-- Navigation Links -->
-      <div class="hidden md:flex items-center space-x-4">
-        <!-- Buy A Home Dropdown Structure -->
-        <div class="relative inline-block">
-          <button id="buyDropdownButton" class="text-white hover:text-gray-200 flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false">
-            Find Your Home
-            <!-- Dropdown Icon -->
-            <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414L10 13.414 5.293 8.707a1 1 0 010-1.414z" />
-            </svg>
-          </button>
-          <!-- Dropdown Menu -->
-          <div id="buyDropdownMenu" class="dropdown-menu absolute left-0 mt-2 w-56 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
-            <a href="/realtor-service" class="block px-4 py-2 hover:bg-blue-800">Learn About Our Realtor Services</a>
-            <a href="/explorer" class="block px-4 py-2 hover:bg-blue-800">Explore Homes</a>
-          </div>
-        </div>
-        <!-- Home Loans Dropdown Structure -->
-        <div class="relative inline-block">
-          <button id="productsDropdownButton" class="text-white hover:text-gray-200 flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false">
-            Home Loans
-            <!-- Dropdown Icon -->
-            <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M5.293 7.293a1 1 0 011.414 0L10 11.586l3.293-4.293a1 1 0 111.414 1.414l-4 5a1 1 0 01-1.414 0l-4-5a1 1 0 010-1.414z" />
-            </svg>
-          </button>
-          <!-- Dropdown Menu -->
-          <div id="productsDropdownMenu" class="dropdown-menu absolute left-0 mt-2 w-48 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
-            <a href="/mortgage-loans" class="block px-4 py-2 hover:bg-blue-800">Mortgage Loan Options</a>
-          </div>
-        </div>
-        <!-- Calculators Dropdown Structure -->
-        <div class="relative inline-block">
-          <button id="mortgageDropdownButton" class="text-white hover:text-gray-200 flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false">
-            Calculators
-            <!-- Dropdown Icon -->
-            <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414L10 13.414 5.293 8.707a1 1 0 010-1.414z" />
-            </svg>
-          </button>
-          <!-- Dropdown Menu -->
-          <div id="mortgageDropdownMenu" class="dropdown-menu absolute left-0 mt-2 w-48 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
-            <a href="/calculators" class="block px-4 py-2 hover:bg-blue-800">Try Our Housing Calculators</a>
-          </div>
-        </div>
-        <!-- Advising Dropdown Structure -->
-        <div class="relative inline-block">
-          <button id="advisingDropdownButton" class="text-white hover:text-gray-200 flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false">
-            Advising
-            <!-- Dropdown Icon -->
-            <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414L10 13.414 5.293 8.707a1 1 0 010-1.414z" />
-            </svg>
-          </button>
-          <!-- Dropdown Menu -->
-          <div id="advisingDropdownMenu" class="dropdown-menu absolute left-0 mt-2 w-64 bg-blue-900 text-white rounded-md shadow-lg hidden z-10">
-            <a href="/home-loans-advisor" class="block px-4 py-2 hover:bg-blue-800">Talk to a Home Loans Advisor</a>
-            <a href="/realtor-advisor" class="block px-4 py-2 hover:bg-blue-800">Talk to a Realtor Advisor</a>
-          </div>
-        </div>
-        <!-- Additional Links (if any) -->
+      <div class="hidden md:flex items-center space-x-6">
+        <% if (user) { %>
+          <a href="/profile" class="text-white hover:text-gray-200 font-medium">My Application</a>
+        <% } %>
       </div>
+      
       <!-- Authentication Buttons -->
       <div class="hidden md:flex items-center space-x-4">
         <% if (user) { %>
+          <!-- Notification Bell -->
+          <div class="relative" id="notificationDropdown">
+            <button class="text-white hover:text-gray-200 p-2 relative" id="notificationBell">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+              </svg>
+              <% if (typeof unreadNotificationCount !== 'undefined' && unreadNotificationCount > 0) { %>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold" id="notificationCount"><%= unreadNotificationCount %></span>
+              <% } %>
+            </button>
+            
+            <!-- Notification Dropdown -->
+            <div id="notificationPanel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+              <div class="p-3 border-b border-gray-200 flex items-center justify-between">
+                <h4 class="font-semibold text-gray-800">Notifications</h4>
+                <% if (typeof unreadNotificationCount !== 'undefined' && unreadNotificationCount > 0) { %>
+                  <span class="text-xs text-blue-600"><%= unreadNotificationCount %> new</span>
+                <% } %>
+              </div>
+              <div class="max-h-72 overflow-y-auto">
+                <% if (typeof notifications !== 'undefined' && notifications && notifications.length > 0) { %>
+                  <% notifications.forEach(function(notif) { %>
+                    <div class="notif-item p-3 border-b border-gray-100 hover:bg-gray-50 <%= !notif.IsRead ? 'bg-blue-50' : '' %>" data-id="<%= notif.NotificationID %>">
+                      <div class="flex items-start">
+                        <div class="flex-shrink-0 mr-3">
+                          <% if (notif.NotificationType === 'Message') { %>
+                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                              <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                              </svg>
+                            </div>
+                          <% } else if (notif.NotificationType === 'Document') { %>
+                            <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                              <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                              </svg>
+                            </div>
+                          <% } else { %>
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                              <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                              </svg>
+                            </div>
+                          <% } %>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium text-gray-800"><%= notif.Title %></p>
+                          <p class="text-xs text-gray-500 truncate"><%= notif.Message %></p>
+                          <p class="text-xs text-gray-400 mt-1"><%= new Date(notif.CreatedAt).toLocaleDateString() %></p>
+                        </div>
+                        <button class="dismiss-notif text-gray-400 hover:text-gray-600 p-1" title="Dismiss">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  <% }); %>
+                <% } else { %>
+                  <div class="p-6 text-center text-gray-500">
+                    <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                    <p class="text-sm">No notifications</p>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          
           <a href="/profile" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">Profile</a>
           <a href="/logout" class="text-white hover:text-gray-200">Sign Out</a>
         <% } else { %>
-          <a href="/login?from=navbar" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">Sign In</a>
+          <a href="/login" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">Sign In</a>
+          <a href="/signup" class="text-white hover:text-gray-200 border border-white px-4 py-2 rounded-md hover:bg-white hover:text-blue-900 transition">Sign Up</a>
         <% } %>
       </div>
+      
       <!-- Mobile Menu Button -->
       <div class="md:hidden">
         <button id="mobile-menu-button" class="text-white focus:outline-none">
@@ -87,79 +106,78 @@
         </button>
       </div>
     </div>
+    
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden">
       <ul class="bg-blue-900 text-white">
-        <li><a href="/realtor-service" class="block px-4 py-2 hover:bg-blue-800">Learn About Our Realtor Services</a></li>
-        <li><a href="/explore-homes" class="block px-4 py-2 hover:bg-blue-800">Explore Homes</a></li>
-        <li><a href="/mortgage-loans" class="block px-4 py-2 hover:bg-blue-800">Mortgage Loans</a></li>
-        <li><a href="/preapproval" class="block px-4 py-2 hover:bg-blue-800">Apply Now</a></li>
-        <li><a href="/calculators" class="block px-4 py-2 hover:bg-blue-800">Try Our Housing Calculators</a></li>
-        <li><a href="/talk-to-advisor" class="block px-4 py-2 hover:bg-blue-800">Talk to an Advisor</a></li>
         <% if (user) { %>
+          <li><a href="/profile" class="block px-4 py-2 hover:bg-blue-800">My Application</a></li>
           <li><a href="/profile" class="block px-4 py-2 hover:bg-blue-800">Profile</a></li>
           <li><a href="/logout" class="block px-4 py-2 hover:bg-blue-800">Sign Out</a></li>
         <% } else { %>
-          <li><a href="/login?from=navbar" class="block px-4 py-2 hover:bg-blue-800">Sign In</a></li>
+          <li><a href="/login" class="block px-4 py-2 hover:bg-blue-800">Sign In</a></li>
+          <li><a href="/signup" class="block px-4 py-2 hover:bg-blue-800">Sign Up</a></li>
         <% } %>
       </ul>
     </div>
   </nav>
 </header>
 
-<!-- Existing Script for Mobile Menu and Dropdowns -->
+<!-- Mobile Menu Script -->
 <script>
-  // Mobile Menu Script
   const btn = document.getElementById('mobile-menu-button');
   const menu = document.getElementById('mobile-menu');
 
   btn.addEventListener('click', () => {
     menu.classList.toggle('hidden');
   });
-
-  // Dropdown Menus Script
-  const dropdownButtons = document.querySelectorAll("[id$='DropdownButton']");
-  dropdownButtons.forEach((button) => {
-    const menuId = button.id.replace('Button', 'Menu');
-    const menu = document.getElementById(menuId);
-
-    button.addEventListener('click', (event) => {
-      event.preventDefault();
-      const isHidden = menu.classList.contains('hidden');
-
-      // Close other open dropdowns
-      document.querySelectorAll('.dropdown-menu').forEach((dropdown) => {
-        if (dropdown !== menu) {
-          dropdown.classList.add('hidden');
-        }
-      });
-
-      menu.classList.toggle('hidden');
-      button.setAttribute('aria-expanded', !isHidden);
+  
+  // Notification dropdown toggle
+  const notifBell = document.getElementById('notificationBell');
+  const notifPanel = document.getElementById('notificationPanel');
+  
+  if (notifBell && notifPanel) {
+    notifBell.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notifPanel.classList.toggle('hidden');
     });
-  });
-
-  // Close dropdowns when clicking outside
-  window.addEventListener('click', (event) => {
-    dropdownButtons.forEach((button) => {
-      const menuId = button.id.replace('Button', 'Menu');
-      const menu = document.getElementById(menuId);
-      if (!button.contains(event.target) && !menu.contains(event.target)) {
-        menu.classList.add('hidden');
-        button.setAttribute('aria-expanded', false);
+    
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (!notifPanel.contains(e.target) && !notifBell.contains(e.target)) {
+        notifPanel.classList.add('hidden');
       }
     });
-  });
-
-  // Close dropdowns when pressing the Escape key
-  window.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      dropdownButtons.forEach((button) => {
-        const menuId = button.id.replace('Button', 'Menu');
-        const menu = document.getElementById(menuId);
-        menu.classList.add('hidden');
-        button.setAttribute('aria-expanded', false);
+    
+    // Dismiss notification
+    document.querySelectorAll('.dismiss-notif').forEach(btn => {
+      btn.addEventListener('click', async function(e) {
+        e.stopPropagation();
+        const notifItem = this.closest('.notif-item');
+        const notifId = notifItem.dataset.id;
+        
+        try {
+          await fetch('/api/notifications/dismiss', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notificationId: notifId })
+          });
+          notifItem.remove();
+          
+          // Update count
+          const countEl = document.getElementById('notificationCount');
+          if (countEl) {
+            const newCount = parseInt(countEl.textContent) - 1;
+            if (newCount <= 0) {
+              countEl.remove();
+            } else {
+              countEl.textContent = newCount;
+            }
+          }
+        } catch (err) {
+          console.error('Error dismissing notification:', err);
+        }
       });
-    }
-  });
+    });
+  }
 </script>

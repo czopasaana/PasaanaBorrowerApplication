@@ -1,0 +1,727 @@
+<section id="calculatorTab" class="tab-content hidden">
+  <div class="max-w-6xl mx-auto">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-6">
+        <h2 class="text-2xl font-bold text-white">Mortgage Calculator</h2>
+        <p class="text-blue-100 mt-1">Calculate your mortgage payment and see the full breakdown</p>
+      </div>
+      
+      <div class="p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Calculator Inputs -->
+          <div class="space-y-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Loan Details</h3>
+            
+            <!-- Property Value -->
+            <%
+              // Calculate max property value from pre-approved loan amount
+              // With 80% LTV (20% down), max property = loan amount / 0.80
+              let maxPropertyValue = 400000;
+              let defaultDownPayment = 80000;
+              if (typeof preApprovedAmount !== 'undefined' && preApprovedAmount > 0) {
+                maxPropertyValue = Math.round(preApprovedAmount / 0.80);
+                defaultDownPayment = Math.round(maxPropertyValue * 0.20);
+              }
+            %>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Property Value</label>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                <input type="number" id="calc-home-price" value="<%= maxPropertyValue %>" 
+                  class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+                  placeholder="400,000">
+              </div>
+              <input type="range" id="calc-home-price-slider" min="50000" max="2000000" step="5000" 
+                value="<%= maxPropertyValue %>" 
+                class="w-full mt-2 accent-blue-600">
+            </div>
+            
+            <!-- Down Payment -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Down Payment 
+                <span class="text-gray-500 font-normal">(min 20%)</span>
+              </label>
+              <div class="flex gap-4">
+                <div class="relative flex-1">
+                  <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                  <input type="number" id="calc-down-payment" value="<%= defaultDownPayment %>" 
+                    class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="relative w-24">
+                  <input type="number" id="calc-down-payment-percent" value="20" min="20" max="100"
+                    class="w-full pr-8 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center">
+                  <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
+                </div>
+              </div>
+              <input type="range" id="calc-down-payment-slider" min="20" max="50" step="1" value="20" 
+                class="w-full mt-2 accent-blue-600">
+              <p id="ltv-warning" class="hidden text-xs text-red-600 mt-1">⚠️ Minimum 20% down payment required (max 80% LTV)</p>
+            </div>
+            
+            <!-- Loan Term -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Loan Term</label>
+              <div class="grid grid-cols-4 gap-2">
+                <button type="button" class="loan-term-btn px-3 py-3 border-2 border-gray-300 rounded-lg text-center hover:border-blue-500 transition text-sm" data-years="10">
+                  10 years
+                </button>
+                <button type="button" class="loan-term-btn px-3 py-3 border-2 border-gray-300 rounded-lg text-center hover:border-blue-500 transition text-sm" data-years="15">
+                  15 years
+                </button>
+                <button type="button" class="loan-term-btn px-3 py-3 border-2 border-gray-300 rounded-lg text-center hover:border-blue-500 transition text-sm" data-years="20">
+                  20 years
+                </button>
+                <button type="button" class="loan-term-btn px-3 py-3 border-2 border-blue-600 bg-blue-50 text-blue-700 rounded-lg text-center font-medium text-sm" data-years="30">
+                  30 years
+                </button>
+              </div>
+            </div>
+            
+            <!-- Loan Type (Annuity vs Serial) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Loan Type</label>
+              <div class="grid grid-cols-2 gap-3">
+                <button type="button" class="loan-type-btn px-4 py-3 border-2 border-blue-600 bg-blue-50 text-blue-700 rounded-lg text-center font-medium" data-type="annuity">
+                  <div class="font-medium">Annuity</div>
+                  <div class="text-xs text-gray-500 mt-1">Fixed total payment</div>
+                </button>
+                <button type="button" class="loan-type-btn px-4 py-3 border-2 border-gray-300 rounded-lg text-center hover:border-blue-500 transition" data-type="serial">
+                  <div class="font-medium">Serial</div>
+                  <div class="text-xs text-gray-500 mt-1">Fixed principal payment</div>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Interest Rate & Bidrag -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Bond Rate</label>
+                <div class="relative">
+                  <input type="number" id="calc-interest-rate" value="4.0" step="0.125" 
+                    class="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center">
+                  <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Bidrag
+                  <span class="text-gray-400 font-normal text-xs">(admin fee)</span>
+                </label>
+                <div class="relative">
+                  <input type="number" id="calc-bidrag" value="0.75" step="0.05" min="0" max="2"
+                    class="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center">
+                  <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Total Rate Display -->
+            <div class="bg-gray-100 rounded-lg p-4">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-700">Total Annual Rate</span>
+                <span class="text-xl font-bold text-blue-700" id="calc-total-rate">4.75%</span>
+              </div>
+              <div class="text-xs text-gray-500 mt-1">Bond Rate (<span id="display-bond-rate">4.0%</span>) + Bidrag (<span id="display-bidrag">0.75%</span>)</div>
+            </div>
+            
+            <!-- Interest-Only Period -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Interest-Only Period
+                <span class="text-gray-500 font-normal">(optional, up to 10 years)</span>
+              </label>
+              <div class="flex items-center gap-4">
+                <input type="range" id="calc-interest-only" min="0" max="10" step="1" value="0" 
+                  class="flex-1 accent-blue-600">
+                <span class="w-20 text-center font-medium text-gray-700" id="interest-only-display">0 years</span>
+              </div>
+            </div>
+            
+            <!-- Payment Frequency -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Payment Frequency</label>
+              <div class="grid grid-cols-2 gap-3">
+                <button type="button" class="payment-freq-btn px-4 py-3 border-2 border-blue-600 bg-blue-50 text-blue-700 rounded-lg text-center font-medium" data-freq="monthly">
+                  Monthly (12/year)
+                </button>
+                <button type="button" class="payment-freq-btn px-4 py-3 border-2 border-gray-300 rounded-lg text-center hover:border-blue-500 transition" data-freq="quarterly">
+                  Quarterly (4/year)
+                </button>
+              </div>
+            </div>
+            
+            <!-- Additional Costs Accordion -->
+            <div class="border border-gray-200 rounded-lg">
+              <button type="button" id="toggle-additional-costs" class="w-full px-4 py-3 flex justify-between items-center text-left hover:bg-gray-50 rounded-lg">
+                <span class="font-medium text-gray-700">Additional Costs (Optional)</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform" id="additional-costs-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div id="additional-costs-panel" class="hidden px-4 pb-4 space-y-4">
+                <div>
+                  <label class="block text-sm text-gray-600 mb-1">Property Tax (Annual)</label>
+                  <div class="relative">
+                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                    <input type="number" id="calc-property-tax" value="4800" 
+                      class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm text-gray-600 mb-1">Home Insurance (Annual)</label>
+                  <div class="relative">
+                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                    <input type="number" id="calc-home-insurance" value="1800" 
+                      class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Save Calculation Button -->
+            <button type="button" id="save-calculation-btn" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 rounded-lg transition flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+              </svg>
+              Save This Calculation
+            </button>
+          </div>
+          
+          <!-- Results -->
+          <div class="bg-gray-50 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-6">Payment Breakdown</h3>
+            
+            <!-- Payment Period Label -->
+            <div class="text-sm text-gray-500 mb-2 text-center" id="payment-period-label">Monthly Payment</div>
+            
+            <!-- Total Payment -->
+            <div class="bg-blue-600 rounded-xl p-6 text-center mb-6">
+              <p class="text-blue-100 text-sm uppercase tracking-wide mb-1">Estimated Payment</p>
+              <p class="text-4xl font-bold text-white" id="calc-total-payment">$2,023</p>
+            </div>
+            
+            <!-- Interest-Only Period Notice -->
+            <div id="interest-only-notice" class="hidden bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+              <div class="flex items-center text-sm text-yellow-800">
+                <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <span>During the <strong id="io-years">0</strong>-year interest-only period, your payment will be <strong id="io-payment">$0</strong></span>
+              </div>
+            </div>
+            
+            <!-- Payment Breakdown Chart -->
+            <div class="relative mb-6">
+              <div class="flex h-8 rounded-lg overflow-hidden">
+                <div id="bar-principal" class="bg-blue-500 transition-all" style="width: 40%"></div>
+                <div id="bar-interest" class="bg-blue-300 transition-all" style="width: 30%"></div>
+                <div id="bar-bidrag" class="bg-indigo-400 transition-all" style="width: 10%"></div>
+                <div id="bar-tax" class="bg-green-500 transition-all" style="width: 10%"></div>
+                <div id="bar-insurance" class="bg-yellow-500 transition-all" style="width: 10%"></div>
+              </div>
+            </div>
+            
+            <!-- Breakdown Details -->
+            <div class="space-y-3">
+              <div class="flex justify-between items-center py-2 border-b border-gray-200" id="principal-row">
+                <div class="flex items-center">
+                  <span class="w-3 h-3 bg-blue-500 rounded-full mr-3"></span>
+                  <span class="text-gray-700">Principal</span>
+                </div>
+                <span class="font-semibold text-gray-900" id="calc-principal">$816</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <div class="flex items-center">
+                  <span class="w-3 h-3 bg-blue-300 rounded-full mr-3"></span>
+                  <span class="text-gray-700">Bond Interest</span>
+                </div>
+                <span class="font-semibold text-gray-900" id="calc-interest">$1,067</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <div class="flex items-center">
+                  <span class="w-3 h-3 bg-indigo-400 rounded-full mr-3"></span>
+                  <span class="text-gray-700">Bidrag (Admin Fee)</span>
+                </div>
+                <span class="font-semibold text-gray-900" id="calc-bidrag-payment">$200</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <div class="flex items-center">
+                  <span class="w-3 h-3 bg-green-500 rounded-full mr-3"></span>
+                  <span class="text-gray-700">Property Tax</span>
+                </div>
+                <span class="font-semibold text-gray-900" id="calc-tax">$400</span>
+              </div>
+              <div class="flex justify-between items-center py-2">
+                <div class="flex items-center">
+                  <span class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></span>
+                  <span class="text-gray-700">Home Insurance</span>
+                </div>
+                <span class="font-semibold text-gray-900" id="calc-insurance">$150</span>
+              </div>
+            </div>
+            
+            <!-- Loan Summary -->
+            <div class="mt-6 pt-6 border-t border-gray-200">
+              <h4 class="font-semibold text-gray-800 mb-4">Loan Summary</h4>
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div class="bg-white p-3 rounded-lg">
+                  <p class="text-gray-500">Loan Amount</p>
+                  <p class="font-semibold text-gray-900" id="calc-loan-amount">$320,000</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg">
+                  <p class="text-gray-500">LTV Ratio</p>
+                  <p class="font-semibold text-gray-900" id="calc-ltv">80%</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg">
+                  <p class="text-gray-500">Total Interest + Bidrag</p>
+                  <p class="font-semibold text-gray-900" id="calc-total-interest">$225,792</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg">
+                  <p class="text-gray-500">Total Cost of Loan</p>
+                  <p class="font-semibold text-gray-900" id="calc-total-payments">$545,792</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg col-span-2">
+                  <p class="text-gray-500">Payoff Date</p>
+                  <p class="font-semibold text-gray-900" id="calc-payoff-date">Dec 2054</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Serial Loan Note -->
+            <div id="serial-loan-note" class="hidden mt-4 bg-gray-100 rounded-lg p-3 text-sm text-gray-600">
+              <strong>Serial Loan:</strong> Your payment decreases over time as the loan balance decreases. The first payment is shown above; your final payment will be lower.
+            </div>
+          </div>
+        </div>
+        
+        <!-- Amortization Schedule Toggle -->
+        <div class="mt-8">
+          <button type="button" id="toggle-amortization" class="flex items-center text-blue-600 hover:text-blue-800 font-medium">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            View Amortization Schedule
+          </button>
+          
+          <div id="amortization-schedule" class="hidden mt-4">
+            <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div class="overflow-x-auto max-h-96">
+                <table class="w-full">
+                  <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Year</th>
+                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Principal</th>
+                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Interest</th>
+                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Bidrag</th>
+                      <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody id="amortization-body" class="divide-y divide-gray-100">
+                    <!-- Populated by JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Calculator elements
+  const homePrice = document.getElementById('calc-home-price');
+  const homePriceSlider = document.getElementById('calc-home-price-slider');
+  const downPayment = document.getElementById('calc-down-payment');
+  const downPaymentPercent = document.getElementById('calc-down-payment-percent');
+  const downPaymentSlider = document.getElementById('calc-down-payment-slider');
+  const bondRate = document.getElementById('calc-interest-rate');
+  const bidrag = document.getElementById('calc-bidrag');
+  const interestOnlySlider = document.getElementById('calc-interest-only');
+  const propertyTax = document.getElementById('calc-property-tax');
+  const homeInsurance = document.getElementById('calc-home-insurance');
+  
+  let loanTermYears = 30;
+  let loanType = 'annuity'; // 'annuity' or 'serial'
+  let paymentFrequency = 'monthly'; // 'monthly' or 'quarterly'
+  let interestOnlyYears = 0;
+  
+  // Loan term buttons
+  document.querySelectorAll('.loan-term-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.loan-term-btn').forEach(b => {
+        b.classList.remove('border-blue-600', 'bg-blue-50', 'text-blue-700', 'font-medium');
+        b.classList.add('border-gray-300');
+      });
+      this.classList.remove('border-gray-300');
+      this.classList.add('border-blue-600', 'bg-blue-50', 'text-blue-700', 'font-medium');
+      loanTermYears = parseInt(this.dataset.years);
+      calculateMortgage();
+    });
+  });
+  
+  // Loan type buttons
+  document.querySelectorAll('.loan-type-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.loan-type-btn').forEach(b => {
+        b.classList.remove('border-blue-600', 'bg-blue-50', 'text-blue-700', 'font-medium');
+        b.classList.add('border-gray-300');
+      });
+      this.classList.remove('border-gray-300');
+      this.classList.add('border-blue-600', 'bg-blue-50', 'text-blue-700', 'font-medium');
+      loanType = this.dataset.type;
+      calculateMortgage();
+    });
+  });
+  
+  // Payment frequency buttons
+  document.querySelectorAll('.payment-freq-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.payment-freq-btn').forEach(b => {
+        b.classList.remove('border-blue-600', 'bg-blue-50', 'text-blue-700', 'font-medium');
+        b.classList.add('border-gray-300');
+      });
+      this.classList.remove('border-gray-300');
+      this.classList.add('border-blue-600', 'bg-blue-50', 'text-blue-700', 'font-medium');
+      paymentFrequency = this.dataset.freq;
+      calculateMortgage();
+    });
+  });
+  
+  // Interest-only slider
+  interestOnlySlider.addEventListener('input', function() {
+    interestOnlyYears = parseInt(this.value);
+    document.getElementById('interest-only-display').textContent = interestOnlyYears + ' years';
+    calculateMortgage();
+  });
+  
+  // Sync sliders
+  homePrice.addEventListener('input', function() {
+    homePriceSlider.value = this.value;
+    syncDownPayment();
+    calculateMortgage();
+  });
+  
+  homePriceSlider.addEventListener('input', function() {
+    homePrice.value = this.value;
+    syncDownPayment();
+    calculateMortgage();
+  });
+  
+  downPaymentPercent.addEventListener('input', function() {
+    let pct = parseFloat(this.value) || 0;
+    // Enforce minimum 20%
+    if (pct < 20) {
+      document.getElementById('ltv-warning').classList.remove('hidden');
+    } else {
+      document.getElementById('ltv-warning').classList.add('hidden');
+    }
+    const hp = parseFloat(homePrice.value) || 0;
+    downPayment.value = Math.round(hp * pct / 100);
+    downPaymentSlider.value = Math.max(20, pct);
+    calculateMortgage();
+  });
+  
+  downPayment.addEventListener('input', function() {
+    const hp = parseFloat(homePrice.value) || 0;
+    const dp = parseFloat(this.value) || 0;
+    let pct = hp > 0 ? (dp / hp * 100) : 0;
+    if (pct < 20) {
+      document.getElementById('ltv-warning').classList.remove('hidden');
+    } else {
+      document.getElementById('ltv-warning').classList.add('hidden');
+    }
+    downPaymentPercent.value = pct.toFixed(1);
+    downPaymentSlider.value = Math.max(20, pct);
+    calculateMortgage();
+  });
+  
+  downPaymentSlider.addEventListener('input', function() {
+    const hp = parseFloat(homePrice.value) || 0;
+    const pct = parseFloat(this.value) || 20;
+    downPaymentPercent.value = pct;
+    downPayment.value = Math.round(hp * pct / 100);
+    document.getElementById('ltv-warning').classList.add('hidden');
+    calculateMortgage();
+  });
+  
+  function syncDownPayment() {
+    const hp = parseFloat(homePrice.value) || 0;
+    const pct = parseFloat(downPaymentPercent.value) || 20;
+    downPayment.value = Math.round(hp * pct / 100);
+  }
+  
+  [bondRate, bidrag, propertyTax, homeInsurance].forEach(el => {
+    el.addEventListener('input', calculateMortgage);
+  });
+  
+  // Toggle additional costs
+  document.getElementById('toggle-additional-costs').addEventListener('click', function() {
+    const panel = document.getElementById('additional-costs-panel');
+    const chevron = document.getElementById('additional-costs-chevron');
+    panel.classList.toggle('hidden');
+    chevron.classList.toggle('rotate-180');
+  });
+  
+  // Toggle amortization
+  document.getElementById('toggle-amortization').addEventListener('click', function() {
+    const schedule = document.getElementById('amortization-schedule');
+    schedule.classList.toggle('hidden');
+  });
+  
+  function calculateMortgage() {
+    const hp = parseFloat(homePrice.value) || 0;
+    const dp = parseFloat(downPayment.value) || 0;
+    const bondRateVal = parseFloat(bondRate.value) || 0;
+    const bidragVal = parseFloat(bidrag.value) || 0;
+    const annualTax = parseFloat(propertyTax.value) || 0;
+    const annualInsurance = parseFloat(homeInsurance.value) || 0;
+    
+    const loanAmount = hp - dp;
+    const totalRate = bondRateVal + bidragVal;
+    const ltv = hp > 0 ? (loanAmount / hp * 100) : 0;
+    
+    // Update total rate display
+    document.getElementById('calc-total-rate').textContent = totalRate.toFixed(2) + '%';
+    document.getElementById('display-bond-rate').textContent = bondRateVal.toFixed(2) + '%';
+    document.getElementById('display-bidrag').textContent = bidragVal.toFixed(2) + '%';
+    document.getElementById('calc-ltv').textContent = ltv.toFixed(0) + '%';
+    
+    // Payment frequency
+    const periodsPerYear = paymentFrequency === 'monthly' ? 12 : 4;
+    const periodLabel = paymentFrequency === 'monthly' ? 'Monthly' : 'Quarterly';
+    document.getElementById('payment-period-label').textContent = periodLabel + ' Payment';
+    
+    // Calculate number of payments (excluding interest-only period)
+    const totalPeriods = loanTermYears * periodsPerYear;
+    const interestOnlyPeriods = interestOnlyYears * periodsPerYear;
+    const amortizingPeriods = totalPeriods - interestOnlyPeriods;
+    
+    // Period rates
+    const bondPeriodRate = bondRateVal / 100 / periodsPerYear;
+    const bidragPeriodRate = bidragVal / 100 / periodsPerYear;
+    const totalPeriodRate = totalRate / 100 / periodsPerYear;
+    
+    let periodPayment = 0;
+    let principalPayment = 0;
+    let interestPayment = 0;
+    let bidragPayment = 0;
+    
+    if (loanType === 'annuity') {
+      // Annuity loan: fixed total payment (principal + interest)
+      if (bondPeriodRate > 0 && amortizingPeriods > 0) {
+        // Calculate P&I payment
+        const piPayment = loanAmount * (bondPeriodRate * Math.pow(1 + bondPeriodRate, amortizingPeriods)) / 
+                          (Math.pow(1 + bondPeriodRate, amortizingPeriods) - 1);
+        
+        // First payment breakdown
+        interestPayment = loanAmount * bondPeriodRate;
+        principalPayment = piPayment - interestPayment;
+        bidragPayment = loanAmount * bidragPeriodRate;
+        periodPayment = piPayment + bidragPayment;
+      } else {
+        principalPayment = amortizingPeriods > 0 ? loanAmount / amortizingPeriods : 0;
+        interestPayment = 0;
+        bidragPayment = loanAmount * bidragPeriodRate;
+        periodPayment = principalPayment + bidragPayment;
+      }
+      document.getElementById('serial-loan-note').classList.add('hidden');
+    } else {
+      // Serial loan: fixed principal payment, decreasing total payment
+      principalPayment = amortizingPeriods > 0 ? loanAmount / amortizingPeriods : 0;
+      interestPayment = loanAmount * bondPeriodRate;
+      bidragPayment = loanAmount * bidragPeriodRate;
+      periodPayment = principalPayment + interestPayment + bidragPayment;
+      document.getElementById('serial-loan-note').classList.remove('hidden');
+    }
+    
+    // Property tax and insurance per period
+    const periodTax = annualTax / periodsPerYear;
+    const periodInsurance = annualInsurance / periodsPerYear;
+    
+    const totalPeriodPayment = periodPayment + periodTax + periodInsurance;
+    
+    // Interest-only payment
+    const interestOnlyPayment = loanAmount * bondPeriodRate + bidragPayment + periodTax + periodInsurance;
+    
+    // Update interest-only notice
+    if (interestOnlyYears > 0) {
+      document.getElementById('interest-only-notice').classList.remove('hidden');
+      document.getElementById('io-years').textContent = interestOnlyYears;
+      document.getElementById('io-payment').textContent = '$' + Math.round(interestOnlyPayment).toLocaleString();
+      document.getElementById('principal-row').style.opacity = '0.5';
+    } else {
+      document.getElementById('interest-only-notice').classList.add('hidden');
+      document.getElementById('principal-row').style.opacity = '1';
+    }
+    
+    // Calculate totals
+    let totalInterestPaid = 0;
+    let totalBidragPaid = 0;
+    let balance = loanAmount;
+    
+    // Interest-only period
+    for (let p = 0; p < interestOnlyPeriods; p++) {
+      totalInterestPaid += balance * bondPeriodRate;
+      totalBidragPaid += balance * bidragPeriodRate;
+    }
+    
+    // Amortizing period
+    if (loanType === 'annuity') {
+      const piPayment = bondPeriodRate > 0 ? 
+        loanAmount * (bondPeriodRate * Math.pow(1 + bondPeriodRate, amortizingPeriods)) / 
+        (Math.pow(1 + bondPeriodRate, amortizingPeriods) - 1) :
+        loanAmount / amortizingPeriods;
+      
+      for (let p = 0; p < amortizingPeriods; p++) {
+        const intPmt = balance * bondPeriodRate;
+        const prinPmt = piPayment - intPmt;
+        totalInterestPaid += intPmt;
+        totalBidragPaid += balance * bidragPeriodRate;
+        balance -= prinPmt;
+      }
+    } else {
+      const fixedPrincipal = loanAmount / amortizingPeriods;
+      for (let p = 0; p < amortizingPeriods; p++) {
+        totalInterestPaid += balance * bondPeriodRate;
+        totalBidragPaid += balance * bidragPeriodRate;
+        balance -= fixedPrincipal;
+      }
+    }
+    
+    const totalCost = loanAmount + totalInterestPaid + totalBidragPaid;
+    
+    // Update display
+    document.getElementById('calc-total-payment').textContent = '$' + Math.round(totalPeriodPayment).toLocaleString();
+    document.getElementById('calc-principal').textContent = '$' + Math.round(principalPayment).toLocaleString();
+    document.getElementById('calc-interest').textContent = '$' + Math.round(interestPayment).toLocaleString();
+    document.getElementById('calc-bidrag-payment').textContent = '$' + Math.round(bidragPayment).toLocaleString();
+    document.getElementById('calc-tax').textContent = '$' + Math.round(periodTax).toLocaleString();
+    document.getElementById('calc-insurance').textContent = '$' + Math.round(periodInsurance).toLocaleString();
+    document.getElementById('calc-loan-amount').textContent = '$' + Math.round(loanAmount).toLocaleString();
+    document.getElementById('calc-total-interest').textContent = '$' + Math.round(totalInterestPaid + totalBidragPaid).toLocaleString();
+    document.getElementById('calc-total-payments').textContent = '$' + Math.round(totalCost).toLocaleString();
+    
+    // Payoff date
+    const payoffDate = new Date();
+    payoffDate.setMonth(payoffDate.getMonth() + (loanTermYears * 12));
+    document.getElementById('calc-payoff-date').textContent = 
+      payoffDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    
+    // Update bar chart
+    const total = principalPayment + interestPayment + bidragPayment + periodTax + periodInsurance;
+    if (total > 0) {
+      document.getElementById('bar-principal').style.width = (principalPayment / total * 100) + '%';
+      document.getElementById('bar-interest').style.width = (interestPayment / total * 100) + '%';
+      document.getElementById('bar-bidrag').style.width = (bidragPayment / total * 100) + '%';
+      document.getElementById('bar-tax').style.width = (periodTax / total * 100) + '%';
+      document.getElementById('bar-insurance').style.width = (periodInsurance / total * 100) + '%';
+    }
+    
+    // Generate amortization schedule
+    generateAmortization(loanAmount, bondPeriodRate, bidragPeriodRate, periodsPerYear, 
+                         loanTermYears, interestOnlyYears, loanType);
+  }
+  
+  function generateAmortization(principal, bondPeriodRate, bidragPeriodRate, periodsPerYear, 
+                                termYears, ioYears, type) {
+    const tbody = document.getElementById('amortization-body');
+    tbody.innerHTML = '';
+    
+    let balance = principal;
+    const totalPeriods = termYears * periodsPerYear;
+    const ioPeriods = ioYears * periodsPerYear;
+    const amortPeriods = totalPeriods - ioPeriods;
+    
+    const fixedPrincipal = amortPeriods > 0 ? principal / amortPeriods : 0;
+    const annuityPayment = bondPeriodRate > 0 && amortPeriods > 0 ?
+      principal * (bondPeriodRate * Math.pow(1 + bondPeriodRate, amortPeriods)) / 
+      (Math.pow(1 + bondPeriodRate, amortPeriods) - 1) :
+      fixedPrincipal;
+    
+    let yearlyPrincipal = 0;
+    let yearlyInterest = 0;
+    let yearlyBidrag = 0;
+    
+    for (let period = 1; period <= totalPeriods; period++) {
+      let principalPmt = 0;
+      const interestPmt = balance * bondPeriodRate;
+      const bidragPmt = balance * bidragPeriodRate;
+      
+      if (period > ioPeriods) {
+        if (type === 'annuity') {
+          principalPmt = annuityPayment - interestPmt;
+        } else {
+          principalPmt = fixedPrincipal;
+        }
+      }
+      
+      balance = Math.max(0, balance - principalPmt);
+      
+      yearlyPrincipal += principalPmt;
+      yearlyInterest += interestPmt;
+      yearlyBidrag += bidragPmt;
+      
+      // Output at end of each year
+      if (period % periodsPerYear === 0 || period === totalPeriods) {
+        const year = Math.ceil(period / periodsPerYear);
+        const row = document.createElement('tr');
+        const isIO = year <= ioYears;
+        row.className = isIO ? 'bg-yellow-50' : '';
+        row.innerHTML = `
+          <td class="px-4 py-3 text-sm text-gray-700">
+            Year ${year}
+            ${isIO ? '<span class="ml-2 text-xs text-yellow-600">(I/O)</span>' : ''}
+          </td>
+          <td class="px-4 py-3 text-sm text-gray-900 text-right">$${Math.round(yearlyPrincipal).toLocaleString()}</td>
+          <td class="px-4 py-3 text-sm text-gray-900 text-right">$${Math.round(yearlyInterest).toLocaleString()}</td>
+          <td class="px-4 py-3 text-sm text-gray-900 text-right">$${Math.round(yearlyBidrag).toLocaleString()}</td>
+          <td class="px-4 py-3 text-sm text-gray-900 text-right">$${Math.max(0, Math.round(balance)).toLocaleString()}</td>
+        `;
+        tbody.appendChild(row);
+        yearlyPrincipal = 0;
+        yearlyInterest = 0;
+        yearlyBidrag = 0;
+      }
+    }
+  }
+  
+  // Initial calculation
+  calculateMortgage();
+  
+  // Save calculation
+  document.getElementById('save-calculation-btn').addEventListener('click', async function() {
+    const data = {
+      homePrice: parseFloat(homePrice.value),
+      downPayment: parseFloat(downPayment.value),
+      downPaymentPercent: parseFloat(downPaymentPercent.value),
+      interestRate: parseFloat(bondRate.value),
+      bidrag: parseFloat(bidrag.value),
+      loanTermYears: loanTermYears,
+      loanType: loanType,
+      paymentFrequency: paymentFrequency,
+      interestOnlyYears: interestOnlyYears,
+      propertyTax: parseFloat(propertyTax.value),
+      homeInsurance: parseFloat(homeInsurance.value)
+    };
+    
+    try {
+      const response = await fetch('/api/calculator/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      
+      if (response.ok) {
+        alert('Calculation saved successfully!');
+      }
+    } catch (err) {
+      console.error('Error saving calculation:', err);
+    }
+  });
+});
+</script>

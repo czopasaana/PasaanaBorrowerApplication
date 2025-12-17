@@ -152,6 +152,17 @@ $(document).ready(function() {
         $arrow.removeClass('rotate-180');
       } else {
         $arrow.addClass('rotate-180');
+        
+        // Initialize Section 1 as active when URLA form is opened
+        if (taskId === 'loanApplication') {
+          const $firstTab = $taskItem.find('.urla-tab[data-target="#urlaSection1"]');
+          if ($firstTab.length > 0) {
+            // Reset all tabs first
+            $taskItem.find('.urla-tab').removeClass('bg-blue-300 text-white').addClass('bg-gray-200 text-gray-700');
+            // Highlight Section 1
+            $firstTab.removeClass('bg-gray-200 text-gray-700').addClass('bg-blue-300 text-white');
+          }
+        }
       }
     }
   });
@@ -1577,6 +1588,19 @@ $('.urla-tab').on('click', function() {
   $(this).removeClass('bg-gray-200 text-gray-700').addClass('bg-blue-300 text-white');
 });
 
+// Initialize Section 1 as active when URLA tabs exist
+function initializeUrlaSection1() {
+  const $firstTab = $('.urla-tab[data-target="#urlaSection1"]');
+  if ($firstTab.length > 0) {
+    $firstTab.removeClass('bg-gray-200 text-gray-700').addClass('bg-blue-300 text-white');
+  }
+}
+
+// Run initialization on page load
+$(document).ready(function() {
+  initializeUrlaSection1();
+});
+
 
   // Final Submission Button
   $('#submitApplication').on('click', function() {
@@ -1776,11 +1800,66 @@ $('input[name="primaryResidence5a"]').on('change', function() {
   // Initially show home tab
   $('[data-tab="homeTab"]').click();
   updateProgress();
+  
+  // ============================================
+  // Document Upload Center - File Upload Handler
+  // ============================================
+  $('.doc-file-input').on('change', async function() {
+    const file = this.files[0];
+    const docId = $(this).data('doc-id');
+    const docItem = $(this).closest('.doc-upload-item');
+    
+    if (!file) return;
+    
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB');
+      return;
+    }
+    
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please upload a PDF, JPG, or PNG file');
+      return;
+    }
+    
+    // Show upload progress
+    $('#uploadProgress').removeClass('hidden');
+    
+    // Create form data
+    const formData = new FormData();
+    formData.append('document', file);
+    formData.append('documentId', docId);
+    
+    try {
+      const response = await fetch('/api/documents/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Update the UI to show uploaded status
+        docItem.find('label').replaceWith('<span class="text-xs text-yellow-600 flex-shrink-0 ml-2">Uploaded</span>');
+        docItem.find('span:first').removeClass('text-gray-500').addClass('text-yellow-600')
+          .html('<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>');
+        
+        // Show success message
+        alert('Document uploaded successfully!');
+      } else {
+        const error = await response.json();
+        alert('Upload failed: ' + (error.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Failed to upload document. Please try again.');
+    } finally {
+      $('#uploadProgress').addClass('hidden');
+    }
+  });
 });
-
-
-
-
 
 
 

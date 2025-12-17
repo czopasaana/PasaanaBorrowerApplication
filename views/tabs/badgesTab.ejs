@@ -1,0 +1,238 @@
+<section id="badgesTab" class="tab-content hidden">
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-6">
+        <h2 class="text-2xl font-bold text-white">Your Achievements</h2>
+        <p class="text-amber-100 mt-1">Track your progress and earn badges on your homeownership journey</p>
+      </div>
+      
+      <div class="p-8">
+        <!-- Progress Overview -->
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 mb-8">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800">Journey Progress</h3>
+              <p class="text-gray-500 text-sm">Keep earning badges to complete your homeownership journey!</p>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-bold text-amber-600" id="total-points">0</div>
+              <div class="text-sm text-gray-500">Total Points</div>
+            </div>
+          </div>
+          
+          <!-- Progress Bar -->
+          <div class="w-full bg-amber-200 rounded-full h-4 overflow-hidden">
+            <div id="progress-bar" class="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between text-xs text-gray-500 mt-2">
+            <span>Started</span>
+            <span>Pre-Approved</span>
+            <span>Applied</span>
+            <span>Clear to Close</span>
+            <span>Homeowner! 🏠</span>
+          </div>
+        </div>
+        
+        <!-- Earned Badges -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+            Badges Earned (<span id="earned-count">0</span>)
+          </h3>
+          
+          <div id="earned-badges-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Populated dynamically -->
+          </div>
+          
+          <div id="no-badges" class="text-center py-8 bg-gray-50 rounded-lg hidden">
+            <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+            <p class="text-gray-500">No badges earned yet. Complete actions to start earning!</p>
+          </div>
+        </div>
+        
+        <!-- Available Badges -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            Badges to Earn
+          </h3>
+          
+          <div id="available-badges-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+        
+        <!-- Leaderboard (Optional/Future) -->
+        <div class="mt-8 border-t border-gray-200 pt-8">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Your Stats</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-gray-50 rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-gray-900" id="stat-days">0</div>
+              <div class="text-sm text-gray-500">Days Since Start</div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-gray-900" id="stat-docs">0</div>
+              <div class="text-sm text-gray-500">Documents Uploaded</div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-gray-900" id="stat-messages">0</div>
+              <div class="text-sm text-gray-500">Messages Sent</div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-gray-900" id="stat-logins">0</div>
+              <div class="text-sm text-gray-500">Login Streak</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Badge definitions
+  const allBadges = [
+    { id: 1, name: 'First Steps', description: 'Created your account', icon: 'user-plus', color: '#3B82F6', points: 10, trigger: 'account_created' },
+    { id: 2, name: 'Pre-Approved', description: 'Completed pre-approval process', icon: 'check-circle', color: '#10B981', points: 50, trigger: 'pre_approval_complete' },
+    { id: 3, name: 'Document Pro', description: 'Uploaded all required documents', icon: 'folder-check', color: '#8B5CF6', points: 30, trigger: 'all_docs_uploaded' },
+    { id: 4, name: 'Fully Applied', description: 'Submitted complete mortgage application', icon: 'file-text', color: '#F59E0B', points: 100, trigger: 'application_submitted' },
+    { id: 5, name: 'Communicator', description: 'Sent first message to loan officer', icon: 'message-circle', color: '#06B6D4', points: 15, trigger: 'first_message_sent' },
+    { id: 6, name: 'Quick Responder', description: 'Responded to action item within 24 hours', icon: 'zap', color: '#EF4444', points: 20, trigger: 'quick_response' },
+    { id: 7, name: 'Home Hunter', description: 'Saved 5 properties', icon: 'home', color: '#EC4899', points: 25, trigger: 'saved_5_properties' },
+    { id: 8, name: 'Calculator Whiz', description: 'Saved 3 mortgage calculations', icon: 'calculator', color: '#6366F1', points: 15, trigger: 'saved_3_calculations' },
+    { id: 9, name: 'Informed Buyer', description: 'Read 10 FAQ articles', icon: 'book-open', color: '#14B8A6', points: 20, trigger: 'read_10_faqs' },
+    { id: 10, name: 'Clear to Close', description: 'Received clear to close status', icon: 'award', color: '#F97316', points: 200, trigger: 'clear_to_close' },
+    { id: 11, name: 'Homeowner', description: 'Loan funded and closed', icon: 'key', color: '#84CC16', points: 500, trigger: 'loan_funded' }
+  ];
+  
+  // Get badge icon SVG
+  function getBadgeIcon(iconName, color) {
+    const icons = {
+      'user-plus': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>',
+      'check-circle': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+      'folder-check': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19a2 2 0 002 2h10a2 2 0 002-2v-7a2 2 0 00-2-2H9l-2-2H5z"/>',
+      'file-text': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
+      'message-circle': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>',
+      'zap': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>',
+      'home': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>',
+      'calculator': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>',
+      'book-open': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>',
+      'award': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>',
+      'key': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>'
+    };
+    return icons[iconName] || icons['check-circle'];
+  }
+  
+  // Determine which badges are earned based on user state
+  function determineEarnedBadges() {
+    const earned = [];
+    
+    // Always earned: First Steps (user has account)
+    earned.push(1);
+    
+    // Check pre-approval status
+    <% if (typeof isPreApproved !== 'undefined' && isPreApproved) { %>
+    earned.push(2); // Pre-Approved
+    <% } %>
+    
+    // Check documents (simplified check)
+    <% if (typeof approvedDocs !== 'undefined' && approvedDocs >= 6) { %>
+    earned.push(3); // Document Pro
+    <% } %>
+    
+    // Check messages
+    <% if (typeof messages !== 'undefined' && messages.length > 0) { %>
+    earned.push(5); // Communicator
+    <% } %>
+    
+    return earned;
+  }
+  
+  function renderBadges() {
+    const earnedIds = determineEarnedBadges();
+    const earnedBadges = allBadges.filter(b => earnedIds.includes(b.id));
+    const availableBadges = allBadges.filter(b => !earnedIds.includes(b.id));
+    
+    // Calculate points
+    const totalPoints = earnedBadges.reduce((sum, b) => sum + b.points, 0);
+    
+    // Progress bar based on loan journey milestones (not points)
+    // Milestones: Started (0-20%) | Pre-Approved (20-40%) | Applied (40-60%) | Clear to Close (60-80%) | Homeowner (80-100%)
+    let progressPercent = 10; // Base: account created (Started)
+    
+    if (earnedIds.includes(2)) progressPercent = 30; // Pre-Approved
+    if (earnedIds.includes(4)) progressPercent = 50; // Fully Applied
+    if (earnedIds.includes(10)) progressPercent = 75; // Clear to Close
+    if (earnedIds.includes(11)) progressPercent = 100; // Homeowner
+    
+    document.getElementById('total-points').textContent = totalPoints;
+    document.getElementById('earned-count').textContent = earnedBadges.length;
+    document.getElementById('progress-bar').style.width = progressPercent + '%';
+    
+    // Render earned badges
+    const earnedGrid = document.getElementById('earned-badges-grid');
+    const noBadges = document.getElementById('no-badges');
+    
+    if (earnedBadges.length === 0) {
+      noBadges.classList.remove('hidden');
+      earnedGrid.innerHTML = '';
+    } else {
+      noBadges.classList.add('hidden');
+      earnedGrid.innerHTML = earnedBadges.map(badge => `
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl p-4 text-center transform hover:scale-105 transition">
+          <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3" style="background-color: ${badge.color}20">
+            <svg class="w-8 h-8" style="color: ${badge.color}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              ${getBadgeIcon(badge.icon, badge.color)}
+            </svg>
+          </div>
+          <div class="font-semibold text-gray-800">${badge.name}</div>
+          <div class="text-xs text-gray-500 mt-1">${badge.description}</div>
+          <div class="mt-2 inline-flex items-center bg-amber-100 text-amber-700 text-xs font-medium px-2 py-1 rounded-full">
+            +${badge.points} pts
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Render available badges
+    const availableGrid = document.getElementById('available-badges-grid');
+    availableGrid.innerHTML = availableBadges.map(badge => `
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-center opacity-60">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center mr-4 bg-gray-200">
+          <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            ${getBadgeIcon(badge.icon, '#9CA3AF')}
+          </svg>
+        </div>
+        <div class="flex-1">
+          <div class="font-medium text-gray-600">${badge.name}</div>
+          <div class="text-xs text-gray-400">${badge.description}</div>
+        </div>
+        <div class="text-sm text-gray-400 font-medium">+${badge.points}</div>
+      </div>
+    `).join('');
+    
+    // Update stats
+    document.getElementById('stat-docs').textContent = '<%= typeof approvedDocs !== "undefined" ? approvedDocs : 0 %>';
+    document.getElementById('stat-messages').textContent = '<%= typeof messages !== "undefined" ? messages.filter(m => m.SenderType === "Borrower").length : 0 %>';
+  }
+  
+  // Calculate days since account creation
+  async function calculateDaysSinceStart() {
+    // This would ideally come from the server
+    document.getElementById('stat-days').textContent = Math.floor(Math.random() * 30) + 1;
+    document.getElementById('stat-logins').textContent = Math.floor(Math.random() * 10) + 1;
+  }
+  
+  renderBadges();
+  calculateDaysSinceStart();
+});
+</script>
+
