@@ -1,0 +1,332 @@
+<!-- views/partials/copilot.ejs -->
+<!-- AI Copilot Chat Widget - Always visible floating assistant -->
+
+<div id="copilot-container" class="fixed bottom-6 right-6 z-50">
+  <!-- Toggle Button (visible when chat is closed) -->
+  <button 
+    id="copilot-toggle-btn"
+    class="copilot-toggle-btn group relative flex items-center justify-center w-16 h-16 bg-gradient-to-br from-violet-600 to-indigo-700 text-white rounded-2xl shadow-2xl hover:shadow-violet-500/25 hover:scale-105 transition-all duration-300 ease-out"
+    aria-label="Open Copilot Assistant"
+  >
+    
+    <!-- AI Icon -->
+    <svg class="w-8 h-8 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+        d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/>
+    </svg>
+    
+    <!-- Tooltip -->
+    <span class="absolute right-full mr-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+      Need help? Ask Copilot
+      <span class="absolute top-1/2 left-full -translate-y-1/2 border-4 border-transparent border-l-gray-900"></span>
+    </span>
+    
+    <!-- Notification dot for suggestions -->
+    <span id="copilot-notification" class="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full border-2 border-white animate-bounce hidden"></span>
+  </button>
+
+  <!-- Chat Window (hidden by default) -->
+  <div 
+    id="copilot-window" 
+    class="copilot-window hidden absolute bottom-20 right-0 w-[400px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col"
+    style="height: 600px; max-height: calc(100vh - 8rem);"
+  >
+    <!-- Header -->
+    <div class="copilot-header bg-gradient-to-r from-violet-600 to-indigo-700 px-5 py-4 flex items-center justify-between flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+              d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-white font-semibold text-lg">Mortgage Copilot</h3>
+          <p class="text-violet-200 text-xs">Your AI assistant</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button 
+          id="copilot-clear-btn" 
+          class="p-2 hover:bg-white/10 rounded-lg transition-colors" 
+          title="Clear conversation"
+        >
+          <svg class="w-5 h-5 text-white/80 hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+        </button>
+        <button 
+          id="copilot-minimize-btn" 
+          class="p-2 hover:bg-white/10 rounded-lg transition-colors" 
+          title="Minimize"
+        >
+          <svg class="w-5 h-5 text-white/80 hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="copilot-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
+      <!-- Welcome Message -->
+      <div class="copilot-message assistant">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm border border-gray-100">
+              <p class="text-gray-700">👋 Hi! I'm your Mortgage Copilot. I can help you with:</p>
+              <ul class="mt-2 text-gray-600 text-sm space-y-1">
+                <li>• Understanding the mortgage process</li>
+                <li>• Navigating your application</li>
+                <li>• Calculating payments</li>
+                <li>• Answering any questions</li>
+              </ul>
+              <p class="mt-2 text-gray-700">How can I assist you today?</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suggestions (contextual) -->
+    <div id="copilot-suggestions" class="px-4 pb-2 flex-shrink-0">
+      <div class="flex flex-wrap gap-2" id="suggestions-container">
+        <!-- Suggestions will be dynamically loaded -->
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="copilot-input-area border-t border-gray-200 p-4 bg-white flex-shrink-0">
+      <form id="copilot-form" class="flex gap-3">
+        <div class="flex-1 relative">
+          <textarea 
+            id="copilot-input" 
+            placeholder="Ask me anything about your mortgage..." 
+            class="w-full px-4 py-3 pr-12 bg-gray-100 border-0 rounded-xl resize-none focus:ring-2 focus:ring-violet-500 focus:bg-white transition-all text-gray-800 placeholder-gray-500"
+            rows="1"
+            style="min-height: 48px; max-height: 120px;"
+          ></textarea>
+          <!-- Voice input button (decorative for now) -->
+          <button 
+            type="button" 
+            class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-violet-600 transition-colors"
+            title="Voice input (coming soon)"
+            disabled
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+            </svg>
+          </button>
+        </div>
+        <button 
+          type="submit" 
+          id="copilot-send-btn"
+          class="px-4 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl hover:from-violet-700 hover:to-indigo-700 transition-all shadow-lg shadow-violet-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          disabled
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+        </button>
+      </form>
+      <p class="text-xs text-gray-400 mt-2 text-center">
+        Copilot can make mistakes. Verify important information with your loan officer.
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Copilot Animations */
+@keyframes copilot-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes copilot-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes copilot-typing {
+  0%, 60%, 100% { opacity: 0.3; }
+  30% { opacity: 1; }
+}
+
+.copilot-window:not(.hidden) {
+  animation: copilot-slide-up 0.3s ease-out;
+}
+
+.copilot-message {
+  animation: copilot-fade-in 0.3s ease-out;
+}
+
+/* Typing indicator */
+.copilot-typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 16px;
+  border-top-left-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  width: fit-content;
+}
+
+.copilot-typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background: #a78bfa;
+  border-radius: 50%;
+  animation: copilot-typing 1.4s infinite;
+}
+
+.copilot-typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.copilot-typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Message bubbles */
+.copilot-message.user .message-bubble {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+  border-radius: 16px;
+  border-bottom-right-radius: 4px;
+}
+
+.copilot-message.assistant .message-bubble {
+  background: white;
+  color: #374151;
+  border-radius: 16px;
+  border-top-left-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #f3f4f6;
+}
+
+/* Suggestion chips */
+.copilot-suggestion {
+  background: white;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.copilot-suggestion:hover {
+  background: #f3f4f6;
+  border-color: #a78bfa;
+  color: #7c3aed;
+}
+
+/* Auto-resize textarea */
+#copilot-input {
+  overflow-y: hidden;
+}
+
+/* Navigation button in messages */
+.copilot-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.copilot-nav-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+/* Markdown styling in messages */
+.copilot-message .message-content p {
+  margin-bottom: 8px;
+}
+
+.copilot-message .message-content p:last-child {
+  margin-bottom: 0;
+}
+
+.copilot-message .message-content strong {
+  font-weight: 600;
+}
+
+.copilot-message .message-content ul,
+.copilot-message .message-content ol {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.copilot-message .message-content li {
+  margin-bottom: 4px;
+}
+
+.copilot-message .message-content code {
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Custom scrollbar for messages */
+#copilot-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+#copilot-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#copilot-messages::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+#copilot-messages::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  #copilot-window {
+    width: calc(100vw - 1rem);
+    right: -0.5rem;
+    height: calc(100vh - 6rem);
+    max-height: none;
+    border-radius: 1rem 1rem 0 0;
+    bottom: 4.5rem;
+  }
+  
+  #copilot-toggle-btn {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+}
+</style>
+

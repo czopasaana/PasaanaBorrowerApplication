@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const { getConnection } = require('./Db');
 const sql = require('mssql');
-const { BlobServiceClient } = require('@azure/storage-blob');
+const { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } = require('@azure/storage-blob');
 
 // White-label branding configuration
 const branding = require('./config/branding');
@@ -185,21 +185,72 @@ function calculateMonthlyPayment(loanAmount, includeExtras = true) {
 // -------------------------------------------
 // Azure Blob Storage Setup
 // -------------------------------------------
-const sasToken = process.env.AZURE_STORAGE_SAS_TOKEN;
 const storageAccountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
+const storageAccountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY;
+const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
 
-const blobServiceClient = new BlobServiceClient(
-  `https://${storageAccountName}.blob.core.windows.net`
-);
+// Use connection string if available, otherwise fall back to account name/key
+let blobServiceClient;
+let sharedKeyCredential;
+
+if (connectionString) {
+  blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
+  // Parse account key from connection string for SAS generation
+  const keyMatch = connectionString.match(/AccountKey=([^;]+)/);
+  if (keyMatch && storageAccountName) {
+    sharedKeyCredential = new StorageSharedKeyCredential(storageAccountName, keyMatch[1]);
+  }
+} else if (storageAccountName && storageAccountKey) {
+  sharedKeyCredential = new StorageSharedKeyCredential(storageAccountName, storageAccountKey);
+  blobServiceClient = new BlobServiceClient(
+    `https://${storageAccountName}.blob.core.windows.net`,
+    sharedKeyCredential
+  );
+} else {
+  console.error('Azure Storage: Missing connection string or account credentials');
+  blobServiceClient = new BlobServiceClient(`https://${storageAccountName}.blob.core.windows.net`);
+}
 
 /**
- * Generates a SAS URL for a given blob to allow secure, temporary access.
+ * Generates a dynamic SAS URL for a given blob to allow secure, temporary access.
+ * SAS token expires in 1 hour for security.
  */
 function generateBlobSasUrl(containerName, blobName) {
-  const containerClient = blobServiceClient.getContainerClient(containerName);
-  const blobClient = containerClient.getBlobClient(blobName);
-  const separator = blobClient.url.includes('?') ? '&' : '?';
-  return `${blobClient.url}${separator}${sasToken}`;
+  if (!blobName || !containerName) return '';
+  
+  try {
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blobClient = containerClient.getBlobClient(blobName);
+    
+    // If we have shared key credential, generate a dynamic SAS token
+    if (sharedKeyCredential) {
+      const startsOn = new Date();
+      const expiresOn = new Date(startsOn.getTime() + 60 * 60 * 1000); // 1 hour from now
+      
+      const sasToken = generateBlobSASQueryParameters({
+        containerName,
+        blobName,
+        permissions: BlobSASPermissions.parse('r'), // Read-only
+        startsOn,
+        expiresOn
+      }, sharedKeyCredential).toString();
+      
+      return `${blobClient.url}?${sasToken}`;
+    }
+    
+    // Fallback: use static SAS token from environment if available
+    const staticSasToken = process.env.AZURE_STORAGE_SAS_TOKEN;
+    if (staticSasToken) {
+      const separator = blobClient.url.includes('?') ? '&' : '?';
+      return `${blobClient.url}${separator}${staticSasToken}`;
+    }
+    
+    // Last resort: return URL without SAS (won't work for private containers)
+    return blobClient.url;
+  } catch (error) {
+    console.error('Error generating SAS URL:', error.message);
+    return '';
+  }
 }
 
 // -------------------------------------------
@@ -864,6 +915,9 @@ app.use('/', purchaseAgreementRoutes);
 const giftLetterRoutes = require('./routes/giftLetterRoutes');
 app.use('/', giftLetterRoutes);
 
+const copilotRoutes = require('./routes/copilotRoutes');
+app.use('/api/copilot', copilotRoutes);
+
 // -------------------------------------------
 // Pre-Approval Routes
 // -------------------------------------------
@@ -998,7 +1052,7 @@ app.get('/preapproval/thank-you', ensureAuthenticated, async (req, res) => {
       .request()
       .input('userID', sql.Int, userID)
       .query(`
-        SELECT TOP 1 ApplicationData, IsPreApproved FROM PreApprovalApplications
+        SELECT TOP 1 ApplicationData, IsPreApproved, PreApprovedAmount FROM PreApprovalApplications
         WHERE UserID = @userID
         ORDER BY SubmissionDate DESC
       `);
@@ -1007,9 +1061,16 @@ app.get('/preapproval/thank-you', ensureAuthenticated, async (req, res) => {
       return res.redirect('/preapproval');
     }
 
-    const applicationDataJSON = result.recordset[0].ApplicationData;
-    const applicationData = JSON.parse(applicationDataJSON);
-    const maximumLoanAmount = calculatePreApprovedLoanAmount(applicationData);
+    // Use stored PreApprovedAmount from database for consistency with profile page
+    let maximumLoanAmount = 0;
+    if (result.recordset[0].PreApprovedAmount) {
+      maximumLoanAmount = parseFloat(result.recordset[0].PreApprovedAmount);
+    } else {
+      // Fallback: calculate for older records that don't have stored amount
+      const applicationDataJSON = result.recordset[0].ApplicationData;
+      const applicationData = JSON.parse(applicationDataJSON);
+      maximumLoanAmount = calculatePreApprovedLoanAmount(applicationData);
+    }
 
     res.locals.isPreApproved = result.recordset[0].IsPreApproved;
     res.render('preapproval/thank-you', {
@@ -1187,6 +1248,136 @@ app.post('/api/documents/upload', ensureAuthenticated, upload.single('document')
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
+// -------------------------------------------
+// Document Delete Routes
+// -------------------------------------------
+
+/**
+ * Delete a specific document from a user's verification records.
+ * Supports: identification, income, assets, liabilities, purchase agreement, gift letter
+ */
+app.delete('/api/documents/delete', ensureAuthenticated, async (req, res) => {
+  try {
+    const userId = req.session.user.userID;
+    const { documentType, blobName, containerName } = req.body;
+
+    if (!documentType || !blobName) {
+      return res.status(400).json({ success: false, error: 'Missing documentType or blobName' });
+    }
+
+    // Delete from Azure Blob Storage
+    try {
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      await blockBlobClient.deleteIfExists();
+      console.log(`Deleted blob: ${blobName} from ${containerName}`);
+    } catch (blobError) {
+      console.error('Error deleting blob (continuing with DB update):', blobError.message);
+      // Continue to update database even if blob deletion fails
+    }
+
+    // Update database based on document type
+    let tableName, fileColumn, uploadedColumn;
+    
+    switch (documentType) {
+      case 'identification':
+        // For identification, clear the file path
+        await pool.request()
+          .input('UserID', sql.Int, userId)
+          .query('UPDATE IdentificationDocuments SET IDFilePath = NULL, ApplicationStatus = \'Not Started\' WHERE UserID = @UserID');
+        break;
+
+      case 'paystub':
+      case 'w2':
+      case 'taxreturn':
+      case 'form1099':
+      case 'pnl':
+        // Income documents - remove from comma-separated list
+        const incomeFields = {
+          'paystub': { files: 'PayStubsFiles', uploaded: 'PayStubsUploaded' },
+          'w2': { files: 'W2Files', uploaded: 'W2sUploaded' },
+          'taxreturn': { files: 'TaxReturnsFiles', uploaded: 'TaxReturnsUploaded' },
+          'form1099': { files: 'Form1099Files', uploaded: 'Form1099sUploaded' },
+          'pnl': { files: 'PnLFiles', uploaded: 'PnLUploaded' }
+        };
+        const incomeField = incomeFields[documentType];
+        await removeFromFileList('IncomeVerificationDocuments', incomeField.files, incomeField.uploaded, blobName, userId);
+        break;
+
+      case 'bankstatement':
+      case 'investmentstatement':
+      case 'retirementstatement':
+        // Asset documents
+        const assetFields = {
+          'bankstatement': { files: 'BankStatementsFiles', uploaded: 'BankStatementsUploaded' },
+          'investmentstatement': { files: 'InvestmentStatementsFiles', uploaded: 'InvestmentStatementsUploaded' },
+          'retirementstatement': { files: 'RetirementStatementsFiles', uploaded: 'RetirementStatementsUploaded' }
+        };
+        const assetField = assetFields[documentType];
+        await removeFromFileList('AssetVerificationDocuments', assetField.files, assetField.uploaded, blobName, userId);
+        break;
+
+      case 'creditcard':
+      case 'autoloan':
+      case 'studentloan':
+      case 'mortgage':
+        // Liability documents
+        const liabilityFields = {
+          'creditcard': { files: 'CreditCardStatementsFiles', uploaded: 'CreditCardStatementsUploaded' },
+          'autoloan': { files: 'AutoLoanStatementsFiles', uploaded: 'AutoLoanStatementsUploaded' },
+          'studentloan': { files: 'StudentLoanStatementsFiles', uploaded: 'StudentLoanStatementsUploaded' },
+          'mortgage': { files: 'MortgageStatementFiles', uploaded: 'MortgageStatementUploaded' }
+        };
+        const liabilityField = liabilityFields[documentType];
+        await removeFromFileList('LiabilityVerificationDocuments', liabilityField.files, liabilityField.uploaded, blobName, userId);
+        break;
+
+      case 'purchaseagreement':
+        await pool.request()
+          .input('UserID', sql.Int, userId)
+          .query('UPDATE PurchaseAgreement SET AgreementFilePath = NULL, HasAgreement = 0, ApplicationStatus = \'Not Started\' WHERE UserID = @UserID');
+        break;
+
+      case 'giftletter':
+        await pool.request()
+          .input('UserID', sql.Int, userId)
+          .query('UPDATE GiftLetter SET GiftLetterFilePath = NULL, HasGiftLetter = 0, ApplicationStatus = \'Not Started\' WHERE UserID = @UserID');
+        break;
+
+      default:
+        return res.status(400).json({ success: false, error: 'Unknown document type' });
+    }
+
+    res.json({ success: true, message: 'Document deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting document:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * Helper function to remove a blob name from a comma-separated file list
+ */
+async function removeFromFileList(tableName, filesColumn, uploadedColumn, blobName, userId) {
+  // Get current file list
+  const result = await pool.request()
+    .input('UserID', sql.Int, userId)
+    .query(`SELECT ${filesColumn} FROM ${tableName} WHERE UserID = @UserID`);
+
+  if (result.recordset.length === 0) return;
+
+  const currentFiles = result.recordset[0][filesColumn] || '';
+  const fileList = currentFiles.split(',').filter(f => f.trim() !== '' && f.trim() !== blobName);
+  const newFiles = fileList.join(',');
+
+  // Update the record
+  await pool.request()
+    .input('UserID', sql.Int, userId)
+    .input('NewFiles', sql.NVarChar(sql.MAX), newFiles || null)
+    .input('Uploaded', sql.Bit, fileList.length > 0 ? 1 : 0)
+    .query(`UPDATE ${tableName} SET ${filesColumn} = @NewFiles, ${uploadedColumn} = @Uploaded, UpdatedAt = SYSUTCDATETIME() WHERE UserID = @UserID`);
+}
 
 // -------------------------------------------
 // Action Item Routes

@@ -215,8 +215,12 @@
     <p class="text-xs text-blue-300 mt-1">Powered by <%= typeof branding !== 'undefined' ? branding.poweredBy : 'Pasaana' %></p>
   </footer>
 
+  <!-- AI Copilot Widget -->
+  <%- include('../partials/copilot.ejs') %>
+
   <!-- JS for the Profile page -->
   <script src="/profile.js"></script>
   <script src="/js/mortgageApplication.js"></script>
+  <script src="/js/copilot.js"></script>
 </body>
 </html>

@@ -158,9 +158,9 @@ $(document).ready(function() {
           const $firstTab = $taskItem.find('.urla-tab[data-target="#urlaSection1"]');
           if ($firstTab.length > 0) {
             // Reset all tabs first
-            $taskItem.find('.urla-tab').removeClass('bg-blue-300 text-white').addClass('bg-gray-200 text-gray-700');
+            $taskItem.find('.urla-tab').removeClass('bg-blue-100 text-blue-800').addClass('bg-gray-100 text-gray-700');
             // Highlight Section 1
-            $firstTab.removeClass('bg-gray-200 text-gray-700').addClass('bg-blue-300 text-white');
+            $firstTab.removeClass('bg-gray-100 text-gray-700').addClass('bg-blue-100 text-blue-800');
           }
         }
       }
@@ -1584,15 +1584,15 @@ $('.urla-tab').on('click', function() {
   $(targetId).removeClass('hidden');
   
   // Optionally style the active tab
-  $('.urla-tab').removeClass('bg-blue-300 text-white').addClass('bg-gray-200 text-gray-700');
-  $(this).removeClass('bg-gray-200 text-gray-700').addClass('bg-blue-300 text-white');
+  $('.urla-tab').removeClass('bg-blue-100 text-blue-800').addClass('bg-gray-100 text-gray-700');
+  $(this).removeClass('bg-gray-100 text-gray-700').addClass('bg-blue-100 text-blue-800');
 });
 
 // Initialize Section 1 as active when URLA tabs exist
 function initializeUrlaSection1() {
   const $firstTab = $('.urla-tab[data-target="#urlaSection1"]');
   if ($firstTab.length > 0) {
-    $firstTab.removeClass('bg-gray-200 text-gray-700').addClass('bg-blue-300 text-white');
+    $firstTab.removeClass('bg-gray-100 text-gray-700').addClass('bg-blue-100 text-blue-800');
   }
 }
 
@@ -1857,6 +1857,71 @@ $('input[name="primaryResidence5a"]').on('change', function() {
       alert('Failed to upload document. Please try again.');
     } finally {
       $('#uploadProgress').addClass('hidden');
+    }
+  });
+
+  // ============================================
+  // Document Delete Handler
+  // ============================================
+  $(document).on('click', '.delete-doc-btn', async function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const $btn = $(this);
+    const docType = $btn.data('doc-type');
+    const blobName = $btn.data('blob-name');
+    const containerName = $btn.data('container');
+    
+    // Confirm deletion
+    if (!confirm(`Are you sure you want to delete this document?\n\n${blobName}`)) {
+      return;
+    }
+    
+    // Disable button and show loading
+    $btn.prop('disabled', true).text('Deleting...');
+    
+    try {
+      const response = await fetch('/api/documents/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          documentType: docType,
+          blobName: blobName,
+          containerName: containerName
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        // Remove the document row from the UI
+        $btn.closest('.flex').fadeOut(300, function() {
+          $(this).remove();
+          
+          // Check if there are no more files in the preview div
+          const $previewDiv = $btn.closest('[id$="Preview"]');
+          if ($previewDiv.find('.flex').length === 0) {
+            $previewDiv.html('No file chosen.');
+          }
+        });
+        
+        // Show success message
+        alert('Document deleted successfully!');
+        
+        // Refresh the page to update the status
+        setTimeout(() => {
+          location.reload();
+        }, 500);
+      } else {
+        alert('Failed to delete document: ' + (result.error || 'Unknown error'));
+        $btn.prop('disabled', false).text('🗑️ Delete');
+      }
+    } catch (err) {
+      console.error('Delete error:', err);
+      alert('Failed to delete document. Please try again.');
+      $btn.prop('disabled', false).text('🗑️ Delete');
     }
   });
 });

@@ -256,56 +256,32 @@ function getStatusInfo(status) {
       Please fill out all required fields. You can save your progress at any time.
     </p>
 
-    <!-- Example Tabs (Sections of URLA) -->
-    <div class="mb-6">
-      <button 
-        type="button" 
-        class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
-        data-target="#urlaSection1">
+    <!-- URLA Section Tabs -->
+    <div class="mb-6 flex flex-wrap gap-2">
+      <button type="button" class="urla-tab px-4 py-2 bg-blue-100 text-blue-800 rounded-lg text-sm font-medium hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 transition" data-target="#urlaSection1">
         Section 1: Borrower Information
       </button>
-      <button 
-        type="button" 
-        class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
-        data-target="#urlaSection2">
+      <button type="button" class="urla-tab px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition" data-target="#urlaSection2">
         Section 2: Assets &amp; Liabilities
       </button>
-      <button 
-        type="button" 
-        class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
-        data-target="#urlaSection3">
+      <button type="button" class="urla-tab px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition" data-target="#urlaSection3">
         Section 3: Real Estate
       </button>
-      <button 
-        type="button" 
-        class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
-        data-target="#urlaSection4">
-        Section 4: Loan and Property Information
+      <button type="button" class="urla-tab px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition" data-target="#urlaSection4">
+        Section 4: Loan and Property
       </button>
-      <button 
-        type="button" 
-        class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
-        data-target="#urlaSection5">
+      <button type="button" class="urla-tab px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition" data-target="#urlaSection5">
         Section 5: Declarations
       </button>
-      <button 
-      type="button" 
-      class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
-      data-target="#urlaSection6">
-      Section 6: Acknowledgments
-    </button>
-    <button 
-    type="button" 
-    class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
-    data-target="#urlaSection7">
-    Section 7: Military Service
-  </button>
-  <button 
-  type="button" 
-  class="urla-tab px-4 py-2 bg-gray-200 text-gray-700 rounded mr-2 focus:outline-none"
-  data-target="#urlaSection8">
-  Section 8: Demographic Information
-</button>
+      <button type="button" class="urla-tab px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition" data-target="#urlaSection6">
+        Section 6: Acknowledgments
+      </button>
+      <button type="button" class="urla-tab px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition" data-target="#urlaSection7">
+        Section 7: Military Service
+      </button>
+      <button type="button" class="urla-tab px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition" data-target="#urlaSection8">
+        Section 8: Demographics
+      </button>
     </div>
 
     <!-- SECTION 1: Borrower Info (Shown by default) -->
@@ -439,6 +415,7 @@ function getStatusInfo(status) {
       <select 
         id="citizenship" 
         name="citizenship" 
+        required
         class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800">
         <option value="">-- Select --</option>
         <option value="USCitizen" 
@@ -499,6 +476,7 @@ function getStatusInfo(status) {
       <select 
         id="maritalStatus" 
         name="maritalStatus" 
+        required
         class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-800">
         <option value="">-- Select --</option>
         <option value="Married" <%= (applicationData && applicationData.MaritalStatus === 'Married') ? 'selected' : '' %>>Married</option>
@@ -607,6 +585,7 @@ function getStatusInfo(status) {
         type="text" 
         id="currentAddressStreet" 
         name="currentAddressStreet" 
+        required
         class="mt-1 block w-full border border-gray-300 rounded-md p-2"
         value="<%= applicationData ? applicationData.CurrentAddressStreet : (preApprovalData && preApprovalData.step3 ? preApprovalData.step3.streetAddress : '') %>"
       >
@@ -619,6 +598,7 @@ function getStatusInfo(status) {
         type="text" 
         id="currentAddressCity" 
         name="currentAddressCity"
+        required
         class="mt-1 block w-full border border-gray-300 rounded-md p-2"
         value="<%= applicationData ? applicationData.CurrentAddressCity : (preApprovalData && preApprovalData.step3 ? preApprovalData.step3.city : '') %>"
       >
@@ -631,6 +611,7 @@ function getStatusInfo(status) {
         type="text" 
         id="currentAddressState" 
         name="currentAddressState" 
+        required
         class="mt-1 block w-full border border-gray-300 rounded-md p-2"
         value="<%= applicationData ? applicationData.CurrentAddressState : (preApprovalData && preApprovalData.step3 ? preApprovalData.step3.state : '') %>"
       >
@@ -643,6 +624,7 @@ function getStatusInfo(status) {
         type="text" 
         id="currentAddressZip" 
         name="currentAddressZip" 
+        required
         class="mt-1 block w-full border border-gray-300 rounded-md p-2"
         value="<%= applicationData ? applicationData.CurrentAddressZip : (preApprovalData && preApprovalData.step3 ? preApprovalData.step3.zipCode : '') %>"
       >
@@ -3957,6 +3939,7 @@ function getStatusInfo(status) {
         step="0.01"
         id="loanAmount4"
         name="loanAmount4"
+        required
         class="border border-gray-300 rounded-md p-2"
         placeholder="e.g. 200000"
         value="<%= applicationData ? applicationData.LoanAmount4 : '' %>"
@@ -3968,7 +3951,7 @@ function getStatusInfo(status) {
       <span class="text-sm font-medium text-gray-700 mb-1 block">
         Loan Purpose
       </span>
-      <select id="loanPurpose4" name="loanPurpose4" class="border border-gray-300 rounded-md p-2">
+      <select id="loanPurpose4" name="loanPurpose4" required class="border border-gray-300 rounded-md p-2">
         <option value="">-- Select --</option>
         <option value="Purchase" <%= (applicationData && applicationData.LoanPurpose4 === 'Purchase') ? 'selected' : '' %>>Purchase</option>
         <option value="Refinance" <%= (applicationData && applicationData.LoanPurpose4 === 'Refinance') ? 'selected' : '' %>>Refinance</option>
@@ -3997,6 +3980,7 @@ function getStatusInfo(status) {
           type="text"
           id="propertyStreet4"
           name="propertyStreet4"
+          required
           class="border border-gray-300 rounded-md p-2"
           value="<%= applicationData ? applicationData.PropertyStreet4 : '' %>"
         >
@@ -4009,6 +3993,7 @@ function getStatusInfo(status) {
           type="text"
           id="propertyCity4"
           name="propertyCity4"
+          required
           class="border border-gray-300 rounded-md p-2"
           value="<%= applicationData ? applicationData.PropertyCity4 : '' %>"
         >
@@ -4021,6 +4006,7 @@ function getStatusInfo(status) {
           type="text"
           id="propertyState4"
           name="propertyState4"
+          required
           class="border border-gray-300 rounded-md p-2"
           value="<%= applicationData ? applicationData.PropertyState4 : '' %>"
         >
@@ -4033,6 +4019,7 @@ function getStatusInfo(status) {
           type="text"
           id="propertyZip4"
           name="propertyZip4"
+          required
           class="border border-gray-300 rounded-md p-2"
           value="<%= applicationData ? applicationData.PropertyZip4 : '' %>"
         >
@@ -5579,9 +5566,9 @@ function getStatusInfo(status) {
     <!-- Document Upload Section -->
     <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
       <h6 class="font-semibold text-xl text-gray-800 mb-4">Upload Supporting Documents</h6>
-      <p class="text-sm text-gray-500 mb-4">Upload optional documents (ID, pay stubs, W-2s) here. You can add these now or later.</p>
+      <p class="text-sm text-gray-500 mb-4">Upload optional documents (ID, pay stubs, W-2s) here. You can add these now or later. <span class="text-gray-400">(PDF, JPG, PNG)</span></p>
       <div>
-        <label class="block mb-2 text-sm font-medium text-gray-700" for="loanDocs">Upload Documents</label>
+        <label class="block mb-2 text-sm font-medium text-gray-700" for="loanDocs">Upload Documents <span class="text-gray-400 font-normal">(PDF, JPG, PNG)</span></label>
         <input 
           class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md p-2 cursor-pointer 
                 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
@@ -5789,6 +5776,7 @@ if (applicationData && !applicationData.EmployerName) {
     <h5 class="text-lg font-bold text-blue-800 mb-4">Upload Your Income Verification Documents</h5>
     <p class="text-sm text-gray-700 mb-4">
       Please upload all applicable documents. <span class="text-gray-500">(Employment Type: <%= employmentType %>)</span>
+      <br><span class="text-gray-400">Accepted formats: PDF, JPG, PNG (max 10MB each)</span>
     </p>
 
     <!-- Pay Stubs -->
@@ -5801,7 +5789,15 @@ if (applicationData && !applicationData.EmployerName) {
       <div id="payStubsPreview" class="mt-2 text-sm text-gray-500">
         <% if (incomeData && incomeData.PayStubs && incomeData.PayStubs.length > 0) { %>
           <% incomeData.PayStubs.forEach(file => { %>
-            <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline block mb-1"><%= file.name %></a>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="paystub" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_INCOME %>">
+                🗑️ Delete
+              </button>
+            </div>
           <% }) %>
         <% } else { %>
           No file chosen.
@@ -5819,7 +5815,15 @@ if (applicationData && !applicationData.EmployerName) {
       <div id="w2sPreview" class="mt-2 text-sm text-gray-500">
         <% if (incomeData && incomeData.W2s && incomeData.W2s.length > 0) { %>
           <% incomeData.W2s.forEach(file => { %>
-            <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline block mb-1"><%= file.name %></a>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="w2" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_INCOME %>">
+                🗑️ Delete
+              </button>
+            </div>
           <% }) %>
         <% } else { %>
           No file chosen.
@@ -5837,7 +5841,15 @@ if (applicationData && !applicationData.EmployerName) {
       <div id="taxReturnsPreview" class="mt-2 text-sm text-gray-500">
         <% if (incomeData && incomeData.TaxReturns && incomeData.TaxReturns.length > 0) { %>
           <% incomeData.TaxReturns.forEach(file => { %>
-            <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline block mb-1"><%= file.name %></a>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="taxreturn" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_INCOME %>">
+                🗑️ Delete
+              </button>
+            </div>
           <% }) %>
         <% } else { %>
           No file chosen.
@@ -5855,7 +5867,15 @@ if (applicationData && !applicationData.EmployerName) {
       <div id="form1099sPreview" class="mt-2 text-sm text-gray-500">
         <% if (incomeData && incomeData.Form1099s && incomeData.Form1099s.length > 0) { %>
           <% incomeData.Form1099s.forEach(file => { %>
-            <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline block mb-1"><%= file.name %></a>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="form1099" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_INCOME %>">
+                🗑️ Delete
+              </button>
+            </div>
           <% }) %>
         <% } else { %>
           No file chosen.
@@ -5873,7 +5893,15 @@ if (applicationData && !applicationData.EmployerName) {
       <div id="pnlDocsPreview" class="mt-2 text-sm text-gray-500">
         <% if (incomeData && incomeData.PnL && incomeData.PnL.length > 0) { %>
           <% incomeData.PnL.forEach(file => { %>
-            <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline block mb-1"><%= file.name %></a>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="pnl" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_INCOME %>">
+                🗑️ Delete
+              </button>
+            </div>
           <% }) %>
         <% } else { %>
           No file chosen.
@@ -5922,6 +5950,7 @@ if (applicationData && !applicationData.EmployerName) {
     <h5 class="text-lg font-bold text-blue-800 mb-4">Upload or Link Your Asset Accounts</h5>
     <p class="text-sm text-gray-700 mb-4">
       Please upload 2–3 months of PDF bank statements and corresponding investment/retirement account statements. Or you can link your accounts securely.
+      <br><span class="text-gray-400">Accepted formats: PDF, JPG, PNG (max 10MB each)</span>
     </p>
 
     <!-- Bank Statements -->
@@ -5933,11 +5962,17 @@ if (applicationData && !applicationData.EmployerName) {
       <input type="file" multiple name="bankStatements" id="bankStatements" class="border p-2 rounded w-full">
       <div id="bankStatementsPreview" class="mt-2 text-sm text-gray-500">
         <% if (assetData && assetData.Bank && assetData.Bank.length > 0) { %>
-          <ul class="list-disc pl-5">
-            <% assetData.Bank.forEach(file => { %>
-              <li><a href="<%= file.url %>" target="_blank" class="text-blue-600 underline"><%= file.name %></a></li>
-            <% }) %>
-          </ul>
+          <% assetData.Bank.forEach(file => { %>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="bankstatement" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_ASSET %>">
+                🗑️ Delete
+              </button>
+            </div>
+          <% }) %>
         <% } else { %>
           No file chosen.
         <% } %>
@@ -5953,11 +5988,17 @@ if (applicationData && !applicationData.EmployerName) {
       <input type="file" multiple name="investmentStatements" id="investmentStatements" class="border p-2 rounded w-full">
       <div id="investmentStatementsPreview" class="mt-2 text-sm text-gray-500">
         <% if (assetData && assetData.Investment && assetData.Investment.length > 0) { %>
-          <ul class="list-disc pl-5">
-            <% assetData.Investment.forEach(file => { %>
-              <li><a href="<%= file.url %>" target="_blank" class="text-blue-600 underline"><%= file.name %></a></li>
-            <% }) %>
-          </ul>
+          <% assetData.Investment.forEach(file => { %>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="investmentstatement" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_ASSET %>">
+                🗑️ Delete
+              </button>
+            </div>
+          <% }) %>
         <% } else { %>
           No file chosen.
         <% } %>
@@ -5973,11 +6014,17 @@ if (applicationData && !applicationData.EmployerName) {
       <input type="file" multiple name="retirementStatements" id="retirementStatements" class="border p-2 rounded w-full">
       <div id="retirementStatementsPreview" class="mt-2 text-sm text-gray-500">
         <% if (assetData && assetData.Retirement && assetData.Retirement.length > 0) { %>
-          <ul class="list-disc pl-5">
-            <% assetData.Retirement.forEach(file => { %>
-              <li><a href="<%= file.url %>" target="_blank" class="text-blue-600 underline"><%= file.name %></a></li>
-            <% }) %>
-          </ul>
+          <% assetData.Retirement.forEach(file => { %>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="retirementstatement" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_ASSET %>">
+                🗑️ Delete
+              </button>
+            </div>
+          <% }) %>
         <% } else { %>
           No file chosen.
         <% } %>
@@ -6025,7 +6072,7 @@ if (applicationData && !applicationData.EmployerName) {
 
   <div class="liability-verification-form hidden p-4 border-t">
     <h5 class="text-lg font-bold text-blue-800 mb-4">Upload Your Liability Verification Documents</h5>
-    <p class="text-sm text-gray-700 mb-4">Please provide recent statements for all outstanding debts (Credit Cards, Auto Loans, Student Loans, Mortgage if applicable).</p>
+    <p class="text-sm text-gray-700 mb-4">Please provide recent statements for all outstanding debts (Credit Cards, Auto Loans, Student Loans, Mortgage if applicable). <span class="text-gray-400">(PDF, JPG, PNG)</span></p>
 
     <div class="mb-4">
       <label class="block font-medium text-gray-700 mb-2">
@@ -6033,14 +6080,23 @@ if (applicationData && !applicationData.EmployerName) {
         <span class="tooltip text-blue-600 ml-1" title="Most recent credit card statements">[?]</span>
       </label>
       <input type="file" multiple name="creditCardStatements" id="creditCardStatements" class="border p-2 rounded w-full">
-      <div id="creditCardStatementsPreview" class="mt-2 text-sm text-gray-500">No file chosen.</div>
-      <% if (liabilityData && liabilityData.CreditCardStatements && liabilityData.CreditCardStatements.length > 0) { %>
-        <ul class="mt-2 list-disc pl-5">
+      <div id="creditCardStatementsPreview" class="mt-2 text-sm text-gray-500">
+        <% if (liabilityData && liabilityData.CreditCardStatements && liabilityData.CreditCardStatements.length > 0) { %>
           <% liabilityData.CreditCardStatements.forEach(file => { %>
-            <li><a href="<%= file.url %>" target="_blank" class="text-blue-600 underline"><%= file.name %></a></li>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="creditcard" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_LIABILITY %>">
+                🗑️ Delete
+              </button>
+            </div>
           <% }) %>
-        </ul>
-      <% } %>
+        <% } else { %>
+          No file chosen.
+        <% } %>
+      </div>
     </div>
 
     <div class="mb-4">
@@ -6049,14 +6105,23 @@ if (applicationData && !applicationData.EmployerName) {
         <span class="tooltip text-blue-600 ml-1" title="Most recent auto loan statements">[?]</span>
       </label>
       <input type="file" multiple name="autoLoanStatements" id="autoLoanStatements" class="border p-2 rounded w-full">
-      <div id="autoLoanStatementsPreview" class="mt-2 text-sm text-gray-500">No file chosen.</div>
-      <% if (liabilityData && liabilityData.AutoLoanStatements && liabilityData.AutoLoanStatements.length > 0) { %>
-        <ul class="mt-2 list-disc pl-5">
+      <div id="autoLoanStatementsPreview" class="mt-2 text-sm text-gray-500">
+        <% if (liabilityData && liabilityData.AutoLoanStatements && liabilityData.AutoLoanStatements.length > 0) { %>
           <% liabilityData.AutoLoanStatements.forEach(file => { %>
-            <li><a href="<%= file.url %>" target="_blank" class="text-blue-600 underline"><%= file.name %></a></li>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="autoloan" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_LIABILITY %>">
+                🗑️ Delete
+              </button>
+            </div>
           <% }) %>
-        </ul>
-      <% } %>
+        <% } else { %>
+          No file chosen.
+        <% } %>
+      </div>
     </div>
 
     <div class="mb-4">
@@ -6065,14 +6130,23 @@ if (applicationData && !applicationData.EmployerName) {
         <span class="tooltip text-blue-600 ml-1" title="Most recent student loan statements">[?]</span>
       </label>
       <input type="file" multiple name="studentLoanStatements" id="studentLoanStatements" class="border p-2 rounded w-full">
-      <div id="studentLoanStatementsPreview" class="mt-2 text-sm text-gray-500">No file chosen.</div>
-      <% if (liabilityData && liabilityData.StudentLoanStatements && liabilityData.StudentLoanStatements.length > 0) { %>
-        <ul class="mt-2 list-disc pl-5">
+      <div id="studentLoanStatementsPreview" class="mt-2 text-sm text-gray-500">
+        <% if (liabilityData && liabilityData.StudentLoanStatements && liabilityData.StudentLoanStatements.length > 0) { %>
           <% liabilityData.StudentLoanStatements.forEach(file => { %>
-            <li><a href="<%= file.url %>" target="_blank" class="text-blue-600 underline"><%= file.name %></a></li>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="studentloan" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_LIABILITY %>">
+                🗑️ Delete
+              </button>
+            </div>
           <% }) %>
-        </ul>
-      <% } %>
+        <% } else { %>
+          No file chosen.
+        <% } %>
+      </div>
     </div>
 
     <div class="mb-4">
@@ -6081,14 +6155,23 @@ if (applicationData && !applicationData.EmployerName) {
         <span class="tooltip text-blue-600 ml-1" title="Most recent mortgage statement">[?]</span>
       </label>
       <input type="file" multiple name="mortgageStatement" id="mortgageStatement" class="border p-2 rounded w-full">
-      <div id="mortgageStatementPreview" class="mt-2 text-sm text-gray-500">No file chosen.</div>
-      <% if (liabilityData && liabilityData.MortgageStatement && liabilityData.MortgageStatement.length > 0) { %>
-        <ul class="mt-2 list-disc pl-5">
+      <div id="mortgageStatementPreview" class="mt-2 text-sm text-gray-500">
+        <% if (liabilityData && liabilityData.MortgageStatement && liabilityData.MortgageStatement.length > 0) { %>
           <% liabilityData.MortgageStatement.forEach(file => { %>
-            <li><a href="<%= file.url %>" target="_blank" class="text-blue-600 underline"><%= file.name %></a></li>
+            <div class="flex items-center justify-between mb-1 bg-gray-50 px-2 py-1 rounded">
+              <a href="<%= file.url %>" target="_blank" class="text-blue-600 underline truncate flex-1"><%= file.name %></a>
+              <button type="button" class="delete-doc-btn ml-2 text-red-500 hover:text-red-700 text-xs px-2 py-1 border border-red-300 rounded hover:bg-red-50" 
+                      data-doc-type="mortgage" 
+                      data-blob-name="<%= file.name %>"
+                      data-container="<%= process.env.AZURE_STORAGE_CONTAINER_NAME_LIABILITY %>">
+                🗑️ Delete
+              </button>
+            </div>
           <% }) %>
-        </ul>
-      <% } %>
+        <% } else { %>
+          No file chosen.
+        <% } %>
+      </div>
     </div>
 
     <div class="flex space-x-4">
@@ -6260,9 +6343,9 @@ if (applicationData && !applicationData.EmployerName) {
               
                   <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
                     <h6 class="font-semibold text-xl text-gray-800 mb-4">Upload Documents (Optional)</h6>
-                    <p class="text-sm text-gray-500 mb-4">Upload co-borrower's ID, pay stubs, W-2s if desired.</p>
+                    <p class="text-sm text-gray-500 mb-4">Upload co-borrower's ID, pay stubs, W-2s if desired. <span class="text-gray-400">(PDF, JPG, PNG)</span></p>
                     <div>
-                      <label class="block mb-2 text-sm font-medium text-gray-700" for="coBorrowerDocs">Upload Documents</label>
+                      <label class="block mb-2 text-sm font-medium text-gray-700" for="coBorrowerDocs">Upload Documents <span class="text-gray-400 font-normal">(PDF, JPG, PNG)</span></label>
                       <input 
                         class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md p-2 cursor-pointer
                               focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
@@ -6315,8 +6398,9 @@ if (applicationData && !applicationData.EmployerName) {
 
     <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
       <h6 class="font-semibold text-xl text-gray-800 mb-4">Upload Document (Optional)</h6>
+      <p class="text-sm text-gray-400 mb-4">Accepted format: PDF only</p>
       <div>
-        <label class="block mb-2 text-sm font-medium text-gray-700" for="purchaseAgreement">Upload Agreement</label>
+        <label class="block mb-2 text-sm font-medium text-gray-700" for="purchaseAgreement">Upload Agreement <span class="text-gray-400 font-normal">(PDF)</span></label>
         <input
           class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md p-2 cursor-pointer 
                 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
@@ -6382,8 +6466,9 @@ if (applicationData && !applicationData.EmployerName) {
               
                   <div class="mb-8 bg-white rounded-lg p-4 border border-gray-200">
                     <h6 class="font-semibold text-xl text-gray-800 mb-4">Upload Document (Optional)</h6>
+                    <p class="text-sm text-gray-400 mb-4">Accepted format: PDF only</p>
                     <div>
-                      <label class="block mb-2 text-sm font-medium text-gray-700" for="giftLetter">Upload Signed Gift Letter</label>
+                      <label class="block mb-2 text-sm font-medium text-gray-700" for="giftLetter">Upload Signed Gift Letter <span class="text-gray-400 font-normal">(PDF)</span></label>
                       <input
                         class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md p-2 cursor-pointer 
                               focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition"
