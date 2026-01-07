@@ -96,32 +96,7 @@ const APPLICANTS = {
       loanAmount: 550000
     }
   },
-  'approved-veteran': {
-    name: 'James Anderson',
-    ssn: 'XXX-XX-7777',
-    dob: '1982-09-05',
-    address: '100 Veteran Way, Colorado Springs, CO 80903',
-    employer: 'Federal Security Services',
-    employerAddress: '200 Government Way, Colorado Springs, CO 80903',
-    ein: '45-6789012',
-    annualSalary: 85000,
-    startDate: '2021-01-15',
-    position: 'Security Analyst',
-    isVeteran: true,
-    branchOfService: 'U.S. Army',
-    serviceYears: '2010-2020',
-    dischargeStatus: 'Honorable',
-    // Liabilities - $400/month total
-    liabilities: {
-      autoLoan: { lender: 'USAA Auto Finance', balance: 12000, monthlyPayment: 280, vehicle: '2020 Ford F-150' },
-      creditCard: { company: 'USAA Visa', balance: 1500, monthlyPayment: 120, limit: 8000 }
-    },
-    purchaseInfo: {
-      propertyAddress: '200 Service Rd, Colorado Springs, CO 80910',
-      purchasePrice: 280000,
-      loanAmount: 280000  // VA loan - no down payment
-    }
-  },
+  // Note: VA loans not supported in Danish realkredit style - approved-veteran removed
   'denied-highdti': {
     name: 'Kevin Miller',
     ssn: 'XXX-XX-8888',
@@ -329,28 +304,7 @@ const APPLICANTS = {
     }
   },
   
-  'borrower-firsttime': {
-    name: 'Jessica Brown',
-    ssn: 'XXX-XX-2345',
-    dob: '1995-09-20',
-    address: '456 Renter Lane, Denver, CO 80203',
-    employer: 'Startup Innovations LLC',
-    employerAddress: '200 Tech Hub, Denver, CO 80203',
-    ein: '78-9012345',
-    annualSalary: 68000,
-    startDate: '2022-06-01',
-    position: 'Marketing Specialist',
-    firstTimeHomeBuyer: true,
-    liabilities: {
-      creditCard: { company: 'Discover', balance: 2500, monthlyPayment: 100, limit: 5000 },
-      studentLoan: { servicer: 'Great Lakes', balance: 18000, monthlyPayment: 200 }
-    },
-    purchaseInfo: {
-      propertyAddress: '789 First Home St, Thornton, CO 80229',
-      purchasePrice: 300000,
-      loanAmount: 240000
-    }
-  },
+  // Note: FHA loans not supported in Danish realkredit style - borrower-firsttime removed
   
   'coborrower-nonoccupant': {
     name: 'Michelle Taylor',
@@ -1058,28 +1012,7 @@ const APPLICANTS = {
     }
   },
   
-  'edge-dpa': {
-    name: 'Amanda Stewart',
-    ssn: 'XXX-XX-7823',
-    dob: '1994-05-28',
-    address: '300 Assistance Ave, Denver, CO 80204',
-    employer: 'Denver Health',
-    employerAddress: '777 Bannock St, Denver, CO 80204',
-    ein: '01-2345678',
-    annualSalary: 62000,
-    startDate: '2022-01-15',
-    position: 'Patient Care Coordinator',
-    firstTimeHomeBuyer: true,
-    downPaymentAssistance: { program: 'CHFA', amount: 15000, forgivable: true },
-    liabilities: {
-      studentLoan: { servicer: 'Great Lakes', balance: 28000, monthlyPayment: 280 }
-    },
-    purchaseInfo: {
-      propertyAddress: '400 Affordable Housing Dr, Commerce City, CO 80022',
-      purchasePrice: 305000,
-      loanAmount: 245000
-    }
-  },
+  // Note: DPA programs not supported in Danish realkredit style - edge-dpa removed
   
   'edge-sellerconcession': {
     name: 'Laura Morris',

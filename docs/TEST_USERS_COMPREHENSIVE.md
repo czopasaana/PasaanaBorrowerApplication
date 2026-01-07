@@ -29,7 +29,6 @@ Based on our AI agent architecture, here are the documents processed:
 | Document Type | AI Agent | When Required |
 |--------------|----------|---------------|
 | **Gift Letter** | GiftLetterAgent | When using gift funds for down payment |
-| **VA COE** | IdentificationAgent | VA loan applicants |
 | **Existing Mortgage Statement** | MortgageAgent | Refinance scenarios, investment property |
 | **Rental Income Statement** | PnLAgent | Investment property with rental income |
 | **Tax Returns** | TaxReturnAgent | Self-employed, high-income verification |
@@ -76,7 +75,7 @@ Based on our AI agent architecture, here are the documents processed:
 | Occupancy | Primary Residence |
 
 ### Expected Outcome
-**APPROVED** - DTI ~15%, excellent credit, stable employment
+**APPROVED** - DTI ~31%, excellent credit, stable employment
 
 ### Why Approved
 - Low DTI ratio (well under 43% cap)
@@ -212,55 +211,7 @@ Based on our AI agent architecture, here are the documents processed:
 
 ---
 
-## 4. APPROVED - Military/VA Eligible
-
-**Email**: `approved.veteran@test.com`
-
-### Profile
-| Field | Value |
-|-------|-------|
-| Name | James Anderson |
-| DOB | 1982-09-05 |
-| SSN | XXX-XX-7777 |
-| Employment | Security Analyst at Federal Security Services |
-| Annual Income | $85,000 |
-| Monthly Debt | $400 |
-| Credit Score | Good (700-749) |
-| Military Service | U.S. Army 2010-2020 (Honorable Discharge) |
-| Loan Amount | $280,000 |
-| Property | 200 Service Rd, Colorado Springs, CO 80910 |
-
-### Expected Outcome
-**APPROVED** - VA loan eligible, DTI ~39%, no PMI required
-
-### Why Approved
-- Veteran with honorable discharge
-- VA loan benefits (no down payment, no PMI)
-- Stable post-military employment
-- DTI within VA guidelines (can go up to 41%)
-
-### Required Documents
-- ✅ Driver's License
-- ✅ Military ID (optional, supports veteran status)
-- ✅ VA Certificate of Eligibility (COE)
-- ✅ 2 Pay Stubs
-- ✅ 2 W-2 Forms
-- ✅ 3 Bank Statements
-- ✅ DD-214 (Discharge papers)
-- ✅ Purchase Agreement
-- ✅ Auto Loan Statement - USAA Auto Finance ($280/mo)
-- ✅ Credit Card Statement - USAA Visa ($120/mo)
-- ✅ Authorization/Consent Form
-
-### Liability Breakdown ($400/month total)
-| Liability | Creditor | Balance | Monthly Payment |
-|-----------|----------|---------|-----------------|
-| Auto Loan | USAA Auto Finance | $12,000 | $280 |
-| Credit Card | USAA Visa | $1,500 | $120 |
-
----
-
-## 5. DENIED - High DTI Ratio
+## 4. DENIED - High DTI Ratio
 
 **Email**: `denied.highdti@test.com`
 
@@ -646,7 +597,6 @@ Based on our AI agent architecture, here are the documents processed:
 | approved.w2@test.com | Strong W-2 Employee | ✅ APPROVED | Standard package |
 | approved.dual@test.com | Dual Income | ✅ APPROVED | Dual borrower docs |
 | approved.selfemployed@test.com | Self-Employed | ✅ APPROVED | P&L, Tax Returns |
-| approved.veteran@test.com | VA Loan | ✅ APPROVED | VA COE, Military ID |
 | denied.highdti@test.com | High DTI | ❌ DENIED (DTI) | All docs + liabilities |
 | denied.badcredit@test.com | Poor Credit | ❌ DENIED (Credit) | All docs present |
 | denied.nodocs@test.com | Missing Docs | ❌ DENIED (No Docs) | NO documents |

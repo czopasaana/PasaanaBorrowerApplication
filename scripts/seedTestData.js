@@ -1,7 +1,8 @@
 /**
  * Comprehensive Test Data Seeder for Mortgage Application
  * 
- * Creates 44 test users covering all possible mortgage scenarios:
+ * Creates 41 test users covering all possible mortgage scenarios:
+ * (Note: VA, FHA, and DPA loan types are not supported in Danish realkredit style)
  * - Product variations (30Y Fixed, 15Y Fixed, ARM products)
  * - Occupancy types (Primary, Second Home, Investment)
  * - Income types (W-2, 1099, Self-Employed, Retirement, etc.)
@@ -134,44 +135,6 @@ const TEST_USERS = [
     expectedOutcome: 'APPROVED - High income, requires 2 years tax returns, P&L'
   },
   {
-    scenario: 'APPROVED - Military/VA Eligible',
-    email: 'approved.veteran@test.com',
-    password: 'Test123!',
-    preApproval: {
-      firstName: 'James',
-      lastName: 'Anderson',
-      dob: '1982-09-05',
-      ssn: '555-66-7777',
-      phone: '555-444-5555',
-      streetAddress: '100 Veteran Way',
-      city: 'Colorado Springs',
-      state: 'CO',
-      zipCode: '80903',
-      employmentType: 'W2',
-      annualIncome: 85000,
-      monthlyDebt: 400,
-      creditScore: 'Good (700-749)'
-    },
-    urla: {
-      citizenship: 'USCitizen',
-      maritalStatus: 'Unmarried',
-      loanPurpose: 'Purchase',
-      loanAmount: 280000,
-      propertyStreet: '200 Service Rd',
-      propertyCity: 'Colorado Springs',
-      propertyState: 'CO',
-      propertyZip: '80910',
-      occupancyType: 'PrimaryResidence',
-      productType: 'VA 30-Year Fixed'
-    },
-    military: {
-      hasMilitaryService: true,
-      currentlyRetiredDischarged: true,
-      reserveOrGuard: false
-    },
-    expectedOutcome: 'APPROVED - VA loan eligible, DTI ~39%, no PMI required'
-  },
-  {
     scenario: 'APPROVED - Conditional then Cleared',
     email: 'approved.conditional@test.com',
     password: 'Test123!',
@@ -237,40 +200,6 @@ const TEST_USERS = [
     },
     plaidLinked: true,
     expectedOutcome: 'APPROVED - Assets verified via Plaid, no manual bank statement uploads needed'
-  },
-  {
-    scenario: 'APPROVED - First-Time Homebuyer',
-    email: 'borrower.firsttime@test.com',
-    password: 'Test123!',
-    preApproval: {
-      firstName: 'Jessica',
-      lastName: 'Brown',
-      dob: '1995-09-20',
-      ssn: '789-01-2345',
-      phone: '555-789-0123',
-      streetAddress: '456 Renter Lane',
-      city: 'Denver',
-      state: 'CO',
-      zipCode: '80203',
-      employmentType: 'W2',
-      annualIncome: 68000,
-      monthlyDebt: 300,
-      creditScore: 'Good (700-749)'
-    },
-    urla: {
-      citizenship: 'USCitizen',
-      maritalStatus: 'Unmarried',
-      loanPurpose: 'Purchase',
-      loanAmount: 240000,
-      propertyStreet: '789 First Home St',
-      propertyCity: 'Thornton',
-      propertyState: 'CO',
-      propertyZip: '80229',
-      occupancyType: 'PrimaryResidence',
-      productType: '30-Year Fixed',
-      firstTimeHomeBuyer: true
-    },
-    expectedOutcome: 'APPROVED - First-time buyer, eligible for DPA programs, DTI ~35%'
   },
   {
     scenario: 'APPROVED - Non-Occupant Co-Signer',
@@ -1564,43 +1493,7 @@ const TEST_USERS = [
     ],
     expectedOutcome: 'APPROVED - 3 financed properties = 6m base + 6m REO reserves required'
   },
-  {
-    scenario: 'EDGE - Down Payment Assistance Program',
-    email: 'edge.dpa@test.com',
-    password: 'Test123!',
-    preApproval: {
-      firstName: 'Amanda',
-      lastName: 'Stewart',
-      dob: '1994-05-28',
-      ssn: '234-56-7823',
-      phone: '555-234-5678',
-      streetAddress: '300 Assistance Ave',
-      city: 'Denver',
-      state: 'CO',
-      zipCode: '80204',
-      employmentType: 'W2',
-      annualIncome: 62000,
-      monthlyDebt: 280,
-      creditScore: 'Good (700-749)'
-    },
-    urla: {
-      citizenship: 'USCitizen',
-      maritalStatus: 'Unmarried',
-      loanPurpose: 'Purchase',
-      loanAmount: 245000,
-      propertyStreet: '400 Affordable Housing Dr',
-      propertyCity: 'Commerce City',
-      propertyState: 'CO',
-      propertyZip: '80022',
-      occupancyType: 'PrimaryResidence',
-      productType: '30-Year Fixed',
-      firstTimeHomeBuyer: true
-    },
-    giftsGrants: [
-      { assetType: 'Grant', source: 'CHFA DPA', valueAmount: 15000, forgivable: true }
-    ],
-    expectedOutcome: 'APPROVED - Using Colorado Housing Finance Authority DPA grant'
-  },
+  // Note: DPA programs not supported in Danish realkredit style - edge.dpa@test.com removed
   {
     scenario: 'EDGE - Seller Concessions (3%)',
     email: 'edge.sellerconcession@test.com',

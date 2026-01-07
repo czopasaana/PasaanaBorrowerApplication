@@ -1,6 +1,8 @@
 # 🏠 Comprehensive Test Users Documentation
 
-This document provides a complete reference for all 44 test users in the mortgage application system. Each user represents a specific scenario designed to test different aspects of the loan approval workflow.
+This document provides a complete reference for all 41 test users in the mortgage application system. Each user represents a specific scenario designed to test different aspects of the loan approval workflow.
+
+> **Note:** VA, FHA, and DPA (Down Payment Assistance) loan types are not supported in Danish realkredit style loans and have been removed from test scenarios.
 
 ---
 
@@ -11,55 +13,52 @@ This document provides a complete reference for all 44 test users in the mortgag
 | 1 | `approved.w2@test.com` | ✅ Approved | APPROVED | Strong W-2 employee |
 | 2 | `approved.dual@test.com` | ✅ Approved | APPROVED | Dual income household |
 | 3 | `approved.selfemployed@test.com` | ✅ Approved | APPROVED | Self-employed business owner |
-| 4 | `approved.veteran@test.com` | ✅ Approved | APPROVED | VA loan eligible |
-| 5 | `approved.conditional@test.com` | ✅ Approved | APPROVED | Conditional → Cleared |
-| 6 | `approved.plaid@test.com` | ✅ Approved | APPROVED | Plaid-verified assets |
-| 7 | `borrower.firsttime@test.com` | ✅ Approved | APPROVED | First-time homebuyer |
-| 8 | `coborrower.nonoccupant@test.com` | ✅ Approved | APPROVED | Non-occupant co-signer |
-| 9 | `denied.highdti@test.com` | ❌ Denied | DENIED | DTI > 50% |
-| 10 | `denied.badcredit@test.com` | ❌ Denied | DENIED | Credit < 640, BK < 48mo |
-| 11 | `denied.nodocs@test.com` | ❌ Denied | DENIED | Missing documentation |
-| 12 | `denied.bankruptcyrecent@test.com` | ❌ Denied | DENIED | BK < 48 months |
-| 13 | `denied.lates30@test.com` | ❌ Denied | DENIED | 30-day mortgage late |
-| 14 | `denied.lates60@test.com` | ❌ Denied | DENIED | 60-day mortgage late |
-| 15 | `denied.judgment@test.com` | ❌ Denied | DENIED | Unresolved judgment |
-| 16 | `denied.secondhomecredit@test.com` | ❌ Denied | DENIED | Second home credit < 660 |
-| 17 | `denied.investmentcredit@test.com` | ❌ Denied | DENIED | Investment credit < 700 |
-| 18 | `product.15year@test.com` | 📦 Product | APPROVED | 15-Year Fixed loan |
-| 19 | `product.arm5@test.com` | 📦 Product | APPROVED | ARM F5 (5-year reset) |
-| 20 | `product.arm1@test.com` | 📦 Product | APPROVED | ARM F1 (1-year reset) |
-| 21 | `occupancy.secondhome@test.com` | 📦 Product | APPROVED | Second home purchase |
-| 22 | `income.1099@test.com` | 💼 Income | APPROVED | 1099 contractor |
-| 23 | `income.commission@test.com` | 💼 Income | APPROVED | Variable/commission W-2 |
-| 24 | `income.multiple@test.com` | 💼 Income | APPROVED | W-2 + 1099 + Rental |
-| 25 | `income.retired@test.com` | 💼 Income | APPROVED | Pension + 401k |
-| 26 | `income.socialsecurity@test.com` | 💼 Income | APPROVED | Social Security only |
-| 27 | `income.alimony@test.com` | 💼 Income | APPROVED | Alimony + child support |
-| 28 | `edge.newjob@test.com` | 💼 Income | CONDITIONAL | Job < 24 months |
-| 29 | `edge.investment@test.com` | 🔶 Edge | APPROVED | Investment property |
-| 30 | `edge.refinance@test.com` | 🔶 Edge | APPROVED | Rate/term refinance |
-| 31 | `edge.giftfunds@test.com` | 🔶 Edge | APPROVED | Gift funds for down payment |
-| 32 | `edge.nonresident@test.com` | 🔶 Edge | CONDITIONAL | H-1B visa holder |
-| 33 | `edge.creditfloor@test.com` | 🔶 Edge | APPROVED | Credit exactly at 640 |
-| 34 | `edge.bankruptcy@test.com` | 🔶 Edge | APPROVED | BK 52 months (seasoned) |
-| 35 | `edge.foreclosure@test.com` | 🔶 Edge | APPROVED | Foreclosure 50mo (seasoned) |
-| 36 | `edge.dti43@test.com` | 🔶 Edge | APPROVED | DTI exactly at 43% |
-| 37 | `edge.reservesfloor@test.com` | 🔶 Edge | APPROVED | Reserves at 2mo minimum |
-| 38 | `edge.largedeposit@test.com` | 🔶 Edge | CONDITIONAL | $55k deposit requiring source |
-| 39 | `edge.highutilization@test.com` | 🔶 Edge | APPROVED | 88% credit utilization |
-| 40 | `edge.nsf@test.com` | 🔶 Edge | CONDITIONAL | NSF incidents on statements |
-| 41 | `edge.deferredloans@test.com` | 🔶 Edge | APPROVED | Student loans in deferment |
-| 42 | `edge.multiplereo@test.com` | 🔶 Edge | APPROVED | 3+ financed properties |
-| 43 | `edge.dpa@test.com` | 🔶 Edge | APPROVED | Down payment assistance |
-| 44 | `edge.sellerconcession@test.com` | 🔶 Edge | APPROVED | 3% seller concession |
-| 45 | `edge.trust@test.com` | 🔶 Edge | APPROVED | Property in revocable trust |
-| 46 | `stage1.preapproval@test.com` | 📋 Stage | PRE-APPROVED | Stage 1 only (no property) |
+| 4 | `approved.conditional@test.com` | ✅ Approved | APPROVED | Conditional → Cleared |
+| 5 | `approved.plaid@test.com` | ✅ Approved | APPROVED | Plaid-verified assets |
+| 6 | `coborrower.nonoccupant@test.com` | ✅ Approved | APPROVED | Non-occupant co-signer |
+| 7 | `denied.highdti@test.com` | ❌ Denied | DENIED | DTI > 50% |
+| 8 | `denied.badcredit@test.com` | ❌ Denied | DENIED | Credit < 640, BK < 48mo |
+| 9 | `denied.nodocs@test.com` | ❌ Denied | DENIED | Missing documentation |
+| 10 | `denied.bankruptcyrecent@test.com` | ❌ Denied | DENIED | BK < 48 months |
+| 11 | `denied.lates30@test.com` | ❌ Denied | DENIED | 30-day mortgage late |
+| 12 | `denied.lates60@test.com` | ❌ Denied | DENIED | 60-day mortgage late |
+| 13 | `denied.judgment@test.com` | ❌ Denied | DENIED | Unresolved judgment |
+| 14 | `denied.secondhomecredit@test.com` | ❌ Denied | DENIED | Second home credit < 660 |
+| 15 | `denied.investmentcredit@test.com` | ❌ Denied | DENIED | Investment credit < 700 |
+| 16 | `product.15year@test.com` | 📦 Product | APPROVED | 15-Year Fixed loan |
+| 17 | `product.arm5@test.com` | 📦 Product | APPROVED | ARM F5 (5-year reset) |
+| 18 | `product.arm1@test.com` | 📦 Product | APPROVED | ARM F1 (1-year reset) |
+| 19 | `occupancy.secondhome@test.com` | 📦 Product | APPROVED | Second home purchase |
+| 20 | `income.1099@test.com` | 💼 Income | APPROVED | 1099 contractor |
+| 21 | `income.commission@test.com` | 💼 Income | APPROVED | Variable/commission W-2 |
+| 22 | `income.multiple@test.com` | 💼 Income | APPROVED | W-2 + 1099 + Rental |
+| 23 | `income.retired@test.com` | 💼 Income | APPROVED | Pension + 401k |
+| 24 | `income.socialsecurity@test.com` | 💼 Income | APPROVED | Social Security only |
+| 25 | `income.alimony@test.com` | 💼 Income | APPROVED | Alimony + child support |
+| 26 | `edge.newjob@test.com` | 💼 Income | CONDITIONAL | Job < 24 months |
+| 27 | `edge.investment@test.com` | 🔶 Edge | APPROVED | Investment property |
+| 28 | `edge.refinance@test.com` | 🔶 Edge | APPROVED | Rate/term refinance |
+| 29 | `edge.giftfunds@test.com` | 🔶 Edge | APPROVED | Gift funds for down payment |
+| 30 | `edge.nonresident@test.com` | 🔶 Edge | CONDITIONAL | H-1B visa holder |
+| 31 | `edge.creditfloor@test.com` | 🔶 Edge | APPROVED | Credit exactly at 640 |
+| 32 | `edge.bankruptcy@test.com` | 🔶 Edge | APPROVED | BK 52 months (seasoned) |
+| 33 | `edge.foreclosure@test.com` | 🔶 Edge | APPROVED | Foreclosure 50mo (seasoned) |
+| 34 | `edge.dti43@test.com` | 🔶 Edge | APPROVED | DTI exactly at 43% |
+| 35 | `edge.reservesfloor@test.com` | 🔶 Edge | APPROVED | Reserves at 2mo minimum |
+| 36 | `edge.largedeposit@test.com` | 🔶 Edge | CONDITIONAL | $55k deposit requiring source |
+| 37 | `edge.highutilization@test.com` | 🔶 Edge | APPROVED | 88% credit utilization |
+| 38 | `edge.nsf@test.com` | 🔶 Edge | CONDITIONAL | NSF incidents on statements |
+| 39 | `edge.deferredloans@test.com` | 🔶 Edge | APPROVED | Student loans in deferment |
+| 40 | `edge.multiplereo@test.com` | 🔶 Edge | APPROVED | 3+ financed properties |
+| 41 | `edge.sellerconcession@test.com` | 🔶 Edge | APPROVED | 3% seller concession |
+| 42 | `edge.trust@test.com` | 🔶 Edge | APPROVED | Property in revocable trust |
+| 43 | `stage1.preapproval@test.com` | 📋 Stage | PRE-APPROVED | Stage 1 only (no property) |
 
 **All test accounts use password: `Test123!`**
 
 ---
 
-## 📁 SECTION 1: APPROVED SCENARIOS (8 Users)
+## 📁 SECTION 1: APPROVED SCENARIOS (6 Users)
 
 These users represent ideal or straightforward approval scenarios.
 
@@ -140,32 +139,7 @@ These users represent ideal or straightforward approval scenarios.
 
 ---
 
-### 4. `approved.veteran@test.com` - Military/VA Eligible
-
-**Profile:**
-| Field | Value |
-|-------|-------|
-| Name | James Anderson |
-| Income | $85,000/year |
-| Military Service | U.S. Army (2010-2020) |
-| Discharge | Honorable |
-| Loan Amount | $280,000 |
-| Loan Type | VA (0% down) |
-
-**Purpose:** Tests VA loan eligibility verification and Certificate of Eligibility processing.
-
-**Documents Required:**
-- Standard income docs
-- VA Certificate of Eligibility (COE)
-- DD-214 (simulated)
-
-**Expected AI Agent Flags:**
-- Verification of military service
-- VA funding fee calculation
-
----
-
-### 5. `approved.conditional@test.com` - Conditional then Cleared
+### 4. `approved.conditional@test.com` - Conditional then Cleared
 
 **Profile:**
 | Field | Value |
@@ -197,24 +171,7 @@ These users represent ideal or straightforward approval scenarios.
 
 ---
 
-### 7. `borrower.firsttime@test.com` - First-Time Homebuyer
-
-**Profile:**
-| Field | Value |
-|-------|-------|
-| Name | Jessica Brown |
-| Income | $68,000/year |
-| Loan Amount | $240,000 |
-| First-Time Buyer | Yes |
-
-**Purpose:** Tests first-time homebuyer identification and eligibility for special programs (FHA, DPA).
-
-**Expected AI Agent Flags:**
-- First-time buyer eligible for assistance programs
-
----
-
-### 8. `coborrower.nonoccupant@test.com` - Non-Occupant Co-Signer
+### 6. `coborrower.nonoccupant@test.com` - Non-Occupant Co-Signer
 
 **Profile:**
 | Field | Value |
@@ -622,11 +579,11 @@ These users test different income documentation scenarios.
 **Purpose:** Tests job change < 24 months but same field continuity.
 
 **Expected AI Agent Flags:**
-- `IncomeAgent`: Employment < 24 months
-- Letter of Explanation required
-- Same field experience mitigates concern
+- `IncomeAgent`: Current job tenure < 24 months (flags for continuity check)
+- `IncomeAgent`: Line-of-work history ≥ 24 months verified (meets policy)
+- Letter of Explanation required for recent transition
 
-**Expected Outcome:** CONDITIONAL (requires LOE and offer letter)
+**Expected Outcome:** CONDITIONAL (Procedural check only; meets hard policy duration requirements)
 
 ---
 
@@ -926,26 +883,7 @@ These users test specific edge scenarios and policy boundaries.
 
 ---
 
-### 43. `edge.dpa@test.com` - Down Payment Assistance
-
-**Profile:**
-| Field | Value |
-|-------|-------|
-| Name | Amanda Stewart |
-| First-Time Buyer | Yes |
-| DPA Grant | $15,000 (CHFA) |
-| Forgivable | Yes |
-
-**Purpose:** Tests down payment assistance program integration.
-
-**Expected AI Agent Flags:**
-- DPA program identified
-- Grant treated as borrower equity
-- Forgivable loan terms verified
-
----
-
-### 44. `edge.sellerconcession@test.com` - Seller Concessions
+### 41. `edge.sellerconcession@test.com` - Seller Concessions
 
 **Profile:**
 | Field | Value |
@@ -962,7 +900,7 @@ These users test specific edge scenarios and policy boundaries.
 
 ---
 
-### 45. `edge.trust@test.com` - Property in Revocable Trust
+### 42. `edge.trust@test.com` - Property in Revocable Trust
 
 **Profile:**
 | Field | Value |
@@ -981,7 +919,7 @@ These users test specific edge scenarios and policy boundaries.
 
 ---
 
-### 46. `stage1.preapproval@test.com` - Stage 1 Pre-Approval Only
+### 43. `stage1.preapproval@test.com` - Stage 1 Pre-Approval Only
 
 **Profile:**
 | Field | Value |

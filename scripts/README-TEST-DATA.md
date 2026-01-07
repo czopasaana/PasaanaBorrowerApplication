@@ -16,7 +16,7 @@ This guide explains how to create, manage, and use test data for the mortgage ap
 npm install pdfkit
 ```
 
-### 2. Seed Test Users (44 users)
+### 2. Seed Test Users (41 users)
 
 ```bash
 node scripts/seedTestData.js
@@ -48,19 +48,19 @@ node scripts/cleanupDocs.js
 
 ---
 
-## 📊 Test User Categories (44 Total)
+## 📊 Test User Categories (41 Total)
 
-### ✅ APPROVED SCENARIOS (8 users)
+> **Note:** VA, FHA, and DPA loan types are not supported in Danish realkredit style loans.
+
+### ✅ APPROVED SCENARIOS (6 users)
 
 | Email | Scenario | Key Feature |
 |-------|----------|-------------|
 | `approved.w2@test.com` | Strong W-2 Employee | Standard salaried approval |
 | `approved.dual@test.com` | Dual Income Household | Co-borrower income stacking |
 | `approved.selfemployed@test.com` | Self-Employed Owner | P&L, 2-year business history |
-| `approved.veteran@test.com` | Military/VA Eligible | VA loan, COE verification |
 | `approved.conditional@test.com` | Conditional → Cleared | Conditions satisfied workflow |
 | `approved.plaid@test.com` | Plaid Verified Assets | Automated asset verification |
-| `borrower.firsttime@test.com` | First-Time Homebuyer | DPA eligibility |
 | `coborrower.nonoccupant@test.com` | Non-Occupant Co-Signer | Parent helping child |
 
 ### ❌ DENIED SCENARIOS (9 users)
@@ -116,7 +116,6 @@ node scripts/cleanupDocs.js
 | `edge.nsf@test.com` | NSF Incidents | Bank account issues |
 | `edge.deferredloans@test.com` | Deferred Loans | Student loans at $0/mo |
 | `edge.multiplereo@test.com` | Multiple REO | 3+ financed properties |
-| `edge.dpa@test.com` | Down Payment Assist | CHFA grant program |
 | `edge.sellerconcession@test.com` | Seller Concessions | 3% closing cost credit |
 | `edge.trust@test.com` | Trust Ownership | Revocable living trust |
 | `stage1.preapproval@test.com` | Stage 1 Only | Pre-approval, no property |
@@ -142,7 +141,6 @@ Each test user (except `denied.nodocs`) gets a complete document set:
 ### 🪪 Identification
 - **Driver's License** - Standard ID
 - **Passport** - For non-resident aliens
-- **VA Certificate of Eligibility** - For veterans
 
 ### 💳 Liability Verification
 - **Credit Card Statements** - All active cards

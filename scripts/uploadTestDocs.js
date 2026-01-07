@@ -119,25 +119,7 @@ const USER_DOC_MAPPING = {
     }
   },
   
-  'approved.veteran@test.com': {
-    prefix: 'approved-veteran',
-    docs: {
-      identification: ['drivers-license', 'va-coe'],  // VA Certificate of Eligibility
-      income: [
-        'paystub-2025-11-15_to_2025-11-30', 
-        'paystub-2025-12-01_to_2025-12-15', 
-        'w2-2024', 
-        'w2-2023'
-      ],
-      assets: ['bank-statement-2025-10', 'bank-statement-2025-11', 'bank-statement-2025-12'],
-      liabilities: [
-        'auto-loan-2025-12',           // $280/month USAA auto loan
-        'credit-card-usaa-visa-2025-12'  // $120/month USAA Visa
-      ],
-      purchaseAgreement: ['purchase-agreement-james-anderson'],
-      authorization: ['authorization']
-    }
-  },
+  // Note: VA loans not supported in Danish realkredit style - approved.veteran@test.com removed
   
   // ==========================================
   // DENIED SCENARIOS - Complete Document Sets (denial for specific reason, not missing docs)
@@ -307,17 +289,7 @@ const USER_DOC_MAPPING = {
     }
   },
 
-  'borrower.firsttime@test.com': {
-    prefix: 'borrower-firsttime',
-    docs: {
-      identification: ['drivers-license'],
-      income: ['paystub-2025-11-15_to_2025-11-30', 'paystub-2025-12-01_to_2025-12-15', 'w2-2024', 'w2-2023'],
-      assets: ['bank-statement-2025-10', 'bank-statement-2025-11', 'bank-statement-2025-12'],
-      liabilities: ['credit-card-discover-2025-12', 'student-loan-2025-12'],
-      purchaseAgreement: ['purchase-agreement-jessica-brown'],
-      authorization: ['authorization']
-    }
-  },
+  // Note: FHA loans not supported in Danish realkredit style - borrower.firsttime@test.com removed
 
   'coborrower.nonoccupant@test.com': {
     prefix: 'coborrower-nonoccupant',
@@ -669,17 +641,7 @@ const USER_DOC_MAPPING = {
     }
   },
 
-  'edge.dpa@test.com': {
-    prefix: 'edge-dpa',
-    docs: {
-      identification: ['drivers-license'],
-      income: ['paystub-2025-11-15_to_2025-11-30', 'paystub-2025-12-01_to_2025-12-15', 'w2-2024', 'w2-2023'],
-      assets: ['bank-statement-2025-10', 'bank-statement-2025-11', 'bank-statement-2025-12'],
-      liabilities: ['student-loan-2025-12'],
-      purchaseAgreement: ['purchase-agreement-amanda-stewart'],
-      authorization: ['authorization']
-    }
-  },
+  // Note: DPA programs not supported in Danish realkredit style - edge.dpa@test.com removed
 
   'edge.sellerconcession@test.com': {
     prefix: 'edge-sellerconcession',
